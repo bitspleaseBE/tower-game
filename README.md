@@ -1,12 +1,12 @@
 # Sniper Tower
 
-[![Deploy to GitHub Pages](https://github.com/bitspleaseBE/sniper-tower/actions/workflows/deploy.yml/badge.svg)](https://github.com/bitspleaseBE/sniper-tower/actions/workflows/deploy.yml)
+[![Deploy to GitHub Pages](https://github.com/bitspleaseBE/tower-game/actions/workflows/deploy.yml/badge.svg)](https://github.com/bitspleaseBE/tower-game/actions/workflows/deploy.yml)
 
 A [Godot 4](https://godotengine.org/) game. Currently a scaffold: a main menu
 (New Game / Settings), a settings screen with persistent options, and a
-placeholder game scene.
+placeholder game scene. Game design lives in [blueprint.md](blueprint.md).
 
-**Play the latest build:** <https://bitspleasebe.github.io/sniper-tower/>
+**Play the latest build:** <https://bitspleasebe.github.io/tower-game/>
 
 ## Project layout
 
@@ -34,6 +34,15 @@ scripts/
 The first time the editor opens the project it generates `.godot/` (ignored by
 git) and `*.uid` files next to scripts/scenes — **commit the `.uid` files**,
 they keep resource references stable when files move.
+
+## Asset workflow
+
+Fill in `blueprint.md` §9 + §13, then in a Claude Code session run
+`/find-assets` — it stages free asset-pack proposals under
+[`inspiration/`](inspiration/README.md) with per-pack `SOURCE.md` provenance
+notes (Godot ignores that folder via `.gdignore`). After the team picks a
+winner, `/select-asset` promotes the chosen files into `assets/` and keeps
+`assets/ATTRIBUTION.md` crediting exactly the files the game ships.
 
 ## Web deployment
 
