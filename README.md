@@ -1,12 +1,12 @@
 # Sniper Tower
 
-[![Deploy to GitHub Pages](https://github.com/bitspleaseBE/sniper-tower/actions/workflows/deploy.yml/badge.svg)](https://github.com/bitspleaseBE/sniper-tower/actions/workflows/deploy.yml)
+[![Deploy to GitHub Pages](https://github.com/bitspleaseBE/tower-game/actions/workflows/deploy.yml/badge.svg)](https://github.com/bitspleaseBE/tower-game/actions/workflows/deploy.yml)
 
 A [Godot 4](https://godotengine.org/) game. Currently a scaffold: a main menu
 (New Game / Settings), a settings screen with persistent options, and a
 placeholder game scene. Game design lives in [blueprint.md](blueprint.md).
 
-**Play the latest build:** <https://bitspleasebe.github.io/sniper-tower/>
+**Play the latest build:** <https://bitspleasebe.github.io/tower-game/>
 
 ## Project layout
 
