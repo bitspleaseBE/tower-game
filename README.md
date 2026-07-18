@@ -37,8 +37,7 @@ they keep resource references stable when files move.
 
 ## Web deployment
 
-Every push to `main` (and, until `main` exists, to the scaffold branch that is
-currently the default) runs [`deploy.yml`](.github/workflows/deploy.yml), which:
+Every push to `main` runs [`deploy.yml`](.github/workflows/deploy.yml), which:
 
 1. Downloads headless Godot + export templates (cached between runs).
 2. Exports the `Web` preset to `build/web/`.
