@@ -35,6 +35,15 @@ The first time the editor opens the project it generates `.godot/` (ignored by
 git) and `*.uid` files next to scripts/scenes — **commit the `.uid` files**,
 they keep resource references stable when files move.
 
+## Asset workflow
+
+Fill in `blueprint.md` §9 + §13, then in a Claude Code session run
+`/find-assets` — it stages free asset-pack proposals under
+[`inspiration/`](inspiration/README.md) with per-pack `SOURCE.md` provenance
+notes (Godot ignores that folder via `.gdignore`). After the team picks a
+winner, `/select-asset` promotes the chosen files into `assets/` and keeps
+`assets/ATTRIBUTION.md` crediting exactly the files the game ships.
+
 ## Web deployment
 
 Every push to `main` runs [`deploy.yml`](.github/workflows/deploy.yml), which:
