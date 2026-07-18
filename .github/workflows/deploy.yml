@@ -72,10 +72,19 @@ jobs:
           test -f build/web/index.pck
 
       - name: Configure GitHub Pages
+        id: configure-pages
         if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
         with:
           enablement: true
+
+      # The default workflow token is not allowed to enable Pages on the repo,
+      # so the very first deploy needs a one-time manual setting (see README).
+      - name: Explain Pages setup (on failure)
+        if: failure() && steps.configure-pages.outcome == 'failure'
+        run: |
+          echo "::error::GitHub Pages is not enabled yet and the workflow token cannot enable it."
+          echo "::error::One-time fix by a repo admin: Settings -> Pages -> Build and deployment -> Source: 'GitHub Actions'. Then re-run this workflow."
 
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request'

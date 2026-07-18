@@ -48,6 +48,14 @@ PRs against `main` run the build without deploying, so broken exports are
 caught before merge. You can also deploy any branch manually from the
 Actions tab ("Deploy to GitHub Pages" → "Run workflow").
 
+### One-time repository setup
+
+GitHub's default workflow token is not allowed to enable Pages on the
+repository, so a repo admin must do this once: **Settings → Pages → Build and
+deployment → Source: "GitHub Actions"**. Until then, deploy runs fail at the
+"Configure GitHub Pages" step with a hint; after it, every deploy is fully
+automatic.
+
 Notes:
 
 - The web export has **thread support disabled** because GitHub Pages does not
