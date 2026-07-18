@@ -4,7 +4,7 @@
 
 A [Godot 4](https://godotengine.org/) game. Currently a scaffold: a main menu
 (New Game / Settings), a settings screen with persistent options, and a
-placeholder game scene.
+placeholder game scene. Game design lives in [blueprint.md](blueprint.md).
 
 **Play the latest build:** <https://bitspleasebe.github.io/sniper-tower/>
 
