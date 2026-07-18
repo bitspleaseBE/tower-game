@@ -1,0 +1,76 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_mainmenu"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_mainmenu")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.07, 0.09, 0.12, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MenuItems" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="CenterContainer/MenuItems"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "SNIPER TOWER"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="CenterContainer/MenuItems"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+
+[node name="NewGameButton" type="Button" parent="CenterContainer/MenuItems"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 48)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 24
+text = "New Game"
+
+[node name="SettingsButton" type="Button" parent="CenterContainer/MenuItems"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 48)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 24
+text = "Settings"
+
+[node name="VersionLabel" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = -38.0
+offset_right = 212.0
+offset_bottom = -12.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 0.35)
+text = "v0.1.0"
+
+[connection signal="pressed" from="CenterContainer/MenuItems/NewGameButton" to="." method="_on_new_game_button_pressed"]
+[connection signal="pressed" from="CenterContainer/MenuItems/SettingsButton" to="." method="_on_settings_button_pressed"]

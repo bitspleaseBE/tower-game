@@ -1,0 +1,15 @@
+# Godot-generated cache/metadata
+.godot/
+
+# Local export output
+build/
+
+# Godot export credentials (keystores, signing secrets)
+export_credentials.cfg
+
+# Imported translations (auto-generated from CSVs)
+*.translation
+
+# OS junk
+.DS_Store
+Thumbs.db
