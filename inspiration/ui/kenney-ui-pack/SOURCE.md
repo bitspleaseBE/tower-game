@@ -1,0 +1,8 @@
+# UI Pack
+
+- Source: https://kenney.nl/assets/ui-pack
+- Author: Kenney (https://kenney.nl)
+- License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/) — Kenney's site-wide license; confirmed via its listing and the itch.io/OpenGameArt mirrors on 2026-07-18
+- Status: manual-download needed — https://kenney.nl/assets/ui-pack (Download button) · mirrors: https://kenney-assets.itch.io/ui-pack · https://opengameart.org/content/ui-pack — unzip contents into this folder
+- Contents: full pack (430+ sprites): chunky rounded buttons, panels, sliders, checkboxes in several color themes; spritesheets + vector files; bonus 2 TTF fonts and 6 UI sound effects.
+- Why it fits: §9's "chunky and friendly" UI in candy colors, big touch targets for §7's one-thumb portrait play. The bundled rounded fonts + click sounds knock out pieces of §8 and §10 for free.
