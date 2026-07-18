@@ -1,4 +1,4 @@
-# Sniper Tower
+# Tower Game
 
 [![Deploy to GitHub Pages](https://github.com/bitspleaseBE/tower-game/actions/workflows/deploy.yml/badge.svg)](https://github.com/bitspleaseBE/tower-game/actions/workflows/deploy.yml)
 
@@ -58,11 +58,21 @@ Actions tab ("Deploy to GitHub Pages" → "Run workflow").
 
 ### One-time repository setup
 
-GitHub's default workflow token is not allowed to enable Pages on the
-repository, so a repo admin must do this once: **Settings → Pages → Build and
-deployment → Source: "GitHub Actions"**. Until then, deploy runs fail at the
-"Configure GitHub Pages" step with a hint; after it, every deploy is fully
-automatic.
+Two settings need a repo admin once; until both are done, deploy runs fail
+(PR builds are unaffected):
+
+1. **Enable Pages:** Settings → Pages → Build and deployment → Source:
+   **"GitHub Actions"**. The default workflow token is not allowed to enable
+   Pages itself; until this is set, runs fail at the "Configure GitHub Pages"
+   step with a hint.
+2. **Allow `main` to deploy:** Settings → Environments → `github-pages` →
+   Deployment branches and tags → add `main`. GitHub creates this environment
+   restricted to whatever branch was the default when Pages was first enabled
+   (here: the original scaffold branch), so deploys from `main` are rejected
+   by environment protection rules — the `deploy` job fails within seconds,
+   with no logs — until `main` is on the allowed list.
+
+After both, every deploy is fully automatic.
 
 Notes:
 

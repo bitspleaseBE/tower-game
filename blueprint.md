@@ -1,4 +1,4 @@
-# Sniper Tower — Game Blueprint
+# Tower Game — Game Blueprint
 
 One page, short answers. This drives build order, scope, and the automated
 asset search — keep the **bold field labels** and `[ ]` checkboxes intact so
