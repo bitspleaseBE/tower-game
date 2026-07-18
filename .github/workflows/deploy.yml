@@ -2,7 +2,9 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ["main"]
+    # The scaffold branch is the repo's default branch until main exists;
+    # drop it from this list once main is created.
+    branches: ["main", "claude/sniper-tower-godot-scaffold-x4v7ed"]
   # PRs against main get a build-only run (no deploy) to catch broken exports early.
   pull_request:
     branches: ["main"]
