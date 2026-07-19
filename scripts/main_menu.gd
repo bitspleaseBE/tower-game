@@ -2,7 +2,7 @@ extends Control
 
 
 func _ready() -> void:
-	%VersionLabel.text = "v%s" % ProjectSettings.get_setting("application/config/version", "dev")
+	%VersionLabel.text = "v%s · meadow" % ProjectSettings.get_setting("application/config/version", "dev")
 	Juice.squishify_button(%NewGameButton)
 	Juice.squishify_button(%SettingsButton)
 	_play_intro_juice()
