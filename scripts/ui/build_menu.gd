@@ -23,7 +23,6 @@ var _mode: StringName = &""
 var _game: Node
 var _open: bool = false
 var _option_buttons: Array[Button] = []
-var _selected_index: int = -1
 var _range_preview: RangePreview
 var _prev_affordable: Array[bool] = []
 
@@ -63,10 +62,9 @@ func open_build(pad: BuildPad) -> void:
 	_clear_range()
 	_pad = pad
 	_mode = &"build"
-	_selected_index = -1
 	title_label.text = "Build"
 	hint_label.visible = true
-	hint_label.text = "Pick a tower"
+	hint_label.text = "Tap to build"
 	options_row.visible = true
 	primary_button.visible = false
 	sell_button.visible = false
@@ -241,46 +239,26 @@ func _on_option_pressed(index: int) -> void:
 		return
 	var tower_data: TowerData = towers[index]
 
-	if _selected_index == index:
-		# Confirm buy.
-		if not _can_afford_option(tower_data):
-			Juice.wiggle(_option_buttons[index])
-			if _game.has_method("pulse_coin_hud"):
-				_game.pulse_coin_hud()
-			elif _game.get("hud") != null and _game.hud.has_method("pulse_coins"):
-				_game.hud.pulse_coins()
-			return
-		if not _game.spend(tower_data.cost[0]):
-			Juice.wiggle(_option_buttons[index])
-			return
-		var tower: Tower = TowerScene.instantiate()
-		_pad.add_child(tower)
-		tower.setup(tower_data)
-		_pad.tower = tower
-		Events.tower_built.emit(tower, _pad)
-		close()
-		return
-
-	# Select for preview.
-	_selected_index = index
-	hint_label.text = "Tap again to build"
-	_update_option_highlights()
+	# One tap builds — range flashes on the pad as the sheet closes.
 	if _range_preview != null:
 		_range_preview.show_at(_pad.global_position, tower_data.range_px[0])
 
-
-func _update_option_highlights() -> void:
-	for i: int in _option_buttons.size():
-		var btn: Button = _option_buttons[i]
-		if i == _selected_index:
-			btn.theme_type_variation = &""
-			# Visual selected state via scale punch rest — use modulate boost.
-			if btn.modulate.a >= 0.9:
-				btn.self_modulate = Color(1.15, 1.15, 1.05, 1.0)
-			else:
-				btn.self_modulate = Color(1.0, 1.0, 1.0, 1.0)
-		else:
-			btn.self_modulate = Color.WHITE
+	if not _can_afford_option(tower_data):
+		Juice.wiggle(_option_buttons[index])
+		if _game.has_method("pulse_coin_hud"):
+			_game.pulse_coin_hud()
+		elif _game.get("hud") != null and _game.hud.has_method("pulse_coins"):
+			_game.hud.pulse_coins()
+		return
+	if not _game.spend(tower_data.cost[0]):
+		Juice.wiggle(_option_buttons[index])
+		return
+	var tower: Tower = TowerScene.instantiate()
+	_pad.add_child(tower)
+	tower.setup(tower_data)
+	_pad.tower = tower
+	Events.tower_built.emit(tower, _pad)
+	close()
 
 
 func _on_primary_pressed() -> void:
@@ -325,7 +303,6 @@ func _on_tower_sold_juice(_pad_node: Node, _refund: int) -> void:
 
 
 func _clear_selection() -> void:
-	_selected_index = -1
 	for btn: Button in _option_buttons:
 		btn.self_modulate = Color.WHITE
 	if _range_preview != null:

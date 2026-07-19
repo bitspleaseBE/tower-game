@@ -16,6 +16,14 @@ const BODY_TEXTURES := {
 	&"boss": preload("res://assets/enemies/critter_boss.png"),
 }
 
+const FACE_TEXTURES := {
+	&"normal": preload("res://assets/enemies/face_a.png"),
+	&"fast": preload("res://assets/enemies/face_b.png"),
+	&"swarm": preload("res://assets/enemies/face_c.png"),
+	&"armored": preload("res://assets/enemies/face_d.png"),
+	&"boss": preload("res://assets/enemies/face_e.png"),
+}
+
 @onready var skin: Node2D = $Skin
 @onready var hurtbox: Area2D = $Hurtbox
 @onready var hurtbox_shape: CollisionShape2D = $Hurtbox/CollisionShape2D
@@ -227,6 +235,15 @@ func _build_skin() -> void:
 	var body_scale := target_px / float(maxi(body_tex.get_width(), body_tex.get_height()))
 	body.scale = Vector2(body_scale, body_scale)
 	skin.add_child(body)
+
+	var face_tex: Texture2D = FACE_TEXTURES.get(id, FACE_TEXTURES[&"normal"]) as Texture2D
+	var face := Sprite2D.new()
+	face.name = "Face"
+	face.texture = face_tex
+	var face_scale := (target_px * 0.58) / float(maxi(face_tex.get_width(), 1))
+	face.scale = Vector2(face_scale, face_scale)
+	face.position = Vector2(0.0, -radius * 0.06)
+	skin.add_child(face)
 
 	if id == &"boss":
 		_add_boss_crown(radius)

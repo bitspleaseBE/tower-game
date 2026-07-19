@@ -18,12 +18,21 @@ func _initialize() -> void:
 		"res://assets/enemies/critter_swarm.png",
 		"res://assets/enemies/critter_armored.png",
 		"res://assets/enemies/critter_boss.png",
+		"res://assets/enemies/face_a.png",
+		"res://assets/enemies/face_b.png",
+		"res://assets/enemies/face_c.png",
+		"res://assets/enemies/face_d.png",
+		"res://assets/enemies/face_e.png",
 		"res://assets/tower/base_square.png",
 		"res://assets/tower/weapon_popper.png",
 		"res://assets/tower/projectile_shot.png",
 		"res://assets/tower/projectile_shell.png",
 		"res://assets/ui/icon_heart.png",
 		"res://assets/ui/icon_coin.png",
+		"res://assets/ui/button_9slice.png",
+		"res://assets/ui/button_pressed_9slice.png",
+		"res://assets/ui/button_secondary_9slice.png",
+		"res://assets/ui/panel_9slice.png",
 		"res://assets/fx/shine_spec.png",
 		"res://assets/fx/particle_confetti.png",
 		"res://assets/fx/particle_puff.png",
@@ -120,7 +129,16 @@ func _initialize() -> void:
 				push_error("enemy Skin missing Sprite2D children")
 				failed = true
 			else:
-				print("OK enemy Skin has Sprite2D")
+				var has_face := false
+				for child: Node in skin.get_children():
+					if String(child.name) == "Face" and child is Sprite2D:
+						has_face = true
+						break
+				if not has_face:
+					push_error("enemy Skin missing Face sprite")
+					failed = true
+				else:
+					print("OK enemy Skin has body+face")
 			e_swarm.call("deactivate")
 
 	if boss != null and game.has_method("_spawn_enemy"):
