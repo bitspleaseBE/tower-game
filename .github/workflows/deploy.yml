@@ -57,6 +57,9 @@ jobs:
       - name: Import assets
         run: godot --headless --import
 
+      - name: Stage 1 smoke (portrait shell)
+        run: godot --headless --path . --script scripts/debug/stage01_smoke.gd
+
       - name: Export web build
         run: |
           mkdir -p build/web

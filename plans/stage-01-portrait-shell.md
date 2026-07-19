@@ -1,6 +1,6 @@
 # Stage 1: Portrait Shell & Board Skeleton
 
-**Status:** not started
+**Status:** done
 
 Objective: after this stage, anyone opening https://bitspleasebe.github.io/tower-game/ on a phone sees a candy-bright PORTRAIT game instead of a dark landscape scaffold — a cream main menu with a bouncy title and two big thumb-reach buttons, a matching settings screen, and behind New Game a real game board: soft mint ground, a thick rounded candy path snaking top-left to right, 8 lilac build pads, a status strip up top (hearts/coins/wave placeholders) and a thumb-zone bar at the bottom. No gameplay yet — this stage locks the screen shape, the single candy theme, and the conventions (Skin swap points, directory layout, committed `*.uid`s) every later stage builds on.
 

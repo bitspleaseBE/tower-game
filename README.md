@@ -16,16 +16,51 @@ Implementation order is the eight-stage roadmap in
 ```
 project.godot            Project configuration (main scene, autoloads, renderer)
 export_presets.cfg       "Web" export preset used by CI (threads disabled, see below)
+theme/
+  candy_theme.tres       Project-wide candy UI theme (gui/theme/custom)
 scenes/
   main_menu.tscn         Entry scene: New Game / Settings
   settings_menu.tscn     Fullscreen + master volume, persisted to user://settings.cfg
-  game.tscn              Placeholder — the actual game goes here
+  game.tscn              Portrait board skeleton (path, pads, HUD zones)
+  entities/              (Stage 2+) towers, enemies, pads, projectiles
+  ui/                    (Stage 2+) Hud, BuildMenu, overlays
 scripts/
   settings.gd            "Settings" autoload: loads/saves/applies user settings
   main_menu.gd, settings_menu.gd, game.gd
+  autoload/              (Stage 3+) Events, Juice, …
+  data/                  (Stage 2+) MapData / TowerData / EnemyData scripts
+  debug/                 Headless smoke / harness scripts
+data/                    (Stage 2+) map_*.tres and other data resources
+assets/                  (Stage 6+) promoted art + ATTRIBUTION.md
 .github/workflows/
   deploy.yml             Exports the web build and deploys it to GitHub Pages
 ```
+
+## Conventions
+
+- **Portrait policy:** base resolution is **720×1280**. Stretch mode is
+  `canvas_items` + aspect `expand`. UI uses anchors/containers only — never
+  absolute offsets from edges that expand moves. World content lives under a
+  `Board` Node2D recentered with `_recenter_board()` on ready and
+  `viewport.size_changed`. Extra canvas space revealed by expand is always
+  ground-colored via `default_clear_color` (mint), never black.
+- **Skin swap points:** every visual entity (tower, enemy, pad, projectile,
+  decor) owns a child `Skin` (Node2D) holding its placeholder primitives.
+  Gameplay scripts never reference nodes inside `Skin`; feel-tweens target the
+  `Skin` node's transform only. Stage 6 swaps art by replacing `Skin`'s
+  children.
+- **Directory layout:** `scenes/entities/`, `scenes/ui/`, `scripts/` mirroring
+  those trees, plus `scripts/autoload/`, `scripts/data/`, `data/`, `theme/`,
+  `assets/` (dirs marked above arrive in later stages). Files are `snake_case`;
+  `class_name`s and root nodes are `PascalCase`.
+- **Theme:** `theme/candy_theme.tres` is registered project-wide via
+  `gui/theme/custom`. Style through the theme (or type variations like
+  `ButtonSecondary`); no ad-hoc per-node color overrides except placeholder
+  `Skin` primitives. Palette lives in
+  [plans/stage-01-portrait-shell.md](plans/stage-01-portrait-shell.md) and the
+  theme file.
+- **Commit `*.uid` files:** they appear on first import and must always be
+  committed so resource references stay stable when files move.
 
 ## Development
 
