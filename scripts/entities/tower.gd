@@ -22,6 +22,9 @@ const CANDY_TINTS := {
 @onready var range_area: Area2D = $RangeArea
 @onready var range_shape: CollisionShape2D = $RangeArea/CollisionShape2D
 
+## Kenney weapon sprites face up (-Y) at rotation 0; Godot angles are from +X.
+const WEAPON_FORWARD_OFFSET := PI * 0.5
+
 var data: TowerData
 var tier: int = 0
 var total_spent: int = 0
@@ -29,7 +32,9 @@ var _cooldown: float = 0.0
 var _range_circle: CircleShape2D
 var _current_target: Enemy
 var _retarget_timer: float = 0.0
+var _weapon: Sprite2D
 const RETARGET_INTERVAL := 0.1
+const AIM_TURN_SPEED := 14.0 ## rad/s — snappy but readable
 
 
 func _ready() -> void:
@@ -86,6 +91,8 @@ func _physics_process(delta: float) -> void:
 		_current_target = _pick_target()
 		_retarget_timer = RETARGET_INTERVAL
 
+	_aim_toward(_current_target, delta)
+
 	if _cooldown > 0.0:
 		return
 
@@ -101,6 +108,23 @@ func _physics_process(delta: float) -> void:
 			_cooldown = data.fire_interval[tier]
 
 
+func _aim_toward(target: Enemy, delta: float) -> void:
+	if _weapon == null or target == null or not is_instance_valid(target) or not target.active:
+		return
+	var to := target.global_position - _weapon.global_position
+	if to.length_squared() < 0.25:
+		return
+	var desired := to.angle() + WEAPON_FORWARD_OFFSET
+	_weapon.rotation = lerp_angle(_weapon.rotation, desired, clampf(AIM_TURN_SPEED * delta, 0.0, 1.0))
+
+
+func _barrel_tip(length: float) -> Vector2:
+	if _weapon == null:
+		return global_position + Vector2(0.0, -length)
+	var forward := Vector2.UP.rotated(_weapon.rotation)
+	return _weapon.global_position + forward * length
+
+
 func _target_still_valid() -> bool:
 	if _current_target == null or not is_instance_valid(_current_target):
 		return false
@@ -111,14 +135,17 @@ func _target_still_valid() -> bool:
 
 
 func _pick_target() -> Enemy:
+	## Closest in range — each tower tracks what's near it, not the path leader.
 	var best: Enemy = null
-	var best_progress := -1.0
+	var best_dist_sq := INF
+	var origin := global_position
 	for area: Area2D in range_area.get_overlapping_areas():
 		var enemy := area.get_parent() as Enemy
 		if enemy == null or not enemy.active:
 			continue
-		if enemy.progress > best_progress:
-			best_progress = enemy.progress
+		var dist_sq := origin.distance_squared_to(enemy.global_position)
+		if dist_sq < best_dist_sq:
+			best_dist_sq = dist_sq
 			best = enemy
 	return best
 
@@ -148,7 +175,7 @@ func _fire_homing(target: Enemy, heavy: bool) -> void:
 	var projectile: Projectile = game.acquire_projectile()
 	if projectile == null:
 		return
-	var barrel_tip := global_position + Vector2(0, -28)
+	var barrel_tip := _barrel_tip(28.0)
 	projectile.global_position = barrel_tip
 	projectile.launch(target, data.damage[tier], data.projectile_speed, heavy)
 	if heavy:
@@ -163,7 +190,7 @@ func _fire_lob(target: Enemy) -> void:
 	var projectile: Projectile = game.acquire_projectile()
 	if projectile == null:
 		return
-	var barrel_tip := global_position + Vector2(0, -20)
+	var barrel_tip := _barrel_tip(20.0)
 	projectile.global_position = barrel_tip
 	var splash: float = data.splash_radius_px[tier] if tier < data.splash_radius_px.size() else 70.0
 	projectile.launch_lob(target.global_position, data.damage[tier], data.projectile_speed, splash)
@@ -194,10 +221,12 @@ func _apply_tier_visuals() -> void:
 
 
 func _rebuild_skin() -> void:
+	var prev_aim := _weapon.rotation if _weapon != null else 0.0
 	while skin.get_child_count() > 0:
 		var child: Node = skin.get_child(0)
 		skin.remove_child(child)
 		child.free()
+	_weapon = null
 
 	var scale_factor := 1.0 + float(tier) * 0.08
 	var id := data.id if data != null else &"popper"
@@ -212,14 +241,15 @@ func _rebuild_skin() -> void:
 	base.self_modulate = tint
 	skin.add_child(base)
 
-	var weapon := Sprite2D.new()
-	weapon.name = "Weapon"
-	weapon.texture = WEAPON_TEXTURES.get(id, WEAPON_TEXTURES[&"popper"]) as Texture2D
-	var weapon_scale := (footprint * 0.95) / float(weapon.texture.get_width())
-	weapon.scale = Vector2(weapon_scale, weapon_scale)
-	weapon.position = Vector2(0.0, -6.0 * scale_factor)
-	weapon.self_modulate = tint
-	skin.add_child(weapon)
+	_weapon = Sprite2D.new()
+	_weapon.name = "Weapon"
+	_weapon.texture = WEAPON_TEXTURES.get(id, WEAPON_TEXTURES[&"popper"]) as Texture2D
+	var weapon_scale := (footprint * 0.95) / float(_weapon.texture.get_width())
+	_weapon.scale = Vector2(weapon_scale, weapon_scale)
+	_weapon.position = Vector2(0.0, -6.0 * scale_factor)
+	_weapon.self_modulate = tint
+	_weapon.rotation = prev_aim
+	skin.add_child(_weapon)
 
 	_add_tier_stripes(scale_factor)
 	_add_bubble_highlight(scale_factor)

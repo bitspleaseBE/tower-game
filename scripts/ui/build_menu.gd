@@ -118,33 +118,87 @@ func _build_option_buttons() -> void:
 		var btn := Button.new()
 		btn.toggle_mode = false
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		btn.custom_minimum_size = Vector2(0, 112)
-		btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
+		btn.custom_minimum_size = Vector2(0, 128)
 		btn.focus_mode = Control.FOCUS_NONE
-		btn.text = "%s\n%d●" % [tower_data.display_name, tower_data.cost[0]]
+		btn.text = "" # Content is laid out below — avoids swatch/text overlap.
+		btn.clip_text = true
+
+		var content := VBoxContainer.new()
+		content.name = "Content"
+		content.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		content.set_anchors_preset(Control.PRESET_FULL_RECT)
+		content.offset_left = 6.0
+		content.offset_top = 10.0
+		content.offset_right = -6.0
+		content.offset_bottom = -12.0
+		content.alignment = BoxContainer.ALIGNMENT_CENTER
+		content.add_theme_constant_override("separation", 4)
+		btn.add_child(content)
+
+		var swatch_row := CenterContainer.new()
+		swatch_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		content.add_child(swatch_row)
 
 		var icon := Panel.new()
-		icon.custom_minimum_size = Vector2(26, 26)
+		icon.name = "Swatch"
+		icon.custom_minimum_size = Vector2(28, 28)
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		icon.set_anchors_preset(Control.PRESET_CENTER_TOP)
-		icon.offset_left = -13.0
-		icon.offset_top = 8.0
-		icon.offset_right = 13.0
-		icon.offset_bottom = 34.0
 		var style := StyleBoxFlat.new()
 		style.bg_color = TOWER_SWATCHES.get(tower_data.id, Color.WHITE)
-		style.corner_radius_top_left = 13
-		style.corner_radius_top_right = 13
-		style.corner_radius_bottom_left = 13
-		style.corner_radius_bottom_right = 13
+		style.corner_radius_top_left = 14
+		style.corner_radius_top_right = 14
+		style.corner_radius_bottom_left = 14
+		style.corner_radius_bottom_right = 14
 		icon.add_theme_stylebox_override("panel", style)
-		btn.add_child(icon)
+		swatch_row.add_child(icon)
+
+		var name_lbl := Label.new()
+		name_lbl.name = "NameLabel"
+		name_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		name_lbl.text = tower_data.display_name
+		name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		name_lbl.add_theme_font_size_override("font_size", 22)
+		name_lbl.add_theme_color_override("font_color", Color.WHITE)
+		content.add_child(name_lbl)
+
+		var cost_row := HBoxContainer.new()
+		cost_row.name = "CostRow"
+		cost_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		cost_row.alignment = BoxContainer.ALIGNMENT_CENTER
+		cost_row.add_theme_constant_override("separation", 4)
+		content.add_child(cost_row)
+
+		var cost_lbl := Label.new()
+		cost_lbl.name = "CostLabel"
+		cost_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		cost_lbl.text = str(tower_data.cost[0])
+		cost_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		cost_lbl.add_theme_font_size_override("font_size", 26)
+		cost_lbl.add_theme_color_override("font_color", Color.WHITE)
+		cost_row.add_child(cost_lbl)
+
+		var coin := TextureRect.new()
+		coin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		coin.texture = preload("res://assets/ui/icon_coin.png")
+		coin.custom_minimum_size = Vector2(22, 22)
+		coin.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		coin.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		coin.modulate = Color(1.0, 0.788, 0.302, 1.0)
+		cost_row.add_child(coin)
 
 		btn.pressed.connect(_on_option_pressed.bind(i))
 		Juice.squishify_button(btn)
 		options_row.add_child(btn)
 		_option_buttons.append(btn)
 		_prev_affordable.append(false)
+
+
+func _option_cost_label(btn: Button) -> Label:
+	return btn.find_child("CostLabel", true, false) as Label
+
+
+func _option_name_label(btn: Button) -> Label:
+	return btn.find_child("NameLabel", true, false) as Label
 
 
 func _slide_in() -> void:
@@ -154,7 +208,7 @@ func _slide_in() -> void:
 	panel.offset_bottom = 280.0
 	var tween := create_tween()
 	tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.tween_property(panel, "offset_top", -260.0, 0.28)
+	tween.tween_property(panel, "offset_top", -280.0, 0.28)
 	tween.parallel().tween_property(panel, "offset_bottom", -12.0, 0.28)
 
 
@@ -199,7 +253,12 @@ func _refresh_build_options() -> void:
 	for i: int in _option_buttons.size():
 		var tower_data: TowerData = towers[i]
 		var btn: Button = _option_buttons[i]
-		btn.text = "%s\n%d●" % [tower_data.display_name, tower_data.cost[0]]
+		var name_lbl := _option_name_label(btn)
+		var cost_lbl := _option_cost_label(btn)
+		if name_lbl != null:
+			name_lbl.text = tower_data.display_name
+		if cost_lbl != null:
+			cost_lbl.text = str(tower_data.cost[0])
 		# Greyed ≠ disabled — unaffordable options must still receive taps.
 		btn.disabled = false
 		var affordable := _can_afford_option(tower_data)
