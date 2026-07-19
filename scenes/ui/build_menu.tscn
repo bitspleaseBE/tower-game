@@ -60,7 +60,7 @@ unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(0, 88)
 layout_mode = 2
-text = "Upgrade — 0●"
+text = "Upgrade — 0"
 
 [node name="SellButton" type="Button" parent="SheetPanel/MarginContainer/VBox"]
 unique_name_in_owner = true
@@ -68,4 +68,4 @@ visible = false
 custom_minimum_size = Vector2(0, 88)
 layout_mode = 2
 theme_type_variation = &"ButtonSecondary"
-text = "Sell +0●"
+text = "Sell +0"

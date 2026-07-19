@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_blycm")
 id = &"popper"
-display_name = "Popper"
+display_name = "Lollipop"
 cost = Array[int]([50, 60, 90])
 damage = Array[float]([1.0, 2.0, 3.0])
 range_px = Array[float]([180.0, 195.0, 210.0])

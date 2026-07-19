@@ -5,6 +5,7 @@ const DESIGN_SIZE := Vector2(720, 1280)
 const TAP_RADIUS_PX := 56.0
 const EnemyScene: PackedScene = preload("res://scenes/entities/enemy.tscn")
 const ProjectileScene: PackedScene = preload("res://scenes/entities/projectile.tscn")
+const WaterPoolScene: PackedScene = preload("res://scenes/entities/water_pool.tscn")
 const BuildPadScene: PackedScene = preload("res://scenes/entities/build_pad.tscn")
 
 ## Stage 5 MapSelect injects via SaveGame; default is map 1 for editor F5.
@@ -34,6 +35,8 @@ var _lost_emitted: bool = false
 var _suppress_game_over: bool = false
 var _enemy_pool: ObjectPool
 var _projectile_pool: ObjectPool
+var _water_pool_pool: ObjectPool
+var _pools_root: Node2D
 var _current_wave: int = 1
 
 
@@ -61,6 +64,16 @@ func _ready() -> void:
 		PerfBudget.PROJECTILE_PREWARM,
 		PerfBudget.MAX_PROJECTILES,
 		ObjectPool.GrowPolicy.GROW_WARN
+	)
+	_pools_root = Node2D.new()
+	_pools_root.name = "WaterPools"
+	board.add_child(_pools_root)
+	_water_pool_pool = ObjectPool.new(
+		WaterPoolScene,
+		_pools_root,
+		PerfBudget.WATER_POOL_PREWARM,
+		PerfBudget.MAX_WATER_POOLS,
+		ObjectPool.GrowPolicy.DROP
 	)
 	Juice.register_game(fx_layer, board, hud)
 
@@ -170,6 +183,18 @@ func acquire_projectile() -> Projectile:
 func release_projectile(projectile: Projectile) -> void:
 	if _projectile_pool != null:
 		_projectile_pool.release(projectile)
+
+
+func acquire_water_pool() -> WaterPool:
+	var node: Node = _water_pool_pool.acquire()
+	if node == null:
+		return null
+	return node as WaterPool
+
+
+func release_water_pool(pool: WaterPool) -> void:
+	if _water_pool_pool != null:
+		_water_pool_pool.release(pool)
 
 
 func enemy_pool_live() -> int:

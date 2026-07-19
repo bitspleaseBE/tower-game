@@ -10,12 +10,10 @@ const WEAPON_TEXTURES := {
 	&"chiller": preload("res://assets/tower/weapon_chiller.png"),
 	&"longshot": preload("res://assets/tower/weapon_longshot.png"),
 }
-const CANDY_TINTS := {
-	&"popper": Color(1.0, 0.56, 0.69, 1.0), ## pink
-	&"lobber": Color(1.0, 0.84, 0.42, 1.0), ## gold
-	&"chiller": Color(0.553, 0.816, 0.941, 1.0), ## #8DD0F0 icy
-	&"longshot": Color(0.749, 0.627, 0.91, 1.0), ## lilac
-}
+const STREAM_DROPLETS := 4
+const STREAM_SPEED := 420.0
+const POOL_RADIUS := [42.0, 50.0, 58.0]
+const POOL_LIFETIME := [2.2, 2.6, 3.0]
 
 @onready var skin: Node2D = $Skin
 @onready var range_ring: Node2D = $RangeRing
@@ -100,9 +98,12 @@ func _physics_process(delta: float) -> void:
 
 	match data.behavior:
 		TowerData.Behavior.SLOW:
-			if _has_any_in_range():
-				_fire_slow_pulse()
-				_cooldown = data.fire_interval[tier]
+			if _current_target == null:
+				return
+			if not _is_aimed_at(_current_target):
+				return
+			_fire_water_stream(_current_target)
+			_cooldown = data.fire_interval[tier]
 		_:
 			if _current_target == null:
 				return
@@ -215,20 +216,30 @@ func _fire_lob(target: Enemy) -> void:
 	Juice.squash(skin, Vector2(1.15, 0.75), 0.18)
 
 
-func _fire_slow_pulse() -> void:
+func _fire_water_stream(target: Enemy) -> void:
+	var game := get_tree().get_first_node_in_group("game")
+	if game == null or not game.has_method("acquire_projectile"):
+		return
 	var factor: float = data.slow_factor[tier] if tier < data.slow_factor.size() else 0.65
 	var duration: float = data.slow_duration[tier] if tier < data.slow_duration.size() else 1.2
-	var dmg: float = data.damage[tier]
-	for area: Area2D in range_area.get_overlapping_areas():
-		var enemy := area.get_parent() as Enemy
-		if enemy == null or not enemy.active:
-			continue
-		enemy.apply_slow(factor, duration)
-		if dmg > 0.0:
-			enemy.take_damage(dmg)
+	var pool_r: float = POOL_RADIUS[mini(tier, POOL_RADIUS.size() - 1)]
+	var pool_life: float = POOL_LIFETIME[mini(tier, POOL_LIFETIME.size() - 1)]
+	var barrel_tip := _barrel_tip(26.0)
+	var heading := Vector2.UP.rotated(_weapon.rotation if _weapon != null else 0.0)
+	var fired := 0
+	for i: int in STREAM_DROPLETS:
+		var projectile: Projectile = game.acquire_projectile()
+		if projectile == null:
+			break
+		projectile.global_position = barrel_tip + heading * float(i) * 7.0
+		# Only the trailing droplet leaves a puddle — the rest are stream body.
+		var puddle_r := pool_r if i == STREAM_DROPLETS - 1 else 0.0
+		projectile.launch_stream(heading, target, STREAM_SPEED, factor, duration, puddle_r, pool_life)
+		fired += 1
+	if fired <= 0:
+		return
 	Sound.play_sfx(&"shot_chiller")
-	Juice.frost_pulse(global_position, data.range_px[tier])
-	Juice.squash(skin, Vector2(1.1, 0.9), 0.12)
+	Juice.squash(skin, Vector2(1.12, 0.88), 0.12)
 
 
 func _apply_tier_visuals() -> void:
@@ -249,7 +260,6 @@ func _rebuild_skin() -> void:
 
 	var scale_factor := 1.0 + float(tier) * 0.08
 	var id := data.id if data != null else &"popper"
-	var tint: Color = CANDY_TINTS.get(id, Color.WHITE) as Color
 	var footprint := 44.0 * scale_factor
 
 	var base := Sprite2D.new()
@@ -257,7 +267,7 @@ func _rebuild_skin() -> void:
 	base.texture = BASE_HEX if id == &"chiller" else BASE_SQUARE
 	var base_scale := footprint / float(base.texture.get_width())
 	base.scale = Vector2(base_scale, base_scale)
-	base.self_modulate = tint
+	base.self_modulate = Color.WHITE
 	skin.add_child(base)
 
 	_weapon = Sprite2D.new()
@@ -266,7 +276,7 @@ func _rebuild_skin() -> void:
 	var weapon_scale := (footprint * 0.95) / float(_weapon.texture.get_width())
 	_weapon.scale = Vector2(weapon_scale, weapon_scale)
 	_weapon.position = Vector2(0.0, -6.0 * scale_factor)
-	_weapon.self_modulate = tint
+	_weapon.self_modulate = Color.WHITE
 	_weapon.rotation = prev_aim
 	skin.add_child(_weapon)
 

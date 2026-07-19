@@ -15,12 +15,20 @@ every shipped third-party file appears here, and only shipped files do.
   - assets/background/decor_rock.png (pack: towerDefense_tile134.png)
   - assets/tower/base_square.png (pack: towerDefense_tile180.png)
   - assets/tower/base_hex.png (pack: towerDefense_tile181.png)
-  - assets/tower/weapon_popper.png (pack: towerDefense_tile249.png)
-  - assets/tower/weapon_lobber.png (pack: towerDefense_tile206.png)
-  - assets/tower/weapon_chiller.png (pack: towerDefense_tile250.png)
-  - assets/tower/weapon_longshot.png (pack: towerDefense_tile291.png)
-  - assets/tower/projectile_shot.png (pack: towerDefense_tile251.png)
-  - assets/tower/projectile_shell.png (pack: towerDefense_tile252.png)
+
+## Tower Defense (Top-Down) — Kenney originals (backup)
+- License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
+- Source: https://kenney.nl/assets/tower-defense-top-down
+- Note: Untouched Kenney copies kept under `assets/tower_kenney/` after candy remount of live `assets/tower/` weapons.
+- Files used:
+  - assets/tower_kenney/base_square.png (pack: towerDefense_tile180.png)
+  - assets/tower_kenney/base_hex.png (pack: towerDefense_tile181.png)
+  - assets/tower_kenney/weapon_popper.png (pack: towerDefense_tile249.png)
+  - assets/tower_kenney/weapon_lobber.png (pack: towerDefense_tile206.png)
+  - assets/tower_kenney/weapon_chiller.png (pack: towerDefense_tile250.png)
+  - assets/tower_kenney/weapon_longshot.png (pack: towerDefense_tile291.png)
+  - assets/tower_kenney/projectile_shot.png (pack: towerDefense_tile251.png)
+  - assets/tower_kenney/projectile_shell.png (pack: towerDefense_tile252.png)
 
 ## Shape Characters — Kenney
 - License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
@@ -60,6 +68,21 @@ every shipped third-party file appears here, and only shipped files do.
   - assets/fx/shine_spec.png
   - assets/fx/particle_soft.png
   - assets/fx/particle_star_soft.png
+
+## Candy cannon remount — AI-generated (gpt-image-2)
+- Original candy-styled replacements for live tower weapons / projectiles / water FX.
+- License: project-owned generated art for this game.
+- Files used:
+  - assets/tower/weapon_popper.png (lollipop cannon)
+  - assets/tower/weapon_lobber.png (water-balloon mortar)
+  - assets/tower/weapon_chiller.png (water cannon)
+  - assets/tower/weapon_longshot.png (space gun)
+  - assets/tower/projectile_laser.png
+  - assets/tower/projectile_balloon.png
+  - assets/fx/particle_water_drop.png
+  - assets/fx/particle_water_pool.png
+  - assets/tower/base_square.png (Kenney base retained)
+  - assets/tower/base_hex.png (Kenney base retained)
 
 ## Settings chrome — original
 - Candy toggle + slider knob for Settings visibility:

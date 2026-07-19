@@ -2,6 +2,7 @@ extends Control
 ## Bottom-sheet build / manage menu for one-thumb play.
 
 const TowerScene: PackedScene = preload("res://scenes/entities/tower.tscn")
+const COIN_ICON: Texture2D = preload("res://assets/ui/icon_coin.png")
 const TOWER_SWATCHES := {
 	&"popper": Color(1.0, 0.56, 0.69, 1.0),
 	&"lobber": Color(1.0, 0.839, 0.42, 1.0),
@@ -44,6 +45,8 @@ func _ready() -> void:
 	sell_button.pressed.connect(_on_sell_pressed)
 	Juice.squishify_button(primary_button)
 	Juice.squishify_button(sell_button)
+	_setup_coin_button(primary_button)
+	_setup_coin_button(sell_button)
 	Events.coins_changed.connect(_on_coins_changed)
 	Events.tower_upgraded.connect(_on_tower_upgraded_juice)
 	Events.tower_sold.connect(_on_tower_sold_juice)
@@ -177,14 +180,7 @@ func _build_option_buttons() -> void:
 		cost_lbl.add_theme_color_override("font_color", Color.WHITE)
 		cost_row.add_child(cost_lbl)
 
-		var coin := TextureRect.new()
-		coin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		coin.texture = preload("res://assets/ui/icon_coin.png")
-		coin.custom_minimum_size = Vector2(22, 22)
-		coin.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		coin.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		coin.modulate = Color(1.0, 0.788, 0.302, 1.0)
-		cost_row.add_child(coin)
+		cost_row.add_child(_make_coin_icon(22.0))
 
 		btn.pressed.connect(_on_option_pressed.bind(i))
 		Juice.squishify_button(btn)
@@ -274,19 +270,39 @@ func _refresh_build_options() -> void:
 			_prev_affordable.append(affordable)
 
 
+func _setup_coin_button(btn: Button) -> void:
+	btn.expand_icon = true
+	btn.add_theme_constant_override("icon_max_width", 28)
+	btn.icon_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+
+
+func _make_coin_icon(size_px: float) -> TextureRect:
+	var coin := TextureRect.new()
+	coin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	coin.texture = COIN_ICON
+	coin.custom_minimum_size = Vector2(size_px, size_px)
+	coin.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	coin.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	coin.modulate = Color(1.0, 0.788, 0.302, 1.0)
+	return coin
+
+
 func _refresh_manage_buttons() -> void:
 	if _pad == null or _pad.tower == null:
 		return
 	var tower: Tower = _pad.tower
-	sell_button.text = "Sell +%d●" % tower.sell_refund()
+	sell_button.icon = COIN_ICON
+	sell_button.text = "Sell +%d" % tower.sell_refund()
 	sell_button.custom_minimum_size = Vector2(0, 88)
 	sell_button.theme_type_variation = &"ButtonSecondary"
 	if tower.tier >= 2:
+		primary_button.icon = null
 		primary_button.text = "MAX"
 		primary_button.disabled = true
 	else:
 		var next_cost: int = tower.data.cost[tower.tier + 1]
-		primary_button.text = "Upgrade — %d●" % next_cost
+		primary_button.icon = COIN_ICON
+		primary_button.text = "Upgrade — %d" % next_cost
 		primary_button.disabled = not _is_free_build() and (_game == null or not _game.can_afford(next_cost))
 	primary_button.custom_minimum_size = Vector2(0, 88)
 

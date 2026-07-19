@@ -1,11 +1,14 @@
 class_name Projectile
 extends Area2D
-## Pooled shot: HOMING (Popper/Longshot) or LOB (Lobber splash).
-## Visual: chewing-gum bubble with blue / pink / purple / white swirl that pops on hit.
+## Pooled shot: HOMING / LOB / STREAM. Skins: gum bubble, balloon, laser, water drop.
 
 const LIFETIME_SECONDS := 1.5
+const STREAM_LIFETIME := 0.55
 const LOB_ARC_HEIGHT := 56.0
 const SOFT_TEX: Texture2D = preload("res://assets/fx/particle_soft.png")
+const LASER_TEX: Texture2D = preload("res://assets/tower/projectile_laser.png")
+const BALLOON_TEX: Texture2D = preload("res://assets/tower/projectile_balloon.png")
+const WATER_DROP_TEX: Texture2D = preload("res://assets/fx/particle_water_drop.png")
 
 const GUM_BLUE := Color(0.55, 0.82, 0.98, 1.0)
 const GUM_PINK := Color(1.0, 0.56, 0.72, 1.0)
@@ -13,7 +16,7 @@ const GUM_PURPLE := Color(0.78, 0.58, 0.95, 1.0)
 const GUM_WHITE := Color(1.0, 0.98, 1.0, 1.0)
 const GUM_PALETTE: Array[Color] = [GUM_BLUE, GUM_PINK, GUM_PURPLE, GUM_WHITE]
 
-enum Mode { HOMING, LOB }
+enum Mode { HOMING, LOB, STREAM }
 
 @onready var skin: Node2D = $Skin
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
@@ -35,6 +38,10 @@ var _lob_elapsed: float = 0.0
 var _heavy_impact: bool = false
 var _bubble_color: Color = GUM_PINK
 var _wobble_phase: float = 0.0
+var _slow_factor: float = 0.65
+var _slow_duration: float = 1.2
+var _pool_radius: float = 48.0
+var _pool_lifetime: float = 2.4
 
 
 func _ready() -> void:
@@ -56,7 +63,6 @@ func _wire_signals_once() -> void:
 	area_entered.connect(_on_area_entered)
 
 
-## Called on every pool acquire — wipe mode, skin, collision, and flight state.
 func reset() -> void:
 	mode = Mode.HOMING
 	_target = null
@@ -72,6 +78,10 @@ func reset() -> void:
 	_heavy_impact = false
 	_bubble_color = GUM_PINK
 	_wobble_phase = 0.0
+	_slow_factor = 0.65
+	_slow_duration = 1.2
+	_pool_radius = 48.0
+	_pool_lifetime = 2.4
 	skin.position = Vector2.ZERO
 	skin.scale = Vector2.ONE
 	skin.modulate = Color.WHITE
@@ -90,6 +100,7 @@ func activate() -> void:
 
 func launch(target: Enemy, damage: float, speed: float, heavy := false) -> void:
 	mode = Mode.HOMING
+	_heavy_impact = heavy
 	_build_skin()
 	_target = target
 	_target_generation = target.generation if target != null else -1
@@ -97,19 +108,19 @@ func launch(target: Enemy, damage: float, speed: float, heavy := false) -> void:
 	_speed = speed
 	_alive_for = 0.0
 	_launched = true
-	_heavy_impact = heavy
 	_wobble_phase = randf() * TAU
 	if collision_shape:
 		collision_shape.set_deferred("disabled", false)
 	if heavy:
-		# Longshot: slightly stretched gum slug, still reads as a bubble.
-		skin.scale = Vector2(1.35, 0.85)
+		skin.scale = Vector2(1.0, 1.55)
 	if _target_valid():
 		_heading = (_target.global_position - global_position).normalized()
+		_orient_skin_to_heading()
 
 
 func launch_lob(dest: Vector2, damage: float, speed: float, splash_radius: float) -> void:
 	mode = Mode.LOB
+	_heavy_impact = false
 	_build_skin()
 	_target = null
 	_target_generation = -1
@@ -123,12 +134,40 @@ func launch_lob(dest: Vector2, damage: float, speed: float, splash_radius: float
 	_lob_elapsed = 0.0
 	_alive_for = 0.0
 	_launched = true
-	_heavy_impact = false
 	_wobble_phase = randf() * TAU
-	# Mortar must not clip enemies en route — damage only at detonation.
 	if collision_shape:
 		collision_shape.set_deferred("disabled", true)
 	monitoring = false
+
+
+func launch_stream(
+	heading: Vector2,
+	target: Enemy,
+	speed: float,
+	slow_factor: float,
+	slow_duration: float,
+	pool_radius: float,
+	pool_lifetime: float,
+) -> void:
+	mode = Mode.STREAM
+	_heavy_impact = false
+	_build_skin()
+	_target = target
+	_target_generation = target.generation if target != null else -1
+	_damage = 0.0
+	_speed = speed
+	_heading = heading.normalized() if heading.length_squared() > 0.001 else Vector2.UP
+	_slow_factor = slow_factor
+	_slow_duration = slow_duration
+	_pool_radius = pool_radius
+	_pool_lifetime = pool_lifetime
+	_alive_for = 0.0
+	_launched = true
+	_wobble_phase = randf() * TAU
+	_orient_skin_to_heading()
+	if collision_shape:
+		collision_shape.set_deferred("disabled", false)
+	monitoring = true
 
 
 func deactivate() -> void:
@@ -147,14 +186,24 @@ func deactivate() -> void:
 func _physics_process(delta: float) -> void:
 	if not _launched:
 		return
-	_wobble_phase += delta * 9.0
-	var wobble := 1.0 + sin(_wobble_phase) * 0.08
-	var base := Vector2(1.35, 0.85) if _heavy_impact else Vector2.ONE
-	skin.scale = base * wobble
 
 	if mode == Mode.LOB:
+		_wobble_phase += delta * 9.0
+		skin.scale = Vector2.ONE * (1.0 + sin(_wobble_phase) * 0.08)
 		_process_lob(delta)
 		return
+
+	if mode == Mode.STREAM:
+		_process_stream(delta)
+		return
+
+	# HOMING
+	_wobble_phase += delta * 9.0
+	if _heavy_impact:
+		skin.scale = Vector2(1.0, 1.55) * (1.0 + sin(_wobble_phase) * 0.04)
+		_orient_skin_to_heading()
+	else:
+		skin.scale = Vector2.ONE * (1.0 + sin(_wobble_phase) * 0.08)
 
 	_alive_for += delta
 	if _alive_for >= LIFETIME_SECONDS:
@@ -165,16 +214,33 @@ func _physics_process(delta: float) -> void:
 		var to_target := _target.global_position - global_position
 		var dist := to_target.length()
 		var step := _speed * delta
-		# Overshoot guard: snap-hit when this frame's step reaches the target.
 		if step >= dist and dist > 0.001:
 			global_position = _target.global_position
 			_resolve_homing_hit(_target)
 			return
 		if to_target.length_squared() > 0.001:
 			_heading = to_target.normalized()
-	elif _target != null:
-		pass
 	global_position += _heading * _speed * delta
+
+
+func _process_stream(delta: float) -> void:
+	_alive_for += delta
+	_wobble_phase += delta * 14.0
+	skin.scale = Vector2.ONE * (0.85 + sin(_wobble_phase) * 0.1)
+	# Light home so the hose tracks a moving critter.
+	if _target_valid():
+		var to_target := (_target.global_position - global_position).normalized()
+		_heading = _heading.lerp(to_target, clampf(8.0 * delta, 0.0, 1.0)).normalized()
+		var dist := global_position.distance_to(_target.global_position)
+		var step := _speed * delta
+		if step >= dist and dist > 0.001:
+			global_position = _target.global_position
+			_resolve_stream_impact()
+			return
+	_orient_skin_to_heading()
+	global_position += _heading * _speed * delta
+	if _alive_for >= STREAM_LIFETIME:
+		_resolve_stream_impact()
 
 
 func _process_lob(delta: float) -> void:
@@ -198,7 +264,7 @@ func _detonate_splash() -> void:
 			continue
 		if enemy.global_position.distance_squared_to(dest) <= radius_sq:
 			enemy.take_damage(_damage)
-	Juice.bubble_pop(dest, _bubble_color, true)
+	Juice.bubble_pop(dest, GUM_BLUE, true)
 	Juice.confetti(dest)
 	deactivate()
 
@@ -206,13 +272,39 @@ func _detonate_splash() -> void:
 func _resolve_homing_hit(enemy: Enemy) -> void:
 	if not _launched:
 		return
-	# Clear launch flag immediately so overlap can't double-hit; defer pool
-	# return so we never flip monitoring/collision during area_entered.
 	_launched = false
-	Juice.bubble_pop(global_position, _bubble_color, _heavy_impact)
+	if _heavy_impact:
+		Juice.laser_hit(global_position)
+	else:
+		Juice.bubble_pop(global_position, _bubble_color, false)
 	enemy.take_damage(_damage, _heavy_impact)
 	set_deferred("monitoring", false)
 	call_deferred("deactivate")
+
+
+func _resolve_stream_impact() -> void:
+	if not _launched:
+		return
+	_launched = false
+	var hit_pos := global_position
+	if _target_valid():
+		_target.apply_slow(_slow_factor, _slow_duration)
+		hit_pos = _target.global_position
+	_spawn_water_pool(hit_pos)
+	set_deferred("monitoring", false)
+	call_deferred("deactivate")
+
+
+func _spawn_water_pool(world_pos: Vector2) -> void:
+	if _pool_radius <= 0.5:
+		return
+	var game := get_tree().get_first_node_in_group("game")
+	if game == null or not game.has_method("acquire_water_pool"):
+		return
+	var pool: WaterPool = game.acquire_water_pool()
+	if pool == null:
+		return
+	pool.activate(world_pos, _pool_radius, _slow_factor, _slow_duration, _pool_lifetime)
 
 
 func _target_valid() -> bool:
@@ -225,12 +317,20 @@ func _target_valid() -> bool:
 
 
 func _on_area_entered(area: Area2D) -> void:
-	if not _launched or mode != Mode.HOMING:
+	if not _launched:
 		return
 	var enemy := area.get_parent() as Enemy
 	if enemy == null or not enemy.active:
 		return
-	_resolve_homing_hit(enemy)
+	if mode == Mode.HOMING:
+		_resolve_homing_hit(enemy)
+	elif mode == Mode.STREAM:
+		_resolve_stream_impact()
+
+
+func _orient_skin_to_heading() -> void:
+	# Sprites point up (-Y) at rotation 0.
+	skin.rotation = _heading.angle() + PI * 0.5
 
 
 func _build_skin() -> void:
@@ -239,35 +339,38 @@ func _build_skin() -> void:
 		skin.remove_child(child)
 		child.free()
 
-	var target_px := 40.0 if mode == Mode.LOB else 30.0
+	if mode == Mode.STREAM:
+		_build_water_drop_skin()
+		return
+	if mode == Mode.LOB:
+		_build_balloon_skin()
+		return
+	if _heavy_impact:
+		_build_laser_skin()
+		return
+	_build_gum_bubble_skin()
+
+
+func _build_gum_bubble_skin() -> void:
+	var target_px := 30.0
 	_bubble_color = GUM_PALETTE[randi() % GUM_PALETTE.size()]
-	var swirl: Array[Color] = [
-		GUM_BLUE,
-		GUM_PINK,
-		GUM_PURPLE,
-		GUM_WHITE,
-	]
+	var swirl: Array[Color] = [GUM_BLUE, GUM_PINK, GUM_PURPLE, GUM_WHITE]
 	swirl.shuffle()
 
 	var bubble := Node2D.new()
 	bubble.name = "Bubble"
 	var radius := target_px * 0.5
-	var c0: Color = _bubble_color
-	var c1: Color = swirl[0]
-	var c2: Color = swirl[1]
-	var c3: Color = swirl[2]
 	bubble.set_meta("r", radius)
-	bubble.set_meta("c0", c0)
-	bubble.set_meta("c1", c1)
-	bubble.set_meta("c2", c2)
-	bubble.set_meta("c3", c3)
+	bubble.set_meta("c0", _bubble_color)
+	bubble.set_meta("c1", swirl[0])
+	bubble.set_meta("c2", swirl[1])
+	bubble.set_meta("c3", swirl[2])
 	bubble.draw.connect(func() -> void:
 		var r: float = float(bubble.get_meta("r"))
 		var base: Color = bubble.get_meta("c0") as Color
 		var a: Color = bubble.get_meta("c1") as Color
 		var b: Color = bubble.get_meta("c2") as Color
 		var c: Color = bubble.get_meta("c3") as Color
-		# Opaque gum body + candy swirl lobes + glossy rim.
 		bubble.draw_circle(Vector2.ZERO, r, base)
 		bubble.draw_circle(Vector2(-r * 0.28, -r * 0.18), r * 0.55, Color(a.r, a.g, a.b, 0.85))
 		bubble.draw_circle(Vector2(r * 0.32, r * 0.22), r * 0.42, Color(b.r, b.g, b.b, 0.8))
@@ -277,12 +380,42 @@ func _build_skin() -> void:
 	)
 	bubble.queue_redraw()
 	skin.add_child(bubble)
-
-	# Soft outer halo so the bubble still reads as floaty gum.
 	var halo := _soft_disc(target_px * 1.15, Color(_bubble_color.r, _bubble_color.g, _bubble_color.b, 0.35))
 	halo.name = "Halo"
 	halo.z_index = -1
 	skin.add_child(halo)
+
+
+func _build_laser_skin() -> void:
+	var spr := Sprite2D.new()
+	spr.name = "Laser"
+	spr.texture = LASER_TEX
+	var spr_scale := 36.0 / float(LASER_TEX.get_height())
+	spr.scale = Vector2(spr_scale * 0.85, spr_scale)
+	skin.add_child(spr)
+	var glow := _soft_disc(22.0, Color(1.0, 0.25, 0.35, 0.45))
+	glow.name = "Glow"
+	glow.z_index = -1
+	skin.add_child(glow)
+
+
+func _build_balloon_skin() -> void:
+	var spr := Sprite2D.new()
+	spr.name = "Balloon"
+	spr.texture = BALLOON_TEX
+	var spr_scale := 40.0 / float(BALLOON_TEX.get_width())
+	spr.scale = Vector2(spr_scale, spr_scale)
+	skin.add_child(spr)
+
+
+func _build_water_drop_skin() -> void:
+	var spr := Sprite2D.new()
+	spr.name = "Drop"
+	spr.texture = WATER_DROP_TEX
+	var spr_scale := 22.0 / float(WATER_DROP_TEX.get_width())
+	spr.scale = Vector2(spr_scale, spr_scale)
+	spr.modulate = Color(0.7, 0.92, 1.0, 0.95)
+	skin.add_child(spr)
 
 
 func _soft_disc(diameter_px: float, tint: Color) -> Sprite2D:

@@ -27,3 +27,5 @@ const MAX_COIN_FLYERS := 24
 const MAX_SHAKE_PX := 5.0
 const MAX_SHAKE_DURATION := 0.25
 const MAX_SFX_VOICES := 8
+const MAX_WATER_POOLS := 16
+const WATER_POOL_PREWARM := 6

@@ -242,6 +242,47 @@ func muzzle_flash(world_pos: Vector2) -> void:
 	tween.tween_callback(flash.queue_free)
 
 
+func laser_hit(world_pos: Vector2) -> void:
+	if not _registered or _fx_layer == null:
+		return
+	var soft: Texture2D = preload("res://assets/fx/particle_soft.png")
+	var flash := Sprite2D.new()
+	flash.z_index = 20
+	flash.texture = soft
+	var flash_scale := 40.0 / float(soft.get_width())
+	flash.scale = Vector2(flash_scale * 0.55, flash_scale)
+	flash.modulate = Color(1.0, 0.2, 0.28, 0.95)
+	_fx_layer.add_child(flash)
+	flash.global_position = world_pos
+	var tween := flash.create_tween()
+	tween.tween_property(flash, "scale", flash.scale * 1.8, 0.1)
+	tween.parallel().tween_property(flash, "modulate:a", 0.0, 0.1)
+	tween.tween_callback(flash.queue_free)
+
+
+func water_splash(world_pos: Vector2) -> void:
+	if not _registered or _fx_layer == null:
+		return
+	var drop_tex: Texture2D = preload("res://assets/fx/particle_water_drop.png")
+	var root := Node2D.new()
+	root.z_index = 18
+	_fx_layer.add_child(root)
+	root.global_position = world_pos
+	var tween := root.create_tween()
+	for i: int in 4:
+		var drop := Sprite2D.new()
+		drop.texture = drop_tex
+		var d_scale := (12.0 + float(i) * 2.0) / float(drop_tex.get_width())
+		drop.scale = Vector2(d_scale, d_scale)
+		drop.modulate = Color(0.55, 0.85, 1.0, 0.9)
+		root.add_child(drop)
+		var angle := (TAU / 4.0) * float(i) + randf_range(-0.2, 0.2)
+		var end_pos := Vector2.from_angle(angle) * randf_range(14.0, 26.0)
+		tween.parallel().tween_property(drop, "position", end_pos, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tween.parallel().tween_property(drop, "modulate:a", 0.0, 0.22)
+	tween.chain().tween_callback(root.queue_free)
+
+
 ## Chewing-gum bubble pop — expand + fade, with a few tinted droplets.
 func bubble_pop(world_pos: Vector2, tint: Color = Color(1.0, 0.56, 0.72, 1.0), heavy := false) -> void:
 	if not _registered or _fx_layer == null:
