@@ -16,6 +16,8 @@ func _ready() -> void:
 	panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	retry_button.pressed.connect(_on_retry)
 	menu_button.pressed.connect(_on_menu)
+	Juice.squishify_button(retry_button)
+	Juice.squishify_button(menu_button)
 	Events.run_won.connect(_on_run_won)
 	Events.run_lost.connect(_on_run_lost)
 

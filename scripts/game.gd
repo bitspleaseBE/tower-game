@@ -1,9 +1,10 @@
 extends Node2D
-## Stage 2 core loop: map 1 economy, pads, waves, one-thumb build/manage.
+## Stage 2 core loop + Stage 3 pooling / juice registration.
 
 const DESIGN_SIZE := Vector2(720, 1280)
 const TAP_RADIUS_PX := 56.0
 const EnemyScene: PackedScene = preload("res://scenes/entities/enemy.tscn")
+const ProjectileScene: PackedScene = preload("res://scenes/entities/projectile.tscn")
 const BuildPadScene: PackedScene = preload("res://scenes/entities/build_pad.tscn")
 
 ## Stage 5 MapSelect will inject map_data; default is map 1.
@@ -14,6 +15,8 @@ var map_data: MapData
 @onready var path_border: Line2D = $Board/Path/PathBorder
 @onready var path_line: Line2D = $Board/Path/PathLine
 @onready var pads_root: Node2D = $Board/Pads
+@onready var projectiles_root: Node2D = $Board/Projectiles
+@onready var fx_layer: Node2D = $FxLayer
 @onready var spawner: Node = $Spawner
 @onready var hud: Control = $UI/Hud
 @onready var build_menu: Control = $UI/BuildMenu
@@ -21,6 +24,9 @@ var map_data: MapData
 var coins: int = 0
 var lives: int = 0
 var _lost_emitted: bool = false
+var _suppress_game_over: bool = false
+var _enemy_pool: ObjectPool
+var _projectile_pool: ObjectPool
 
 
 func _ready() -> void:
@@ -32,6 +38,18 @@ func _ready() -> void:
 	_spawn_pads()
 	_recenter_board()
 	get_viewport().size_changed.connect(_recenter_board)
+
+	_enemy_pool = ObjectPool.new(
+		EnemyScene, path, PerfBudget.ENEMY_PREWARM, PerfBudget.MAX_ENEMIES, ObjectPool.GrowPolicy.GROW_WARN
+	)
+	_projectile_pool = ObjectPool.new(
+		ProjectileScene,
+		projectiles_root,
+		PerfBudget.PROJECTILE_PREWARM,
+		PerfBudget.MAX_PROJECTILES,
+		ObjectPool.GrowPolicy.GROW_WARN
+	)
+	Juice.register_game(fx_layer, board, hud)
 
 	coins = map_data.starting_coins
 	lives = map_data.starting_lives
@@ -80,10 +98,54 @@ func earn(amount: int) -> void:
 
 
 func _spawn_enemy(enemy_data: EnemyData) -> Enemy:
-	var enemy: Enemy = EnemyScene.instantiate()
-	path.add_child(enemy)
-	enemy.setup(enemy_data)
+	var node: Node = _enemy_pool.acquire()
+	if node == null:
+		return null
+	var enemy := node as Enemy
+	enemy.activate(enemy_data)
 	return enemy
+
+
+func release_enemy(enemy: Enemy) -> void:
+	if _enemy_pool != null:
+		_enemy_pool.release(enemy)
+
+
+func acquire_projectile() -> Projectile:
+	var node: Node = _projectile_pool.acquire()
+	if node == null:
+		return null
+	var projectile := node as Projectile
+	projectile.activate()
+	return projectile
+
+
+func release_projectile(projectile: Projectile) -> void:
+	if _projectile_pool != null:
+		_projectile_pool.release(projectile)
+
+
+func enemy_pool_live() -> int:
+	return 0 if _enemy_pool == null else _enemy_pool.live_count()
+
+
+func enemy_pool_free() -> int:
+	return 0 if _enemy_pool == null else _enemy_pool.free_count()
+
+
+func projectile_pool_live() -> int:
+	return 0 if _projectile_pool == null else _projectile_pool.live_count()
+
+
+func projectile_pool_free() -> int:
+	return 0 if _projectile_pool == null else _projectile_pool.free_count()
+
+
+func set_stress_mode(enabled: bool) -> void:
+	_suppress_game_over = enabled
+	if enabled:
+		lives = 999999
+		Events.lives_changed.emit(lives)
 
 
 func _go_back() -> void:
@@ -93,6 +155,7 @@ func _go_back() -> void:
 
 func _recenter_board() -> void:
 	board.position = ((get_viewport_rect().size - DESIGN_SIZE) * 0.5).max(Vector2.ZERO)
+	Juice.sync_shake_rest()
 
 
 func _build_path() -> void:
@@ -129,7 +192,7 @@ func _handle_board_tap(world_pos: Vector2) -> void:
 		_hide_all_range_rings()
 		return
 
-	nearest.pulse()
+	Juice.punch_scale(nearest.skin, 1.15, 0.12)
 	if nearest.tower == null:
 		build_menu.open_build(nearest)
 	else:
@@ -147,32 +210,19 @@ func _on_countdown_tick(seconds_left: int) -> void:
 	hud.show_countdown(seconds_left)
 
 
-func _on_enemy_killed(enemy: Node, bounty: int) -> void:
+func _on_enemy_killed(_enemy: Node, bounty: int) -> void:
 	earn(bounty)
-	_spawn_bounty_floater(enemy.global_position, bounty)
 
 
 func _on_enemy_leaked(enemy: Node) -> void:
 	if not (enemy is Enemy) or (enemy as Enemy).data == null:
 		return
 	var cost: int = (enemy as Enemy).data.lives_cost
-	lives = maxi(0, lives - cost)
+	if not _suppress_game_over:
+		lives = maxi(0, lives - cost)
 	Events.lives_changed.emit(lives)
-	if lives == 0 and not _lost_emitted:
+	Juice.shake(4.0, 0.2)
+	if lives == 0 and not _lost_emitted and not _suppress_game_over:
 		_lost_emitted = true
 		spawner.stop()
 		Events.run_lost.emit(map_data.id)
-
-
-func _spawn_bounty_floater(world_pos: Vector2, bounty: int) -> void:
-	var label := Label.new()
-	label.text = "+%d" % bounty
-	label.z_index = 20
-	label.modulate = Color(1.0, 0.79, 0.3, 1.0)
-	add_child(label)
-	label.global_position = world_pos + Vector2(-12, -30)
-	var tween := create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(label, "position:y", label.position.y - 40.0, 0.6)
-	tween.tween_property(label, "modulate:a", 0.0, 0.6)
-	tween.chain().tween_callback(label.queue_free)

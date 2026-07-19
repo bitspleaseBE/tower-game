@@ -2,8 +2,6 @@ class_name Tower
 extends Node2D
 ## Auto-targeting tower. Stats from TowerData; Skin + RangeRing are visual only.
 
-const ProjectileScene: PackedScene = preload("res://scenes/entities/projectile.tscn")
-
 @onready var skin: Node2D = $Skin
 @onready var range_ring: Node2D = $RangeRing
 @onready var range_area: Area2D = $RangeArea
@@ -14,6 +12,9 @@ var tier: int = 0
 var total_spent: int = 0
 var _cooldown: float = 0.0
 var _range_circle: CircleShape2D
+var _current_target: Enemy
+var _retarget_timer: float = 0.0
+const RETARGET_INTERVAL := 0.1
 
 
 func _ready() -> void:
@@ -33,7 +34,8 @@ func setup(tower_data: TowerData) -> void:
 	tier = 0
 	total_spent = data.cost[0]
 	_apply_tier_visuals()
-	_play_build_bounce()
+	Juice.claim(skin)
+	Juice.bounce_in(skin)
 
 
 func upgrade() -> void:
@@ -42,6 +44,7 @@ func upgrade() -> void:
 	tier += 1
 	total_spent += data.cost[tier]
 	_apply_tier_visuals()
+	Juice.claim(skin)
 
 
 func sell_refund() -> int:
@@ -58,13 +61,30 @@ func _physics_process(delta: float) -> void:
 	if data == null:
 		return
 	_cooldown = maxf(0.0, _cooldown - delta)
+	_retarget_timer = maxf(0.0, _retarget_timer - delta)
+
+	if not _target_still_valid():
+		_current_target = null
+
+	if _retarget_timer <= 0.0 or _current_target == null:
+		_current_target = _pick_target()
+		_retarget_timer = RETARGET_INTERVAL
+
 	if _cooldown > 0.0:
 		return
-	var target := _pick_target()
-	if target == null:
+	if _current_target == null:
 		return
-	_fire(target)
+	_fire(_current_target)
 	_cooldown = data.fire_interval[tier]
+
+
+func _target_still_valid() -> bool:
+	if _current_target == null or not is_instance_valid(_current_target):
+		return false
+	if not _current_target.active:
+		return false
+	var range_px: float = data.range_px[tier]
+	return global_position.distance_to(_current_target.global_position) <= range_px
 
 
 func _pick_target() -> Enemy:
@@ -72,7 +92,7 @@ func _pick_target() -> Enemy:
 	var best_progress := -1.0
 	for area: Area2D in range_area.get_overlapping_areas():
 		var enemy := area.get_parent() as Enemy
-		if enemy == null or not is_instance_valid(enemy):
+		if enemy == null or not enemy.active:
 			continue
 		if enemy.progress > best_progress:
 			best_progress = enemy.progress
@@ -81,15 +101,16 @@ func _pick_target() -> Enemy:
 
 
 func _fire(target: Enemy) -> void:
-	var projectile: Projectile = ProjectileScene.instantiate()
+	var game := get_tree().get_first_node_in_group("game")
+	if game == null or not game.has_method("acquire_projectile"):
+		return
+	var projectile: Projectile = game.acquire_projectile()
+	if projectile == null:
+		return
 	var barrel_tip := global_position + Vector2(0, -28)
-	var host: Node = get_tree().get_first_node_in_group("game")
-	if host == null:
-		host = get_parent()
-	host.add_child(projectile)
 	projectile.global_position = barrel_tip
 	projectile.launch(target, data.damage[tier], data.projectile_speed)
-	_play_recoil()
+	Juice.squash(skin)
 
 
 func _apply_tier_visuals() -> void:
@@ -117,7 +138,6 @@ func _rebuild_skin() -> void:
 	top.position = Vector2(0, -4)
 	skin.add_child(top)
 
-	# Barrel
 	var barrel := Polygon2D.new()
 	barrel.color = Color(0.31, 0.227, 0.357, 1.0)
 	barrel.polygon = PackedVector2Array([
@@ -125,7 +145,6 @@ func _rebuild_skin() -> void:
 	])
 	skin.add_child(barrel)
 
-	# Tier stripes
 	for s: int in tier + 1:
 		var stripe := Polygon2D.new()
 		stripe.color = Color(1.0, 0.84, 0.42, 1.0)
@@ -135,6 +154,10 @@ func _rebuild_skin() -> void:
 		])
 		skin.add_child(stripe)
 
+	skin.scale = Vector2.ONE
+	skin.position = Vector2.ZERO
+	skin.modulate = Color.WHITE
+
 
 func _on_range_ring_draw() -> void:
 	var range_px: float = float(range_ring.get_meta("range_px", 0.0))
@@ -142,19 +165,6 @@ func _on_range_ring_draw() -> void:
 		return
 	range_ring.draw_circle(Vector2.ZERO, range_px, Color(0.55, 0.82, 0.94, 0.18))
 	range_ring.draw_arc(Vector2.ZERO, range_px, 0.0, TAU, 64, Color(0.55, 0.82, 0.94, 0.55), 3.0, true)
-
-
-func _play_build_bounce() -> void:
-	skin.scale = Vector2(0.5, 0.5)
-	var tween := create_tween()
-	tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.tween_property(skin, "scale", Vector2.ONE, 0.25)
-
-
-func _play_recoil() -> void:
-	var tween := create_tween()
-	tween.tween_property(skin, "position:y", 4.0, 0.04)
-	tween.tween_property(skin, "position:y", 0.0, 0.08)
 
 
 func _rounded_poly(radius: float, segments: int = 20) -> PackedVector2Array:

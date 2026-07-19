@@ -21,6 +21,7 @@ config/icon="res://icon.svg"
 
 Settings="*res://scripts/settings.gd"
 Events="*res://scripts/autoload/events.gd"
+Juice="*res://scripts/autoload/juice.gd"
 
 [display]
 

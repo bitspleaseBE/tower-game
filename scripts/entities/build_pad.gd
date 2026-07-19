@@ -10,13 +10,12 @@ var tower: Tower = null
 func _ready() -> void:
 	add_to_group("build_pads")
 	_build_skin()
+	Juice.claim(skin)
 	_start_breathe()
 
 
 func pulse() -> void:
-	var tween := create_tween()
-	tween.tween_property(skin, "scale", Vector2(1.15, 1.15), 0.06)
-	tween.tween_property(skin, "scale", Vector2.ONE, 0.06)
+	Juice.punch_scale(skin, 1.15, 0.12)
 
 
 func _build_skin() -> void:

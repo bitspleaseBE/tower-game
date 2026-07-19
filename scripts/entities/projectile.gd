@@ -1,33 +1,71 @@
 class_name Projectile
 extends Area2D
-## Homing shot. Instantiated by Tower; freed on hit or lifetime expiry.
+## Homing shot from ObjectPool. Validity uses target.active + generation.
 
 const LIFETIME_SECONDS := 1.5
 
 @onready var skin: Node2D = $Skin
 
 var _target: Enemy
+var _target_generation: int = -1
 var _damage: float = 0.0
 var _speed: float = 0.0
 var _heading: Vector2 = Vector2.RIGHT
 var _alive_for: float = 0.0
 var _launched: bool = false
+var _signals_wired := false
 
 
 func _ready() -> void:
 	collision_layer = 0
 	collision_mask = 1
+	_wire_signals_once()
+	if skin.get_child_count() == 0:
+		_build_skin()
+	if not _launched:
+		visible = false
+		process_mode = Node.PROCESS_MODE_DISABLED
+		monitoring = false
+
+
+func _wire_signals_once() -> void:
+	if _signals_wired:
+		return
+	_signals_wired = true
 	area_entered.connect(_on_area_entered)
-	_build_skin()
+
+
+func activate() -> void:
+	_alive_for = 0.0
+	_launched = false
+	_target = null
+	_target_generation = -1
+	visible = true
+	process_mode = Node.PROCESS_MODE_INHERIT
+	monitoring = true
+	set_deferred("monitorable", false)
 
 
 func launch(target: Enemy, damage: float, speed: float) -> void:
 	_target = target
+	_target_generation = target.generation if target != null else -1
 	_damage = damage
 	_speed = speed
+	_alive_for = 0.0
 	_launched = true
-	if is_instance_valid(target):
-		_heading = (target.global_position - global_position).normalized()
+	if _target_valid():
+		_heading = (_target.global_position - global_position).normalized()
+
+
+func deactivate() -> void:
+	_launched = false
+	_target = null
+	visible = false
+	process_mode = Node.PROCESS_MODE_DISABLED
+	monitoring = false
+	var game := get_tree().get_first_node_in_group("game")
+	if game != null and game.has_method("release_projectile"):
+		game.release_projectile(self)
 
 
 func _physics_process(delta: float) -> void:
@@ -35,22 +73,36 @@ func _physics_process(delta: float) -> void:
 		return
 	_alive_for += delta
 	if _alive_for >= LIFETIME_SECONDS:
-		queue_free()
+		deactivate()
 		return
 
-	if is_instance_valid(_target):
+	if _target_valid():
 		var to_target := _target.global_position - global_position
 		if to_target.length_squared() > 0.001:
 			_heading = to_target.normalized()
+	elif _target != null:
+		# Keep last heading for remainder of lifetime when target dies/recycles.
+		pass
 	global_position += _heading * _speed * delta
 
 
+func _target_valid() -> bool:
+	return (
+		_target != null
+		and is_instance_valid(_target)
+		and _target.active
+		and _target.generation == _target_generation
+	)
+
+
 func _on_area_entered(area: Area2D) -> void:
+	if not _launched:
+		return
 	var enemy := area.get_parent() as Enemy
-	if enemy == null:
+	if enemy == null or not enemy.active:
 		return
 	enemy.take_damage(_damage)
-	queue_free()
+	deactivate()
 
 
 func _build_skin() -> void:

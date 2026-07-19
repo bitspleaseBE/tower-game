@@ -23,6 +23,8 @@ func _ready() -> void:
 	_set_sheet_hidden_instant()
 	primary_button.pressed.connect(_on_primary_pressed)
 	sell_button.pressed.connect(_on_sell_pressed)
+	Juice.squishify_button(primary_button)
+	Juice.squishify_button(sell_button)
 	Events.coins_changed.connect(_on_coins_changed)
 
 

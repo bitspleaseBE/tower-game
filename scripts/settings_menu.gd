@@ -4,6 +4,7 @@ extends Control
 func _ready() -> void:
 	%FullscreenCheck.set_pressed_no_signal(Settings.fullscreen)
 	%VolumeSlider.set_value_no_signal(Settings.master_volume)
+	Juice.squishify_button(%BackButton)
 	%FullscreenCheck.grab_focus()
 
 

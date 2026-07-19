@@ -1,6 +1,6 @@
 # Stage 3: Juice Engine & Web Performance Proof
 
-**Status:** not started
+**Status:** done
 
 Objective: after this stage, the same map 1 run from Stage 2 *feels* like the blueprint's pitch — critters jelly-wobble as they march, hits flash, kills burst into confetti while coins arc into the HUD counter, towers squash and recoil with every shot, hearts thump and the screen micro-shakes on a leak, waves announce themselves with a bouncy banner, and every button squishes under the thumb — and the scariest technical unknown is retired: a hidden stress harness proves that worst-case effect load (80+ pooled enemies, max towers firing, continuous confetti) holds ~60 fps (floor 50) on a mid-range Android phone in Chrome via the real Pages deploy, with the measured hard caps written into `scripts/perf_budget.gd` and the GPU-vs-CPU particle decision made final for every later stage.
 

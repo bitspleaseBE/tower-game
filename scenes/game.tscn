@@ -1,10 +1,13 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
 [ext_resource type="Script" path="res://scripts/wave_spawner.gd" id="2_spawner"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="3_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/build_menu.tscn" id="4_bm"]
 [ext_resource type="PackedScene" path="res://scenes/ui/result_overlay.tscn" id="5_ro"]
+[ext_resource type="PackedScene" path="res://scenes/ui/wave_banner.tscn" id="6_wb"]
+[ext_resource type="Script" path="res://scripts/debug/stress_test.gd" id="7_stress"]
+[ext_resource type="PackedScene" path="res://scenes/debug/stress_overlay.tscn" id="8_so"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_game")
@@ -64,8 +67,15 @@ round_precision = 12
 
 [node name="Pads" type="Node2D" parent="Board"]
 
+[node name="Projectiles" type="Node2D" parent="Board"]
+
+[node name="FxLayer" type="Node2D" parent="."]
+
 [node name="Spawner" type="Node" parent="."]
 script = ExtResource("2_spawner")
+
+[node name="StressTest" type="Node" parent="."]
+script = ExtResource("7_stress")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -73,4 +83,8 @@ script = ExtResource("2_spawner")
 
 [node name="BuildMenu" parent="UI" instance=ExtResource("4_bm")]
 
+[node name="WaveBanner" parent="UI" instance=ExtResource("6_wb")]
+
 [node name="ResultOverlay" parent="UI" instance=ExtResource("5_ro")]
+
+[node name="StressOverlay" parent="UI" instance=ExtResource("8_so")]
