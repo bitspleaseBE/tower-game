@@ -206,9 +206,13 @@ func _detonate_splash() -> void:
 func _resolve_homing_hit(enemy: Enemy) -> void:
 	if not _launched:
 		return
+	# Clear launch flag immediately so overlap can't double-hit; defer pool
+	# return so we never flip monitoring/collision during area_entered.
+	_launched = false
 	Juice.bubble_pop(global_position, _bubble_color, _heavy_impact)
 	enemy.take_damage(_damage, _heavy_impact)
-	deactivate()
+	set_deferred("monitoring", false)
+	call_deferred("deactivate")
 
 
 func _target_valid() -> bool:

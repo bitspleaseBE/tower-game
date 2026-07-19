@@ -24,6 +24,7 @@ var best_at_run_start: int = 0
 @onready var hud: Control = $UI/Hud
 @onready var build_menu: Control = $UI/BuildMenu
 @onready var result_overlay: Control = $UI/ResultOverlay
+@onready var pause_overlay: Control = $UI/PauseOverlay
 @onready var wave_banner: Control = $UI/WaveBanner
 
 var coins: int = 0
@@ -71,7 +72,7 @@ func _ready() -> void:
 	if result_overlay.has_method("setup"):
 		result_overlay.setup(self)
 
-	hud.menu_requested.connect(_go_back)
+	hud.menu_requested.connect(_on_menu_requested)
 	build_menu.setup(self)
 	spawner.setup(self, map_data)
 	spawner.countdown_tick.connect(_on_countdown_tick)
@@ -100,7 +101,8 @@ func enter_endless() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
-		_go_back()
+		_on_menu_requested()
+		get_viewport().set_input_as_handled()
 		return
 	# Emulate-mouse-from-touch is on: handle ONLY mouse buttons (not ScreenTouch).
 	if not (event is InputEventMouseButton):
@@ -191,6 +193,17 @@ func set_stress_mode(enabled: bool) -> void:
 	if enabled:
 		lives = 999999
 		Events.lives_changed.emit(lives)
+
+
+func _on_menu_requested() -> void:
+	# End-of-run sheet owns the tree pause — don't stack a second overlay.
+	if result_overlay != null and result_overlay.visible:
+		return
+	if pause_overlay != null and pause_overlay.has_method("is_open") and pause_overlay.is_open():
+		pause_overlay.close()
+		return
+	if pause_overlay != null and pause_overlay.has_method("open"):
+		pause_overlay.open()
 
 
 func _go_back() -> void:

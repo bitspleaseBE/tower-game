@@ -107,8 +107,11 @@ func _initialize() -> void:
 	if game.get_node_or_null("UI/ResultOverlay") == null:
 		push_error("Missing UI/ResultOverlay")
 		failed = true
+	if game.get_node_or_null("UI/PauseOverlay") == null:
+		push_error("Missing UI/PauseOverlay")
+		failed = true
 	else:
-		print("OK Hud/BuildMenu/ResultOverlay")
+		print("OK Hud/BuildMenu/ResultOverlay/PauseOverlay")
 
 	var pad_count := game.get_tree().get_nodes_in_group("build_pads").size()
 	if pad_count != 8:

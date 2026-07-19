@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
 [ext_resource type="Script" path="res://scripts/wave_spawner.gd" id="2_spawner"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/build_menu.tscn" id="4_bm"]
 [ext_resource type="PackedScene" path="res://scenes/ui/result_overlay.tscn" id="5_ro"]
 [ext_resource type="PackedScene" path="res://scenes/ui/wave_banner.tscn" id="6_wb"]
+[ext_resource type="PackedScene" path="res://scenes/ui/pause_overlay.tscn" id="14_po"]
 [ext_resource type="Script" path="res://scripts/debug/stress_test.gd" id="7_stress"]
 [ext_resource type="PackedScene" path="res://scenes/debug/stress_overlay.tscn" id="8_so"]
 [ext_resource type="Script" path="res://scripts/ui/range_preview.gd" id="9_rp"]
@@ -227,5 +228,7 @@ stretch_mode = 0
 [node name="WaveBanner" parent="UI" instance=ExtResource("6_wb")]
 
 [node name="ResultOverlay" parent="UI" instance=ExtResource("5_ro")]
+
+[node name="PauseOverlay" parent="UI" instance=ExtResource("14_po")]
 
 [node name="StressOverlay" parent="UI" instance=ExtResource("8_so")]
