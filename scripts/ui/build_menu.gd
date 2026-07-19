@@ -23,7 +23,6 @@ var _mode: StringName = &""
 var _game: Node
 var _open: bool = false
 var _option_buttons: Array[Button] = []
-var _button_group: ButtonGroup
 var _selected_index: int = -1
 var _range_preview: RangePreview
 var _prev_affordable: Array[bool] = []
@@ -40,7 +39,6 @@ func _ready() -> void:
 			load("res://data/towers/chiller.tres") as TowerData,
 			load("res://data/towers/longshot.tres") as TowerData,
 		]
-	_button_group = null
 	_build_option_buttons()
 	_set_sheet_hidden_instant()
 	primary_button.pressed.connect(_on_primary_pressed)
@@ -104,8 +102,8 @@ func close() -> void:
 	_mode = &""
 	var tween := create_tween()
 	tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
-	tween.tween_property(panel, "offset_top", 200.0, 0.18)
-	tween.parallel().tween_property(panel, "offset_bottom", 200.0, 0.18)
+	tween.tween_property(panel, "offset_top", 280.0, 0.18)
+	tween.parallel().tween_property(panel, "offset_bottom", 280.0, 0.18)
 	tween.tween_callback(func() -> void:
 		panel.visible = false
 	)
@@ -120,8 +118,7 @@ func _build_option_buttons() -> void:
 	for i: int in towers.size():
 		var tower_data: TowerData = towers[i]
 		var btn := Button.new()
-		btn.toggle_mode = true
-		btn.button_group = _button_group
+		btn.toggle_mode = false
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		btn.custom_minimum_size = Vector2(0, 112)
 		btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -155,18 +152,18 @@ func _build_option_buttons() -> void:
 func _slide_in() -> void:
 	_open = true
 	panel.visible = true
-	panel.offset_top = 200.0
-	panel.offset_bottom = 200.0
+	panel.offset_top = 280.0
+	panel.offset_bottom = 280.0
 	var tween := create_tween()
 	tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.tween_property(panel, "offset_top", -200.0, 0.28)
+	tween.tween_property(panel, "offset_top", -260.0, 0.28)
 	tween.parallel().tween_property(panel, "offset_bottom", -12.0, 0.28)
 
 
 func _set_sheet_hidden_instant() -> void:
 	_open = false
-	panel.offset_top = 200.0
-	panel.offset_bottom = 200.0
+	panel.offset_top = 280.0
+	panel.offset_bottom = 280.0
 	panel.visible = false
 
 
@@ -267,8 +264,23 @@ func _on_option_pressed(index: int) -> void:
 	# Select for preview.
 	_selected_index = index
 	hint_label.text = "Tap again to build"
+	_update_option_highlights()
 	if _range_preview != null:
 		_range_preview.show_at(_pad.global_position, tower_data.range_px[0])
+
+
+func _update_option_highlights() -> void:
+	for i: int in _option_buttons.size():
+		var btn: Button = _option_buttons[i]
+		if i == _selected_index:
+			btn.theme_type_variation = &""
+			# Visual selected state via scale punch rest — use modulate boost.
+			if btn.modulate.a >= 0.9:
+				btn.self_modulate = Color(1.15, 1.15, 1.05, 1.0)
+			else:
+				btn.self_modulate = Color(1.0, 1.0, 1.0, 1.0)
+		else:
+			btn.self_modulate = Color.WHITE
 
 
 func _on_primary_pressed() -> void:
@@ -315,7 +327,7 @@ func _on_tower_sold_juice(_pad_node: Node, _refund: int) -> void:
 func _clear_selection() -> void:
 	_selected_index = -1
 	for btn: Button in _option_buttons:
-		btn.button_pressed = false
+		btn.self_modulate = Color.WHITE
 	if _range_preview != null:
 		_range_preview.hide_preview()
 
