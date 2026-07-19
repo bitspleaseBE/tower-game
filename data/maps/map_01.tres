@@ -90,148 +90,80 @@ start_delay = 2.0
 script = ExtResource("2_wfgdk")
 spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave6_swarm"), SubResource("wave6_normal")])
 
-[sub_resource type="Resource" id="wave7_swarm"]
-script = ExtResource("3_4a38b")
-enemy = ExtResource("6_swarm")
-count = 24
-spawn_interval = 0.35
-
-[sub_resource type="Resource" id="wave7_fast"]
-script = ExtResource("3_4a38b")
-enemy = ExtResource("5_ttdbb")
-count = 8
-spawn_interval = 0.7
-start_delay = 3.0
-
-[sub_resource type="Resource" id="wave7"]
-script = ExtResource("2_wfgdk")
-spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave7_swarm"), SubResource("wave7_fast")])
-
-[sub_resource type="Resource" id="wave8_armored"]
+[sub_resource type="Resource" id="wave7_armored"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("7_armor")
 count = 4
 spawn_interval = 2.5
 
-[sub_resource type="Resource" id="wave8_normal"]
+[sub_resource type="Resource" id="wave7_normal"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("4_l4bsi")
 count = 8
 spawn_interval = 0.8
 start_delay = 2.0
 
-[sub_resource type="Resource" id="wave8"]
+[sub_resource type="Resource" id="wave7"]
 script = ExtResource("2_wfgdk")
-spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave8_armored"), SubResource("wave8_normal")])
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave7_armored"), SubResource("wave7_normal")])
 
-[sub_resource type="Resource" id="wave9_swarm"]
+[sub_resource type="Resource" id="wave8_swarm"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("6_swarm")
-count = 30
-spawn_interval = 0.3
+count = 24
+spawn_interval = 0.35
 
-[sub_resource type="Resource" id="wave9_fast"]
+[sub_resource type="Resource" id="wave8_fast"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("5_ttdbb")
-count = 6
-spawn_interval = 0.6
-start_delay = 4.0
+count = 8
+spawn_interval = 0.7
+start_delay = 3.0
 
-[sub_resource type="Resource" id="wave9"]
+[sub_resource type="Resource" id="wave8"]
 script = ExtResource("2_wfgdk")
-spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave9_swarm"), SubResource("wave9_fast")])
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave8_swarm"), SubResource("wave8_fast")])
 
-[sub_resource type="Resource" id="wave10_armored"]
+[sub_resource type="Resource" id="wave9_armored"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("7_armor")
 count = 6
 spawn_interval = 2.0
 
-[sub_resource type="Resource" id="wave10_swarm"]
+[sub_resource type="Resource" id="wave9_swarm"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("6_swarm")
 count = 16
 spawn_interval = 0.35
 start_delay = 3.0
 
-[sub_resource type="Resource" id="wave10"]
+[sub_resource type="Resource" id="wave9"]
 script = ExtResource("2_wfgdk")
-spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave10_armored"), SubResource("wave10_swarm")])
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave9_armored"), SubResource("wave9_swarm")])
 
-[sub_resource type="Resource" id="wave11_fast_a"]
-script = ExtResource("3_4a38b")
-enemy = ExtResource("5_ttdbb")
-count = 10
-spawn_interval = 0.5
-
-[sub_resource type="Resource" id="wave11_fast_b"]
-script = ExtResource("3_4a38b")
-enemy = ExtResource("5_ttdbb")
-count = 10
-spawn_interval = 0.5
-start_delay = 6.0
-
-[sub_resource type="Resource" id="wave11"]
-script = ExtResource("2_wfgdk")
-spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave11_fast_a"), SubResource("wave11_fast_b")])
-
-[sub_resource type="Resource" id="wave12_armored"]
-script = ExtResource("3_4a38b")
-enemy = ExtResource("7_armor")
-count = 8
-spawn_interval = 1.6
-
-[sub_resource type="Resource" id="wave12_swarm"]
-script = ExtResource("3_4a38b")
-enemy = ExtResource("6_swarm")
-count = 20
-spawn_interval = 0.3
-start_delay = 2.0
-
-[sub_resource type="Resource" id="wave12"]
-script = ExtResource("2_wfgdk")
-spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave12_armored"), SubResource("wave12_swarm")])
-
-[sub_resource type="Resource" id="wave13_armored"]
-script = ExtResource("3_4a38b")
-enemy = ExtResource("7_armor")
-count = 10
-spawn_interval = 1.4
-
-[sub_resource type="Resource" id="wave13_fast"]
-script = ExtResource("3_4a38b")
-enemy = ExtResource("5_ttdbb")
-count = 10
-spawn_interval = 0.5
-start_delay = 5.0
-
-[sub_resource type="Resource" id="wave13"]
-script = ExtResource("2_wfgdk")
-spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave13_armored"), SubResource("wave13_fast")])
-
-[sub_resource type="Resource" id="w14_boss"]
+[sub_resource type="Resource" id="w10_boss"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("8_boss")
 count = 1
 spawn_interval = 1.0
 
-[sub_resource type="Resource" id="w14_swarm"]
+[sub_resource type="Resource" id="w10_swarm"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("6_swarm")
-count = 24
+count = 20
 spawn_interval = 0.4
 start_delay = 3.0
 
-[sub_resource type="Resource" id="w14_fast"]
+[sub_resource type="Resource" id="w10_fast"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("5_ttdbb")
-count = 8
+count = 6
 spawn_interval = 0.6
 start_delay = 8.0
 
-[sub_resource type="Resource" id="wave14"]
+[sub_resource type="Resource" id="wave10"]
 script = ExtResource("2_wfgdk")
-spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("w14_boss"), SubResource("w14_swarm"), SubResource("w14_fast")])
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("w10_boss"), SubResource("w10_swarm"), SubResource("w10_fast")])
 
 [resource]
 script = ExtResource("1_cs3hx")
@@ -241,7 +173,7 @@ path_points = PackedVector2Array(-40, 280, 560, 280, 560, 540, 160, 540, 160, 82
 pad_positions = PackedVector2Array(180, 400, 420, 400, 650, 410, 360, 660, 620, 660, 70, 690, 300, 930, 440, 1020)
 starting_coins = 100
 starting_lives = 20
-waves = Array[ExtResource("2_wfgdk")]([SubResource("wave1"), SubResource("wave2"), SubResource("wave3"), SubResource("wave4"), SubResource("wave5"), SubResource("wave6"), SubResource("wave7"), SubResource("wave8"), SubResource("wave9"), SubResource("wave10"), SubResource("wave11"), SubResource("wave12"), SubResource("wave13"), SubResource("wave14")])
+waves = Array[ExtResource("2_wfgdk")]([SubResource("wave1"), SubResource("wave2"), SubResource("wave3"), SubResource("wave4"), SubResource("wave5"), SubResource("wave6"), SubResource("wave7"), SubResource("wave8"), SubResource("wave9"), SubResource("wave10")])
 endless_hp_growth = 1.14
 endless_count_growth = 1.06
 endless_speed_growth = 1.015

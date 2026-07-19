@@ -1,11 +1,17 @@
 class_name Projectile
 extends Area2D
 ## Pooled shot: HOMING (Popper/Longshot) or LOB (Lobber splash).
+## Visual: chewing-gum bubble with blue / pink / purple / white swirl that pops on hit.
 
 const LIFETIME_SECONDS := 1.5
 const LOB_ARC_HEIGHT := 56.0
-const SHOT_TEX: Texture2D = preload("res://assets/tower/projectile_shot.png")
-const SHELL_TEX: Texture2D = preload("res://assets/tower/projectile_shell.png")
+const SOFT_TEX: Texture2D = preload("res://assets/fx/particle_soft.png")
+
+const GUM_BLUE := Color(0.55, 0.82, 0.98, 1.0)
+const GUM_PINK := Color(1.0, 0.56, 0.72, 1.0)
+const GUM_PURPLE := Color(0.78, 0.58, 0.95, 1.0)
+const GUM_WHITE := Color(1.0, 0.98, 1.0, 1.0)
+const GUM_PALETTE: Array[Color] = [GUM_BLUE, GUM_PINK, GUM_PURPLE, GUM_WHITE]
 
 enum Mode { HOMING, LOB }
 
@@ -27,6 +33,8 @@ var _lob_dest: Vector2 = Vector2.ZERO
 var _lob_flight_time: float = 0.4
 var _lob_elapsed: float = 0.0
 var _heavy_impact: bool = false
+var _bubble_color: Color = GUM_PINK
+var _wobble_phase: float = 0.0
 
 
 func _ready() -> void:
@@ -62,6 +70,8 @@ func reset() -> void:
 	_lob_elapsed = 0.0
 	_lob_flight_time = 0.4
 	_heavy_impact = false
+	_bubble_color = GUM_PINK
+	_wobble_phase = 0.0
 	skin.position = Vector2.ZERO
 	skin.scale = Vector2.ONE
 	skin.modulate = Color.WHITE
@@ -88,11 +98,12 @@ func launch(target: Enemy, damage: float, speed: float, heavy := false) -> void:
 	_alive_for = 0.0
 	_launched = true
 	_heavy_impact = heavy
+	_wobble_phase = randf() * TAU
 	if collision_shape:
 		collision_shape.set_deferred("disabled", false)
 	if heavy:
-		# Longshot tracer read: stretched Skin along flight heading.
-		skin.scale = Vector2(1.8, 0.55)
+		# Longshot: slightly stretched gum slug, still reads as a bubble.
+		skin.scale = Vector2(1.35, 0.85)
 	if _target_valid():
 		_heading = (_target.global_position - global_position).normalized()
 
@@ -113,6 +124,7 @@ func launch_lob(dest: Vector2, damage: float, speed: float, splash_radius: float
 	_alive_for = 0.0
 	_launched = true
 	_heavy_impact = false
+	_wobble_phase = randf() * TAU
 	# Mortar must not clip enemies en route — damage only at detonation.
 	if collision_shape:
 		collision_shape.set_deferred("disabled", true)
@@ -135,6 +147,11 @@ func deactivate() -> void:
 func _physics_process(delta: float) -> void:
 	if not _launched:
 		return
+	_wobble_phase += delta * 9.0
+	var wobble := 1.0 + sin(_wobble_phase) * 0.08
+	var base := Vector2(1.35, 0.85) if _heavy_impact else Vector2.ONE
+	skin.scale = base * wobble
+
 	if mode == Mode.LOB:
 		_process_lob(delta)
 		return
@@ -148,7 +165,7 @@ func _physics_process(delta: float) -> void:
 		var to_target := _target.global_position - global_position
 		var dist := to_target.length()
 		var step := _speed * delta
-		# Overshoot guard: at ~1500 px/s a 60 Hz step is ~25 px — snap-hit.
+		# Overshoot guard: snap-hit when this frame's step reaches the target.
 		if step >= dist and dist > 0.001:
 			global_position = _target.global_position
 			_resolve_homing_hit(_target)
@@ -181,7 +198,7 @@ func _detonate_splash() -> void:
 			continue
 		if enemy.global_position.distance_squared_to(dest) <= radius_sq:
 			enemy.take_damage(_damage)
-	Juice.splash_ring(dest)
+	Juice.bubble_pop(dest, _bubble_color, true)
 	Juice.confetti(dest)
 	deactivate()
 
@@ -189,6 +206,7 @@ func _detonate_splash() -> void:
 func _resolve_homing_hit(enemy: Enemy) -> void:
 	if not _launched:
 		return
+	Juice.bubble_pop(global_position, _bubble_color, _heavy_impact)
 	enemy.take_damage(_damage, _heavy_impact)
 	deactivate()
 
@@ -216,11 +234,57 @@ func _build_skin() -> void:
 		var child: Node = skin.get_child(0)
 		skin.remove_child(child)
 		child.free()
-	var tex: Texture2D = SHELL_TEX if mode == Mode.LOB else SHOT_TEX
+
+	var target_px := 40.0 if mode == Mode.LOB else 30.0
+	_bubble_color = GUM_PALETTE[randi() % GUM_PALETTE.size()]
+	var swirl: Array[Color] = [
+		GUM_BLUE,
+		GUM_PINK,
+		GUM_PURPLE,
+		GUM_WHITE,
+	]
+	swirl.shuffle()
+
+	var bubble := Node2D.new()
+	bubble.name = "Bubble"
+	var radius := target_px * 0.5
+	var c0: Color = _bubble_color
+	var c1: Color = swirl[0]
+	var c2: Color = swirl[1]
+	var c3: Color = swirl[2]
+	bubble.set_meta("r", radius)
+	bubble.set_meta("c0", c0)
+	bubble.set_meta("c1", c1)
+	bubble.set_meta("c2", c2)
+	bubble.set_meta("c3", c3)
+	bubble.draw.connect(func() -> void:
+		var r: float = float(bubble.get_meta("r"))
+		var base: Color = bubble.get_meta("c0") as Color
+		var a: Color = bubble.get_meta("c1") as Color
+		var b: Color = bubble.get_meta("c2") as Color
+		var c: Color = bubble.get_meta("c3") as Color
+		# Opaque gum body + candy swirl lobes + glossy rim.
+		bubble.draw_circle(Vector2.ZERO, r, base)
+		bubble.draw_circle(Vector2(-r * 0.28, -r * 0.18), r * 0.55, Color(a.r, a.g, a.b, 0.85))
+		bubble.draw_circle(Vector2(r * 0.32, r * 0.22), r * 0.42, Color(b.r, b.g, b.b, 0.8))
+		bubble.draw_circle(Vector2(r * 0.05, -r * 0.08), r * 0.28, Color(c.r, c.g, c.b, 0.75))
+		bubble.draw_arc(Vector2.ZERO, r * 0.92, 0.0, TAU, 32, Color(1.0, 1.0, 1.0, 0.35), 2.0, true)
+		bubble.draw_circle(Vector2(-r * 0.35, -r * 0.4), r * 0.18, Color(1.0, 1.0, 1.0, 0.75))
+	)
+	bubble.queue_redraw()
+	skin.add_child(bubble)
+
+	# Soft outer halo so the bubble still reads as floaty gum.
+	var halo := _soft_disc(target_px * 1.15, Color(_bubble_color.r, _bubble_color.g, _bubble_color.b, 0.35))
+	halo.name = "Halo"
+	halo.z_index = -1
+	skin.add_child(halo)
+
+
+func _soft_disc(diameter_px: float, tint: Color) -> Sprite2D:
 	var spr := Sprite2D.new()
-	spr.name = "Sprite"
-	spr.texture = tex
-	var target_px := 28.0 if mode == Mode.LOB else 18.0
-	var spr_scale := target_px / float(tex.get_width())
+	spr.texture = SOFT_TEX
+	var spr_scale := diameter_px / float(SOFT_TEX.get_width())
 	spr.scale = Vector2(spr_scale, spr_scale)
-	skin.add_child(spr)
+	spr.modulate = tint
+	return spr

@@ -50,8 +50,8 @@ func _initialize() -> void:
 			failed = true
 		else:
 			print("OK pad_positions match Stage 1 canonical")
-		if map.waves.size() < 12 or map.waves.size() > 15:
-			push_error("Expected 12–15 waves, got %d" % map.waves.size())
+		if map.waves.size() < 10 or map.waves.size() > 15:
+			push_error("Expected 10–15 waves, got %d" % map.waves.size())
 			failed = true
 		else:
 			print("OK waves=%d" % map.waves.size())

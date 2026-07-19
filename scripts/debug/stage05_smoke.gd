@@ -21,7 +21,7 @@ func _initialize() -> void:
 			push_error("missing %s" % id)
 			failed = true
 			continue
-		if map.waves.size() < 12 or map.waves.size() > 15:
+		if map.waves.size() < 10 or map.waves.size() > 15:
 			push_error("%s waves=%d" % [id, map.waves.size()])
 			failed = true
 		if map.endless_hp_growth <= 1.0 or map.endless_count_growth <= 1.0:

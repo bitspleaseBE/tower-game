@@ -19,8 +19,8 @@ func _initialize() -> void:
 	if map == null:
 		push_error("map_01.tres failed to load")
 		failed = true
-	elif map.waves.size() < 12 or map.waves.size() > 15:
-		push_error("Expected 12–15 waves, got %d" % map.waves.size())
+	elif map.waves.size() < 10 or map.waves.size() > 15:
+		push_error("Expected 10–15 waves, got %d" % map.waves.size())
 		failed = true
 	else:
 		print("OK waves=%d" % map.waves.size())
@@ -38,7 +38,7 @@ func _initialize() -> void:
 		if chiller.behavior != TowerData.Behavior.SLOW or chiller.slow_factor.size() != 3:
 			push_error("chiller slow schema wrong")
 			failed = true
-		if longshot.behavior != TowerData.Behavior.SNIPER or longshot.projectile_speed < 1400.0:
+		if longshot.behavior != TowerData.Behavior.SNIPER or longshot.projectile_speed < 1000.0:
 			push_error("longshot sniper schema wrong")
 			failed = true
 		print("OK tower roster behaviors")

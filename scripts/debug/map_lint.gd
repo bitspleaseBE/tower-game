@@ -12,7 +12,7 @@ const PATH_X_MIN := -80.0
 const PATH_X_MAX := 800.0
 const PATH_Y_MIN := 160.0
 const PATH_Y_MAX := 1060.0
-const WAVES_MIN := 12
+const WAVES_MIN := 10
 const WAVES_MAX := 15
 
 

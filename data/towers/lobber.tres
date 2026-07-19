@@ -12,5 +12,5 @@ range_px = Array[float]([170.0, 185.0, 200.0])
 fire_interval = Array[float]([1.5, 1.4, 1.2])
 behavior = 1
 sell_refund_ratio = 0.7
-projectile_speed = 400.0
+projectile_speed = 280.0
 splash_radius_px = Array[float]([70.0, 85.0, 100.0])

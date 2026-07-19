@@ -12,4 +12,4 @@ range_px = Array[float]([300.0, 340.0, 380.0])
 fire_interval = Array[float]([2.2, 2.0, 1.8])
 behavior = 3
 sell_refund_ratio = 0.7
-projectile_speed = 1500.0
+projectile_speed = 1100.0

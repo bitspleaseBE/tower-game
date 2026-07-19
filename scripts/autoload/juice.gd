@@ -242,6 +242,65 @@ func muzzle_flash(world_pos: Vector2) -> void:
 	tween.tween_callback(flash.queue_free)
 
 
+## Chewing-gum bubble pop — expand + fade, with a few tinted droplets.
+func bubble_pop(world_pos: Vector2, tint: Color = Color(1.0, 0.56, 0.72, 1.0), heavy := false) -> void:
+	if not _registered or _fx_layer == null:
+		return
+	var soft: Texture2D = preload("res://assets/fx/particle_soft.png")
+	var root := Node2D.new()
+	root.z_index = 20
+	_fx_layer.add_child(root)
+	root.global_position = world_pos
+
+	var burst := Sprite2D.new()
+	burst.texture = soft
+	var start_px := 44.0 if heavy else 34.0
+	var start_scale := start_px / float(soft.get_width())
+	burst.scale = Vector2(start_scale, start_scale)
+	burst.modulate = Color(tint.r, tint.g, tint.b, 0.85)
+	root.add_child(burst)
+
+	var ring := Sprite2D.new()
+	ring.texture = soft
+	var ring_scale := (start_px * 0.7) / float(soft.get_width())
+	ring.scale = Vector2(ring_scale, ring_scale)
+	ring.modulate = Color(1.0, 1.0, 1.0, 0.7)
+	root.add_child(ring)
+
+	var droplet_colors: Array[Color] = [
+		Color(0.55, 0.82, 0.98, 1.0),
+		Color(1.0, 0.56, 0.72, 1.0),
+		Color(0.78, 0.58, 0.95, 1.0),
+		Color(1.0, 0.98, 1.0, 1.0),
+	]
+	var drop_count := 6 if heavy else 4
+	var drops: Array[Sprite2D] = []
+	for i: int in drop_count:
+		var drop := Sprite2D.new()
+		drop.texture = soft
+		var d_scale := (10.0 + float(i % 3) * 3.0) / float(soft.get_width())
+		drop.scale = Vector2(d_scale, d_scale)
+		drop.modulate = droplet_colors[i % droplet_colors.size()]
+		root.add_child(drop)
+		drops.append(drop)
+
+	var tween := root.create_tween()
+	var expand := 2.4 if heavy else 2.0
+	tween.tween_property(burst, "scale", burst.scale * expand, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(burst, "modulate:a", 0.0, 0.18)
+	tween.parallel().tween_property(ring, "scale", ring.scale * (expand * 1.15), 0.2)
+	tween.parallel().tween_property(ring, "modulate:a", 0.0, 0.2)
+	for i: int in drops.size():
+		var drop: Sprite2D = drops[i]
+		var angle := (TAU / float(drop_count)) * float(i) + randf_range(-0.2, 0.2)
+		var dist := randf_range(18.0, 36.0) * (1.25 if heavy else 1.0)
+		var end_pos := Vector2.from_angle(angle) * dist
+		tween.parallel().tween_property(drop, "position", end_pos, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tween.parallel().tween_property(drop, "modulate:a", 0.0, 0.22)
+		tween.parallel().tween_property(drop, "scale", drop.scale * 0.35, 0.22)
+	tween.tween_callback(root.queue_free)
+
+
 func upgrade_fx(tower: Node2D) -> void:
 	if tower == null:
 		return

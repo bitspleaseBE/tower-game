@@ -34,7 +34,9 @@ var _current_target: Enemy
 var _retarget_timer: float = 0.0
 var _weapon: Sprite2D
 const RETARGET_INTERVAL := 0.1
-const AIM_TURN_SPEED := 14.0 ## rad/s — snappy but readable
+const AIM_TURN_SPEED := 10.0 ## rad/s — Popper / Lobber
+const AIM_TURN_SPEED_SNIPER := 16.0 ## rad/s — Longshot tracks faster
+const AIM_ALIGN_RAD := 0.12 ## ~7° — must be on target before firing
 
 
 func _ready() -> void:
@@ -104,6 +106,9 @@ func _physics_process(delta: float) -> void:
 		_:
 			if _current_target == null:
 				return
+			# Hold fire while the barrel is still swinging onto the target.
+			if not _is_aimed_at(_current_target):
+				return
 			_fire(_current_target)
 			_cooldown = data.fire_interval[tier]
 
@@ -111,11 +116,22 @@ func _physics_process(delta: float) -> void:
 func _aim_toward(target: Enemy, delta: float) -> void:
 	if _weapon == null or target == null or not is_instance_valid(target) or not target.active:
 		return
+	var desired := _desired_aim(target)
+	var turn := AIM_TURN_SPEED_SNIPER if data.behavior == TowerData.Behavior.SNIPER else AIM_TURN_SPEED
+	_weapon.rotation = rotate_toward(_weapon.rotation, desired, turn * delta)
+
+
+func _desired_aim(target: Enemy) -> float:
 	var to := target.global_position - _weapon.global_position
 	if to.length_squared() < 0.25:
-		return
-	var desired := to.angle() + WEAPON_FORWARD_OFFSET
-	_weapon.rotation = lerp_angle(_weapon.rotation, desired, clampf(AIM_TURN_SPEED * delta, 0.0, 1.0))
+		return _weapon.rotation
+	return to.angle() + WEAPON_FORWARD_OFFSET
+
+
+func _is_aimed_at(target: Enemy) -> bool:
+	if _weapon == null or target == null or not is_instance_valid(target):
+		return false
+	return absf(angle_difference(_weapon.rotation, _desired_aim(target))) <= AIM_ALIGN_RAD
 
 
 func _barrel_tip(length: float) -> Vector2:
