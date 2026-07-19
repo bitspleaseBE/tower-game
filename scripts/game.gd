@@ -79,6 +79,8 @@ func _ready() -> void:
 	Events.enemy_leaked.connect(_on_enemy_leaked)
 	Events.wave_started.connect(_on_wave_started)
 
+	Sound.set_music_ducked(false)
+	Sound.play_music(&"music_game")
 	spawner.start()
 
 
@@ -132,6 +134,7 @@ func pulse_coin_hud() -> void:
 
 func _exit_tree() -> void:
 	Engine.time_scale = 1.0
+	Sound.stop_sfx()
 
 
 func earn(amount: int) -> void:
@@ -252,6 +255,8 @@ func _hide_all_range_rings() -> void:
 
 func _on_countdown_tick(seconds_left: int) -> void:
 	hud.show_countdown(seconds_left)
+	if seconds_left > 0:
+		Sound.play_sfx(&"countdown_tick")
 
 
 func _on_wave_started(number: int, _total: int) -> void:
@@ -271,6 +276,7 @@ func _on_enemy_leaked(enemy: Node) -> void:
 	if not _suppress_game_over:
 		lives = maxi(0, lives - cost)
 	Events.lives_changed.emit(lives)
+	Sound.play_sfx(&"leak")
 	Juice.shake(4.0, 0.2)
 	if lives == 0 and not _lost_emitted and not _suppress_game_over:
 		_lost_emitted = true

@@ -13,7 +13,8 @@ extends RefCounted
 ## sole winner; delete GPU path. Caps below are architecture starting values — lower
 ## PARTICLES_PER_BURST / MAX_CONFETTI_BURSTS first if Stage 8 device stress dips <50 fps.
 ##
-## Stage 7 adds MAX_SFX_VOICES here.
+## SFX voice pool (Sound autoload). PROVISIONAL — re-verify Stage 8 under stress + audio.
+## Voice limiting is SFX-only; music uses one dedicated player.
 
 const MAX_ENEMIES := 96
 const ENEMY_PREWARM := 32
@@ -25,3 +26,4 @@ const MAX_FLOATERS := 20
 const MAX_COIN_FLYERS := 24
 const MAX_SHAKE_PX := 5.0
 const MAX_SHAKE_DURATION := 0.25
+const MAX_SFX_VOICES := 8

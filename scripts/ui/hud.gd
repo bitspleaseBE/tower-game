@@ -125,3 +125,4 @@ func _on_endless_best(_map_id: StringName, wave: int) -> void:
 	_render_wave()
 	wave_label.pivot_offset = wave_label.size * 0.5
 	Juice.punch_scale(wave_label)
+	Sound.play_sfx(&"new_best")

@@ -74,6 +74,7 @@ func _on_run_won(map_id: StringName) -> void:
 	go_endless_button.visible = true
 	retry_button.visible = false
 	menu_button.visible = true
+	Sound.play_sfx(&"win")
 	_show_panel()
 
 
@@ -91,12 +92,17 @@ func _on_run_lost(map_id: StringName) -> void:
 		var start_best: int = int(_game.get("best_at_run_start")) if _game != null else 0
 		var is_new := best > start_best
 		new_best_label.visible = is_new
+		# Fanfare; don't stack new_best with lose.
 		if is_new:
+			Sound.play_sfx(&"new_best")
 			_celebrate_new_best()
+		else:
+			Sound.play_sfx(&"lose")
 	else:
 		title_label.text = "The critters got through!"
 		subtitle_label.visible = false
 		new_best_label.visible = false
+		Sound.play_sfx(&"lose")
 	_show_panel()
 
 
@@ -123,6 +129,7 @@ func _restart_confetti(host: Node2D) -> void:
 
 func _show_panel() -> void:
 	Engine.time_scale = 1.0
+	Sound.set_music_ducked(true)
 	visible = true
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	get_tree().paused = true
@@ -150,6 +157,7 @@ func _campaign_successor(map_id: StringName) -> StringName:
 
 func _on_next_map() -> void:
 	get_tree().paused = false
+	Sound.set_music_ducked(false)
 	if _game == null or _game.get("map_data") == null:
 		return
 	var next_id := _campaign_successor((_game.map_data as MapData).id)
@@ -162,6 +170,7 @@ func _on_next_map() -> void:
 
 func _on_go_endless() -> void:
 	get_tree().paused = false
+	Sound.set_music_ducked(false)
 	visible = false
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if _game != null and _game.has_method("enter_endless"):
@@ -170,9 +179,11 @@ func _on_go_endless() -> void:
 
 func _on_retry() -> void:
 	get_tree().paused = false
+	Sound.set_music_ducked(false)
 	get_tree().reload_current_scene()
 
 
 func _on_menu() -> void:
 	get_tree().paused = false
+	Sound.set_music_ducked(false)
 	get_tree().change_scene_to_file("res://scenes/map_select.tscn")

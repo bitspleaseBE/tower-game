@@ -1,6 +1,6 @@
 # Stage 7: Audio — SFX, Music & Web Autoplay
 
-**Status:** not started
+**Status:** done
 
 Objective: after this stage, the live Pages build *sounds* like the blueprint's juice pitch — every kill pops, every build/upgrade/sell and tower shot has a punchy arcade sting, coins tink, leaks thump hearts, waves announce, win/lose and unlock/new-best celebrate, UI buttons click, and one cheerful music loop beds the run — all CC0, all routed through a `Sound` autoload that respects the existing Settings master-volume slider, web autoplay restrictions (first user gesture), pause, scene changes, and `PerfBudget.MAX_SFX_VOICES`. Missing downloaded packs degrade gracefully (silent hooks logged as Stage 8 follow-ups); the stage still merges with whatever audio arrived.
 

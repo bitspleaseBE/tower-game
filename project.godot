@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Tower Game"
-config/version="0.3.6"
+config/version="0.3.7"
 run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 boot_splash/bg_color=Color(0.482, 0.776, 0.416, 1)
@@ -23,6 +23,11 @@ Settings="*res://scripts/settings.gd"
 Events="*res://scripts/autoload/events.gd"
 SaveGame="*res://scripts/autoload/save_game.gd"
 Juice="*res://scripts/autoload/juice.gd"
+Sound="*res://scripts/autoload/sound.gd"
+
+[audio]
+
+buses/default_bus_layout="res://default_bus_layout.tres"
 
 [display]
 

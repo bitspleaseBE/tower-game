@@ -66,3 +66,47 @@ every shipped third-party file appears here, and only shipped files do.
   - assets/ui/toggle_on.png
   - assets/ui/toggle_off.png
   - assets/ui/slider_grabber.png
+
+## Interface Sounds — Kenney
+- License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
+- Source: https://kenney.nl/assets/interface-sounds
+- Files used:
+  - assets/audio/ui_tap.ogg (pack: Audio/click_002.ogg)
+  - assets/audio/build_place.ogg (pack: Audio/confirmation_002.ogg)
+  - assets/audio/sell.ogg (pack: Audio/drop_003.ogg)
+  - assets/audio/countdown_tick.ogg (pack: Audio/tick_001.ogg)
+
+## 50 RPG Sound Effects — Kenney
+- License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
+- Source: https://opengameart.org/content/50-rpg-sound-effects
+- Files used:
+  - assets/audio/coin.ogg (pack: OGG/handleCoins.ogg)
+  - assets/audio/hit.ogg (pack: OGG/knifeSlice.ogg)
+  - assets/audio/upgrade.ogg (pack: OGG/metalClick.ogg)
+
+## 63 Digital Sound Effects — Kenney
+- License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
+- Source: https://opengameart.org/content/63-digital-sound-effects-lasers-phasers-space-etc
+- Files used (re-encoded pack MP3 → Ogg Vorbis for web size / seamless playback):
+  - assets/audio/shot_popper.ogg (pack: pepSound1.mp3)
+  - assets/audio/shot_lobber.ogg (pack: laser4.mp3)
+  - assets/audio/shot_chiller.ogg (pack: phaserUp2.mp3)
+  - assets/audio/shot_longshot.ogg (pack: laser9.mp3)
+  - assets/audio/kill_pop.ogg (pack: highUp.mp3)
+  - assets/audio/leak.ogg (pack: lowDown.mp3)
+
+## Music Jingles — Kenney
+- License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
+- Source: https://kenney.nl/assets/music-jingles
+- Files used:
+  - assets/audio/wave_start.ogg (pack: OGG/jingles_HIT/jingles_HIT00.ogg)
+  - assets/audio/win.ogg (pack: OGG/jingles_PIZZA/jingles_PIZZA00.ogg)
+  - assets/audio/lose.ogg (pack: OGG/jingles_HIT/jingles_HIT05.ogg)
+  - assets/audio/unlock.ogg (pack: OGG/jingles_NES/jingles_NES10.ogg)
+  - assets/audio/new_best.ogg (pack: OGG/jingles_PIZZA/jingles_PIZZA14.ogg)
+
+## Music Loops — Kenney
+- License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
+- Source: https://kenney.nl/assets/music-loops
+- Files used:
+  - assets/audio/music_game.ogg (pack: Loops/Farm Frolics.ogg)

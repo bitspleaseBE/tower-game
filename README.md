@@ -59,6 +59,10 @@ assets/                  (Stage 6+) promoted art + ATTRIBUTION.md
   `Skin` primitives. Palette lives in
   [plans/stage-01-portrait-shell.md](plans/stage-01-portrait-shell.md) and the
   theme file.
+- **Audio:** starts after the first tap (browser autoplay policy). The `Sound`
+  autoload unlocks on the first mouse/touch/key gesture, then routes SFX and
+  the music loop through Master → Music/SFX buses. Master volume is the
+  Settings slider (0 = muted).
 - **Commit `*.uid` files:** they appear on first import and must always be
   committed so resource references stay stable when files move.
 

@@ -81,6 +81,9 @@ jobs:
       - name: Stage 6 smoke (candy art)
         run: godot --headless --path . --script scripts/debug/stage06_smoke.gd
 
+      - name: Stage 7 smoke (audio)
+        run: godot --headless --path . --script scripts/debug/stage07_smoke.gd
+
       - name: Export web build
         run: |
           mkdir -p build/web

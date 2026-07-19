@@ -316,6 +316,7 @@ func _on_option_pressed(index: int) -> void:
 	_pad.add_child(tower)
 	tower.setup(tower_data)
 	_pad.tower = tower
+	Sound.play_sfx(&"build_place")
 	Events.tower_built.emit(tower, _pad)
 	close()
 
@@ -331,6 +332,7 @@ func _on_primary_pressed() -> void:
 		if not _game.spend(cost):
 			return
 		tower.upgrade()
+		Sound.play_sfx(&"upgrade")
 		Events.tower_upgraded.emit(tower)
 		_refresh_manage_buttons()
 
@@ -345,6 +347,7 @@ func _on_sell_pressed() -> void:
 	tower.queue_free()
 	_pad.tower = null
 	_game.earn(refund)
+	Sound.play_sfx(&"sell")
 	Events.tower_sold.emit(_pad, refund)
 	if pad_skin != null:
 		Juice.sell_fx(_pad.global_position, pad_skin)

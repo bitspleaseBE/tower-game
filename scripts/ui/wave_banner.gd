@@ -31,6 +31,7 @@ func _on_wave_started(number: int, _total: int) -> void:
 					is_boss_wave = true
 					break
 	label.text = "BOSS!" if is_boss_wave else "Wave %d" % number
+	Sound.play_sfx(&"wave_start")
 	_show_banner()
 
 
