@@ -260,7 +260,7 @@ func _rebuild_skin() -> void:
 
 	var scale_factor := 1.0 + float(tier) * 0.08
 	var id := data.id if data != null else &"popper"
-	var footprint := 44.0 * scale_factor
+	var footprint := 58.0 * scale_factor
 
 	var base := Sprite2D.new()
 	base.name = "Base"
@@ -273,9 +273,9 @@ func _rebuild_skin() -> void:
 	_weapon = Sprite2D.new()
 	_weapon.name = "Weapon"
 	_weapon.texture = WEAPON_TEXTURES.get(id, WEAPON_TEXTURES[&"popper"]) as Texture2D
-	var weapon_scale := (footprint * 0.95) / float(_weapon.texture.get_width())
+	var weapon_scale := (footprint * 1.1) / float(_weapon.texture.get_width())
 	_weapon.scale = Vector2(weapon_scale, weapon_scale)
-	_weapon.position = Vector2(0.0, -6.0 * scale_factor)
+	_weapon.position = Vector2(0.0, -8.0 * scale_factor)
 	_weapon.self_modulate = Color.WHITE
 	_weapon.rotation = prev_aim
 	skin.add_child(_weapon)

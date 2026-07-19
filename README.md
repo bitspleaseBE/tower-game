@@ -1,10 +1,11 @@
-# Tower Game
+# Bubble Pop
 
 [![Deploy to GitHub Pages](https://github.com/bitspleaseBE/tower-game/actions/workflows/deploy.yml/badge.svg)](https://github.com/bitspleaseBE/tower-game/actions/workflows/deploy.yml)
 
-A [Godot 4](https://godotengine.org/) game. Currently a scaffold: a main menu
-(New Game / Settings), a settings screen with persistent options, and a
-placeholder game scene. Game design lives in [blueprint.md](blueprint.md).
+A candy-land tower defense in [Godot 4](https://godotengine.org/) — one thumb,
+big juicy shapes, bubble pops and confetti. Product intent lives in
+[blueprint.md](blueprint.md). Creative style + tower character sheets live in
+**[docs/](docs/README.md)** ([style bible](docs/style.md), [tower roster](docs/towers.md)).
 Implementation order is the eight-stage roadmap in
 [plans/README.md](plans/README.md); consolidated verification is in
 [plans/VERIFICATION.md](plans/VERIFICATION.md).
@@ -43,7 +44,7 @@ assets/                  (Stage 6+) promoted art + ATTRIBUTION.md
   absolute offsets from edges that expand moves. World content lives under a
   `Board` Node2D recentered with `_recenter_board()` on ready and
   `viewport.size_changed`. Extra canvas space revealed by expand is always
-  ground-colored via `default_clear_color` (mint), never black.
+  ground-colored via `default_clear_color` (candy pastel meadow), never black.
 - **Skin swap points:** every visual entity (tower, enemy, pad, projectile,
   decor) owns a child `Skin` (Node2D) holding its placeholder primitives.
   Gameplay scripts never reference nodes inside `Skin`; feel-tweens target the

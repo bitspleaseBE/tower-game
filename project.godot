@@ -10,11 +10,11 @@ config_version=5
 
 [application]
 
-config/name="Tower Game"
+config/name="Bubble Pop"
 config/version="0.3.8"
 run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-boot_splash/bg_color=Color(0.482, 0.776, 0.416, 1)
+boot_splash/bg_color=Color(0.78, 0.92, 0.84, 1)
 config/icon="res://assets/enemies/critter_boss.png"
 
 [autoload]
@@ -47,4 +47,4 @@ theme/custom="res://theme/candy_theme.tres"
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-environment/defaults/default_clear_color=Color(0.482, 0.776, 0.416, 1)
+environment/defaults/default_clear_color=Color(0.78, 0.92, 0.84, 1)

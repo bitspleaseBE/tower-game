@@ -21,6 +21,8 @@ func _ready() -> void:
 	collision_mask = 1
 	monitoring = true
 	monitorable = false
+	# Sit on the path under critters — not painted over them.
+	z_index = -2
 	_circle = CircleShape2D.new()
 	collision_shape.shape = _circle
 	if not _active:

@@ -7,12 +7,12 @@ every shipped third-party file appears here, and only shipped files do.
 - License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
 - Source: https://kenney.nl/assets/tower-defense-top-down
 - Files used:
-  - assets/background/grass_tile.png (pack: towerDefense_tile024.png)
-  - assets/background/path_straight.png (pack: towerDefense_tile050.png)
-  - assets/background/pad.png (pack: towerDefense_tile180.png)
-  - assets/background/decor_tree.png (pack: towerDefense_tile131.png)
-  - assets/background/decor_bush.png (pack: towerDefense_tile136.png)
-  - assets/background/decor_rock.png (pack: towerDefense_tile134.png)
+  - assets/background_kenney/grass_tile.png (pack: towerDefense_tile024.png)
+  - assets/background_kenney/path_straight.png (pack: towerDefense_tile050.png)
+  - assets/background_kenney/pad.png (pack: towerDefense_tile180.png)
+  - assets/background_kenney/decor_tree.png (pack: towerDefense_tile131.png)
+  - assets/background_kenney/decor_bush.png (pack: towerDefense_tile136.png)
+  - assets/background_kenney/decor_rock.png (pack: towerDefense_tile134.png)
   - assets/tower/base_square.png (pack: towerDefense_tile180.png)
   - assets/tower/base_hex.png (pack: towerDefense_tile181.png)
 
@@ -83,6 +83,12 @@ every shipped third-party file appears here, and only shipped files do.
   - assets/fx/particle_water_pool.png
   - assets/tower/base_square.png (Kenney base retained)
   - assets/tower/base_hex.png (Kenney base retained)
+  - assets/background/grass_tile.png (pastel candy meadow)
+  - assets/background/path_straight.png (frosting path tile)
+  - assets/background/pad.png (marshmallow pad)
+  - assets/background/decor_tree.png (lollipop tree)
+  - assets/background/decor_bush.png (cotton-candy bush)
+  - assets/background/decor_rock.png (jellybean rock)
 
 ## Settings chrome — original
 - Candy toggle + slider knob for Settings visibility:

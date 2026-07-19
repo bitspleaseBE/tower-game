@@ -1,4 +1,4 @@
-# Tower Game — Game Blueprint
+# Bubble Pop — Game Blueprint
 
 One page, short answers. This drives build order, scope, and the automated
 asset search — keep the **bold field labels** and `[ ]` checkboxes intact so
@@ -10,10 +10,10 @@ tooling can parse it. Mark a checkbox like `[x]`.
 
 Two sentences, max. What is this game and why is it fun?
 
-**Pitch:** A candy-bright tower defense built for one thumb: drop cute turrets
-onto fixed pads and pop waves of wobbling critters before they reach your base.
-Everything squashes, stretches, and bursts into confetti — a TD that feels as
-good as it plays.
+**Pitch:** **Bubble Pop** — a candy-bright tower defense built for one thumb:
+drop cute turrets onto fixed pads and pop waves of wobbling critters before
+they reach your base. Everything squashes, stretches, and bursts into confetti —
+a TD that feels as good as it plays.
 
 ## 2. Story & setting
 

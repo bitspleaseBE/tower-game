@@ -1,8 +1,8 @@
 extends Control
 ## Mini path/pad preview drawn from MapData. Stage 6 swap point for thumbnail sprites.
 
-const PATH_COLOR := Color(0.965, 0.878, 0.659, 1) ## path sand
-const PAD_COLOR := Color(0.75, 0.63, 0.91, 1) ## lilac
+const PATH_COLOR := Color(1.0, 0.86, 0.9, 1) ## frosting path
+const PAD_COLOR := Color(0.82, 0.72, 0.94, 1) ## marshmallow lilac
 const SCALE := 0.16
 const PATH_WIDTH := 6.0
 const PAD_RADIUS := 5.0

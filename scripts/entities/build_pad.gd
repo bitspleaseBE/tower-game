@@ -44,7 +44,7 @@ func _build_skin() -> void:
 	var pad := Sprite2D.new()
 	pad.name = "Pad"
 	pad.texture = PAD_TEX
-	var pad_scale := 72.0 / float(PAD_TEX.get_width())
+	var pad_scale := 84.0 / float(PAD_TEX.get_width())
 	pad.scale = Vector2(pad_scale, pad_scale)
 	skin.add_child(pad)
 

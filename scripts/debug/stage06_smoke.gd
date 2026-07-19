@@ -215,9 +215,9 @@ func _initialize() -> void:
 	var clear_color: Color = ProjectSettings.get_setting(
 		"rendering/environment/defaults/default_clear_color", Color.BLACK
 	) as Color
-	# Expect grass-green-ish (g dominant-ish, not the old pale mint alone).
-	if clear_color.g < 0.55:
-		push_error("default_clear_color not grass-green: %s" % clear_color)
+	# Expect candy pastel meadow (soft mint/pink — g still high).
+	if clear_color.g < 0.55 or clear_color.r < 0.4:
+		push_error("default_clear_color not candy pastel: %s" % clear_color)
 		failed = true
 	else:
 		print("OK clear_color=%s" % clear_color)

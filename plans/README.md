@@ -1,6 +1,6 @@
 # Implementation roadmap
 
-Build order for Tower Game v1.0. Product intent lives in [`blueprint.md`](../blueprint.md); these stage plans are the executable sequence. Status values: `not started` · `in progress` · `done`.
+Build order for **Bubble Pop** v1.0. Product intent lives in [`blueprint.md`](../blueprint.md); creative style + tower sheets in [`docs/`](../docs/README.md). These stage plans are the executable sequence. Status values: `not started` · `in progress` · `done`.
 
 | # | Stage | Plan | Depends on | Status |
 |---|-------|------|------------|--------|
