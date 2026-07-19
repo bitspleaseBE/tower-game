@@ -1,11 +1,20 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
+[ext_resource type="Script" path="res://scripts/wave_spawner.gd" id="2_spawner"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="3_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/build_menu.tscn" id="4_bm"]
+[ext_resource type="PackedScene" path="res://scenes/ui/result_overlay.tscn" id="5_ro"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_game")
 
 [node name="Board" type="Node2D" parent="."]
+
+[node name="Ground" type="Polygon2D" parent="Board"]
+z_index = -10
+color = Color(0.78, 0.914, 0.745, 1)
+polygon = PackedVector2Array(-200, -200, 920, -200, 920, 1480, -200, 1480)
 
 [node name="Decor" type="Node2D" parent="Board"]
 
@@ -55,82 +64,13 @@ round_precision = 12
 
 [node name="Pads" type="Node2D" parent="Board"]
 
+[node name="Spawner" type="Node" parent="."]
+script = ExtResource("2_spawner")
+
 [node name="UI" type="CanvasLayer" parent="."]
 
-[node name="Root" type="Control" parent="UI"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+[node name="Hud" parent="UI" instance=ExtResource("3_hud")]
 
-[node name="TopBar" type="PanelContainer" parent="UI/Root"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_left = 12.0
-offset_top = 12.0
-offset_right = -12.0
-offset_bottom = 76.0
-grow_horizontal = 2
+[node name="BuildMenu" parent="UI" instance=ExtResource("4_bm")]
 
-[node name="MarginContainer" type="MarginContainer" parent="UI/Root/TopBar"]
-layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 8
-
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/Root/TopBar/MarginContainer"]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="LivesLabel" type="Label" parent="UI/Root/TopBar/MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Lives 20"
-vertical_alignment = 1
-
-[node name="CoinsLabel" type="Label" parent="UI/Root/TopBar/MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Coins 100"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="WaveLabel" type="Label" parent="UI/Root/TopBar/MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Wave 1/6"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="MenuButton" type="Button" parent="UI/Root/TopBar/MarginContainer/HBoxContainer"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 56)
-layout_mode = 2
-size_flags_vertical = 4
-theme_type_variation = &"ButtonSecondary"
-theme_override_font_sizes/font_size = 24
-text = "Menu"
-
-[node name="BottomBar" type="PanelContainer" parent="UI/Root"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -128.0
-grow_horizontal = 2
-grow_vertical = 0
-
-[node name="HintLabel" type="Label" parent="UI/Root/BottomBar"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.31, 0.227, 0.357, 0.5)
-text = "Turrets land here soon."
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[connection signal="pressed" from="UI/Root/TopBar/MarginContainer/HBoxContainer/MenuButton" to="." method="_on_menu_button_pressed"]
+[node name="ResultOverlay" parent="UI" instance=ExtResource("5_ro")]

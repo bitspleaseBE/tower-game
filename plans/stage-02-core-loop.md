@@ -1,6 +1,6 @@
 # Stage 2: Data-Driven Core Loop on Map 1
 
-**Status:** not started
+**Status:** done
 
 Objective: after this stage, a stranger on a phone can open the live Pages build, tap New Game, and play map 1's short run start-to-finish with one thumb — a 7 s countdown ticks on the HUD, waves of critters march the path, tapping a pad opens a bottom-sheet BuildMenu to build the one tower type (3 upgrade tiers, 70% sell refund), towers auto-shoot visible projectiles, kills pop for coins with floating "+N" text, leaks cost lives, and the run ends in a win overlay after wave 6 or a lose overlay at 0 lives, both offering Retry / Menu. Every balance number lives in `.tres` resources under `data/` from day one; gameplay scripts contain zero hardcoded stats.
 

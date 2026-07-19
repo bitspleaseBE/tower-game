@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TowerData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/tower_data.gd" id="1_blycm"]
+
+[resource]
+script = ExtResource("1_blycm")
+id = &"popper"
+display_name = "Popper"
+cost = Array[int]([50, 60, 90])
+damage = Array[float]([1.0, 2.0, 4.0])
+range_px = Array[float]([180.0, 200.0, 230.0])
+fire_interval = Array[float]([0.8, 0.7, 0.55])

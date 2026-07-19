@@ -88,11 +88,17 @@ func _initialize() -> void:
 	else:
 		print("OK Skin pattern on decor")
 
-	if game.get_node_or_null("UI/Root/TopBar") == null or game.get_node_or_null("UI/Root/BottomBar") == null:
-		push_error("Missing UI TopBar/BottomBar")
+	if game.get_node_or_null("UI/Hud") == null or game.get_node_or_null("UI/BuildMenu") == null:
+		push_error("Missing UI Hud/BuildMenu")
 		failed = true
 	else:
 		print("OK HUD zones")
+
+	if game.get_node_or_null("UI/Hud").get_node_or_null("%MenuButton") == null:
+		push_error("Missing MenuButton on Hud")
+		failed = true
+	else:
+		print("OK MenuButton")
 
 	game.queue_free()
 
