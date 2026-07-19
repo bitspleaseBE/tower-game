@@ -51,16 +51,6 @@ every shipped third-party file appears here, and only shipped files do.
   - assets/ui/icon_star.png (pack: PNG/White/2x/star.png)
   - assets/ui/icon_lock.png (pack: PNG/White/2x/locked.png)
 
-## UI Pack — Kenney
-- License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
-- Source: https://kenney.nl/assets/ui-pack
-- Files used:
-  - assets/ui/button_9slice.png (pack: Red/Default/button_rectangle_depth_gloss.png)
-  - assets/ui/button_pressed_9slice.png (pack: Red/Default/button_rectangle_depth_flat.png)
-  - assets/ui/button_secondary_9slice.png (pack: Yellow/Default/button_rectangle_depth_gloss.png)
-  - assets/ui/button_secondary_pressed_9slice.png (pack: Yellow/Default/button_rectangle_depth_flat.png)
-  - assets/ui/panel_9slice.png (pack: Grey/Default/button_rectangle_depth_gloss.png)
-
 ## Soft FX discs — original
 - Soft white discs/stars authored for kill confetti / muzzle / puff (no black matte):
   - assets/fx/particle_confetti.png
