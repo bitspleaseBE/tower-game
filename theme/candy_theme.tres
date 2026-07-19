@@ -1,8 +1,9 @@
-[gd_resource type="Theme" load_steps=17 format=3]
+[gd_resource type="Theme" load_steps=18 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/ui/toggle_on.png" id="1_toggle_on"]
 [ext_resource type="Texture2D" path="res://assets/ui/toggle_off.png" id="2_toggle_off"]
 [ext_resource type="Texture2D" path="res://assets/ui/slider_grabber.png" id="3_grabber"]
+[ext_resource type="FontFile" uid="uid://d3dv72yfrayea" path="res://assets/fonts/kenney_future.ttf" id="4_font"]
 
 [sub_resource type="StyleBoxFlat" id="btn_normal"]
 content_margin_left = 32.0
@@ -202,6 +203,7 @@ corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
 [resource]
+default_font = ExtResource("4_font")
 default_font_size = 30
 Button/colors/font_color = Color(1, 1, 1, 1)
 Button/colors/font_disabled_color = Color(0.31, 0.227, 0.357, 0.6)

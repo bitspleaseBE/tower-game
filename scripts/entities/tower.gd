@@ -2,14 +2,41 @@ class_name Tower
 extends Node2D
 ## Auto-targeting tower. Stats from TowerData; Skin + RangeRing are visual only.
 
-const BASE_SQUARE: Texture2D = preload("res://assets/tower/base_square.png")
-const BASE_HEX: Texture2D = preload("res://assets/tower/base_hex.png")
+## Tier index 0/1/2 → base / t2 / t3 candy art. Square bases for most; hex for chiller.
+const BASE_SQUARE_TIERS: Array[Texture2D] = [
+	preload("res://assets/tower/base_square.png"),
+	preload("res://assets/tower/base_square_t2.png"),
+	preload("res://assets/tower/base_square_t3.png"),
+]
+const BASE_HEX_TIERS: Array[Texture2D] = [
+	preload("res://assets/tower/base_hex.png"),
+	preload("res://assets/tower/base_hex_t2.png"),
+	preload("res://assets/tower/base_hex_t3.png"),
+]
 const WEAPON_TEXTURES := {
-	&"popper": preload("res://assets/tower/weapon_popper.png"),
-	&"lobber": preload("res://assets/tower/weapon_lobber.png"),
-	&"chiller": preload("res://assets/tower/weapon_chiller.png"),
-	&"longshot": preload("res://assets/tower/weapon_longshot.png"),
+	&"popper": [
+		preload("res://assets/tower/weapon_popper.png"),
+		preload("res://assets/tower/weapon_popper_t2.png"),
+		preload("res://assets/tower/weapon_popper_t3.png"),
+	],
+	&"lobber": [
+		preload("res://assets/tower/weapon_lobber.png"),
+		preload("res://assets/tower/weapon_lobber_t2.png"),
+		preload("res://assets/tower/weapon_lobber_t3.png"),
+	],
+	&"chiller": [
+		preload("res://assets/tower/weapon_chiller.png"),
+		preload("res://assets/tower/weapon_chiller_t2.png"),
+		preload("res://assets/tower/weapon_chiller_t3.png"),
+	],
+	&"longshot": [
+		preload("res://assets/tower/weapon_longshot.png"),
+		preload("res://assets/tower/weapon_longshot_t2.png"),
+		preload("res://assets/tower/weapon_longshot_t3.png"),
+	],
 }
+## Footprint grows hard on upgrade so towers read bulkier (not just stripe pips).
+const TIER_SCALE := [1.0, 1.28, 1.55]
 const STREAM_DROPLETS := 4
 const STREAM_SPEED := 420.0
 const POOL_RADIUS := [42.0, 50.0, 58.0]
@@ -258,13 +285,14 @@ func _rebuild_skin() -> void:
 		child.free()
 	_weapon = null
 
-	var scale_factor := 1.0 + float(tier) * 0.08
 	var id := data.id if data != null else &"popper"
+	var tier_i := clampi(tier, 0, 2)
+	var scale_factor: float = TIER_SCALE[tier_i]
 	var footprint := 58.0 * scale_factor
 
 	var base := Sprite2D.new()
 	base.name = "Base"
-	base.texture = BASE_HEX if id == &"chiller" else BASE_SQUARE
+	base.texture = _base_texture_for(id, tier_i)
 	var base_scale := footprint / float(base.texture.get_width())
 	base.scale = Vector2(base_scale, base_scale)
 	base.self_modulate = Color.WHITE
@@ -272,15 +300,14 @@ func _rebuild_skin() -> void:
 
 	_weapon = Sprite2D.new()
 	_weapon.name = "Weapon"
-	_weapon.texture = WEAPON_TEXTURES.get(id, WEAPON_TEXTURES[&"popper"]) as Texture2D
-	var weapon_scale := (footprint * 1.1) / float(_weapon.texture.get_width())
+	_weapon.texture = _weapon_texture_for(id, tier_i)
+	var weapon_scale := (footprint * 1.15) / float(_weapon.texture.get_width())
 	_weapon.scale = Vector2(weapon_scale, weapon_scale)
 	_weapon.position = Vector2(0.0, -8.0 * scale_factor)
 	_weapon.self_modulate = Color.WHITE
 	_weapon.rotation = prev_aim
 	skin.add_child(_weapon)
 
-	_add_tier_stripes(scale_factor)
 	_add_bubble_highlight(scale_factor)
 
 	skin.scale = Vector2.ONE
@@ -288,15 +315,14 @@ func _rebuild_skin() -> void:
 	skin.modulate = Color.WHITE
 
 
-func _add_tier_stripes(scale_factor: float) -> void:
-	for s: int in tier + 1:
-		var stripe := Polygon2D.new()
-		stripe.color = Color(1.0, 0.84, 0.42, 1.0)
-		var y := 10.0 * scale_factor + float(s) * 5.0
-		stripe.polygon = PackedVector2Array([
-			Vector2(-10, y), Vector2(10, y), Vector2(10, y + 3), Vector2(-10, y + 3),
-		])
-		skin.add_child(stripe)
+func _base_texture_for(id: StringName, tier_i: int) -> Texture2D:
+	var bases: Array[Texture2D] = BASE_HEX_TIERS if id == &"chiller" else BASE_SQUARE_TIERS
+	return bases[clampi(tier_i, 0, bases.size() - 1)]
+
+
+func _weapon_texture_for(id: StringName, tier_i: int) -> Texture2D:
+	var variants: Array = WEAPON_TEXTURES.get(id, WEAPON_TEXTURES[&"popper"]) as Array
+	return variants[clampi(tier_i, 0, variants.size() - 1)] as Texture2D
 
 
 func _add_bubble_highlight(scale_factor: float) -> void:

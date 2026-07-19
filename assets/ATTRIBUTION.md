@@ -13,13 +13,11 @@ every shipped third-party file appears here, and only shipped files do.
   - assets/background_kenney/decor_tree.png (pack: towerDefense_tile131.png)
   - assets/background_kenney/decor_bush.png (pack: towerDefense_tile136.png)
   - assets/background_kenney/decor_rock.png (pack: towerDefense_tile134.png)
-  - assets/tower/base_square.png (pack: towerDefense_tile180.png)
-  - assets/tower/base_hex.png (pack: towerDefense_tile181.png)
 
 ## Tower Defense (Top-Down) — Kenney originals (backup)
 - License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
 - Source: https://kenney.nl/assets/tower-defense-top-down
-- Note: Untouched Kenney copies kept under `assets/tower_kenney/` after candy remount of live `assets/tower/` weapons.
+- Note: Untouched Kenney copies kept under `assets/tower_kenney/` after candy remount of live `assets/tower/` weapons and bases.
 - Files used:
   - assets/tower_kenney/base_square.png (pack: towerDefense_tile180.png)
   - assets/tower_kenney/base_hex.png (pack: towerDefense_tile181.png)
@@ -74,27 +72,39 @@ every shipped third-party file appears here, and only shipped files do.
 - License: project-owned generated art for this game.
 - Files used:
   - assets/tower/weapon_popper.png (lollipop cannon)
+  - assets/tower/weapon_popper_t2.png / weapon_popper_t3.png (bulkier upgrades)
   - assets/tower/weapon_lobber.png (water-balloon mortar)
+  - assets/tower/weapon_lobber_t2.png / weapon_lobber_t3.png
   - assets/tower/weapon_chiller.png (water cannon)
+  - assets/tower/weapon_chiller_t2.png / weapon_chiller_t3.png
   - assets/tower/weapon_longshot.png (space gun)
+  - assets/tower/weapon_longshot_t2.png / weapon_longshot_t3.png
   - assets/tower/projectile_laser.png
   - assets/tower/projectile_balloon.png
   - assets/fx/particle_water_drop.png
   - assets/fx/particle_water_pool.png
-  - assets/tower/base_square.png (Kenney base retained)
-  - assets/tower/base_hex.png (Kenney base retained)
-  - assets/background/grass_tile.png (pastel candy meadow)
+  - assets/tower/base_square.png / base_square_t2.png / base_square_t3.png (marshmallow pedestal)
+  - assets/tower/base_hex.png / base_hex_t2.png / base_hex_t3.png (sugar-crystal hex pedestal)
+  - assets/background/grass_tile.png (pastel candy meadow — pink / purple / blue)
   - assets/background/path_straight.png (frosting path tile)
   - assets/background/pad.png (marshmallow pad)
   - assets/background/decor_tree.png (lollipop tree)
   - assets/background/decor_bush.png (cotton-candy bush)
   - assets/background/decor_rock.png (jellybean rock)
+  - assets/background/decor_gumdrop.png (faceted gumdrop)
+  - assets/background/decor_swirl.png (soft-serve ice-cream swirl)
 
 ## Settings chrome — original
 - Candy toggle + slider knob for Settings visibility:
   - assets/ui/toggle_on.png
   - assets/ui/toggle_off.png
   - assets/ui/slider_grabber.png
+
+## UI Pack — Kenney
+- License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
+- Source: https://kenney.nl/assets/ui-pack
+- Files used:
+  - assets/fonts/kenney_future.ttf (pack: Font/Kenney Future.ttf)
 
 ## Interface Sounds — Kenney
 - License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)

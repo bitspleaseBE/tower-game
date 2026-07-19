@@ -3,12 +3,13 @@ extends Control
 
 const TowerScene: PackedScene = preload("res://scenes/entities/tower.tscn")
 const COIN_ICON: Texture2D = preload("res://assets/ui/icon_coin.png")
-const TOWER_SWATCHES := {
-	&"popper": Color(1.0, 0.56, 0.69, 1.0),
-	&"lobber": Color(1.0, 0.839, 0.42, 1.0),
-	&"chiller": Color(0.553, 0.816, 0.941, 1.0),
-	&"longshot": Color(0.749, 0.627, 0.91, 1.0),
+const TOWER_ICONS := {
+	&"popper": preload("res://assets/tower/weapon_popper.png"),
+	&"lobber": preload("res://assets/tower/weapon_lobber.png"),
+	&"chiller": preload("res://assets/tower/weapon_chiller.png"),
+	&"longshot": preload("res://assets/tower/weapon_longshot.png"),
 }
+const TOWER_ICON_SIZE := 56.0
 
 @export var towers: Array[TowerData] = []
 
@@ -138,22 +139,18 @@ func _build_option_buttons() -> void:
 		content.add_theme_constant_override("separation", 4)
 		btn.add_child(content)
 
-		var swatch_row := CenterContainer.new()
-		swatch_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		content.add_child(swatch_row)
+		var icon_row := CenterContainer.new()
+		icon_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		content.add_child(icon_row)
 
-		var icon := Panel.new()
-		icon.name = "Swatch"
-		icon.custom_minimum_size = Vector2(28, 28)
+		var icon := TextureRect.new()
+		icon.name = "Icon"
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		var style := StyleBoxFlat.new()
-		style.bg_color = TOWER_SWATCHES.get(tower_data.id, Color.WHITE)
-		style.corner_radius_top_left = 14
-		style.corner_radius_top_right = 14
-		style.corner_radius_bottom_left = 14
-		style.corner_radius_bottom_right = 14
-		icon.add_theme_stylebox_override("panel", style)
-		swatch_row.add_child(icon)
+		icon.texture = TOWER_ICONS.get(tower_data.id) as Texture2D
+		icon.custom_minimum_size = Vector2(TOWER_ICON_SIZE, TOWER_ICON_SIZE)
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon_row.add_child(icon)
 
 		var name_lbl := Label.new()
 		name_lbl.name = "NameLabel"

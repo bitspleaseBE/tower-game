@@ -48,13 +48,6 @@ func _build_skin() -> void:
 	pad.scale = Vector2(pad_scale, pad_scale)
 	skin.add_child(pad)
 
-	var shine := Polygon2D.new()
-	shine.name = "Shine"
-	shine.color = Color(1.0, 1.0, 1.0, 0.5)
-	shine.polygon = _ellipse_poly(8.0, 8.0, 12)
-	shine.position = Vector2(-14.0, -14.0)
-	skin.add_child(shine)
-
 
 func _start_breathe() -> void:
 	var phase := randf() * 1.8
