@@ -66,6 +66,9 @@ jobs:
       - name: Stage 3 smoke (juice engine)
         run: godot --headless --path . --script scripts/debug/stage03_smoke.gd
 
+      - name: Play smoke (build / kill / lose)
+        run: godot --headless --path . --script scripts/debug/play_smoke.gd
+
       - name: Export web build
         run: |
           mkdir -p build/web

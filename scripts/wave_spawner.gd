@@ -109,8 +109,9 @@ func _spawn_group(group: SpawnGroup) -> void:
 		if _run_over:
 			_groups_remaining = maxi(0, _groups_remaining - 1)
 			return
-		_game._spawn_enemy(group.enemy)
-		_alive_enemies += 1
+		var spawned: Variant = _game._spawn_enemy(group.enemy)
+		if spawned != null:
+			_alive_enemies += 1
 		if i < group.count - 1:
 			await get_tree().create_timer(group.spawn_interval).timeout
 			if _run_over:
