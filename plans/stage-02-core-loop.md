@@ -36,7 +36,7 @@ Starter numbers below are deliberate first guesses — tune freely, but ONLY by 
 - [ ] `data/enemies/normal.tres` — id `normal`, hp 3, speed 70, bounty 5, lives_cost 1, armor 0.
 - [ ] `data/enemies/fast.tres` — id `fast`, hp 2, speed 120, bounty 6, lives_cost 1, armor 0.
 - [ ] `data/towers/popper.tres` — id `popper`, display_name "Popper", behavior SINGLE, cost [50, 60, 90], damage [1, 2, 4], range_px [180, 200, 230], fire_interval [0.8, 0.7, 0.55], sell_refund_ratio 0.7. (This becomes Stage 4's rapid single-target identity.)
-- [ ] `data/maps/map_01.tres` — id `map_01`, display_name "Meadow Munch", starting_coins 100, starting_lives 20. `path_points`: a portrait S-route through the board band (y ≈ 160–1040; HUD strips own the rest), entering off-screen left and exiting off-screen right, e.g. `(-40, 280), (560, 280), (560, 540), (160, 540), (160, 820), (560, 820), (560, 1000), (760, 1000)`. If Stage 1's hand-placed route differs meaningfully, copy Stage 1's points into the `.tres` — from this stage on the resource is the single source of truth. `pad_positions`: 8 pads in the S-pockets, each ≥ 90 px from the path centerline and ≥ 110 px from each other, all fully on the 720-wide screen. A set that satisfies those constraints for the path above: `(240, 410), (450, 410), (650, 400), (280, 680), (470, 680), (260, 940), (450, 940), (650, 910)` — re-check the constraints if you adjust either list; thumb-test in devtools. 6 waves:
+- [ ] `data/maps/map_01.tres` — id `map_01`, display_name "Meadow Munch", starting_coins 100, starting_lives 20. Copy Stage 1's route and pads **verbatim** into the `.tres` — from this stage on the resource is the single source of truth (delete the consts from `game.gd` after the copy). `path_points`: `(-40, 280), (560, 280), (560, 540), (160, 540), (160, 820), (560, 820), (560, 1000), (760, 1000)`. `pad_positions`: `(180, 400), (420, 400), (650, 410), (360, 660), (620, 660), (70, 690), (300, 930), (440, 1020)` — already verified ≥ 90 px off-path and ≥ 110 px apart; if you must adjust, re-check both rules and thumb-test in DevTools. 6 waves:
   1. 6× normal, interval 1.2
   2. 10× normal, interval 1.0
   3. 8× normal interval 1.0 + 4× fast (start_delay 4.0, interval 0.9)
@@ -100,8 +100,8 @@ Starter numbers below are deliberate first guesses — tune freely, but ONLY by 
 
 ### 8. HUD
 
-- [ ] `scenes/ui/hud.tscn` + `scripts/ui/hud.gd`, instanced inside `game.tscn`'s CanvasLayer, restyling Stage 1's static strips:
-  - Top strip (anchored top, safe margin): `LivesLabel` ("♥ 20"), `CoinsLabel` ("● 100"), `WaveLabel` ("Wave 2/6").
+- [ ] `scenes/ui/hud.tscn` + `scripts/ui/hud.gd`, instanced inside `game.tscn`'s CanvasLayer, replacing Stage 1's static `TopBar` strip (same screen zone — top-anchored, 12 px safe margin):
+  - Top strip: `LivesLabel` ("♥ 20"), `CoinsLabel` ("● 100"), `WaveLabel` ("Wave 2/6"), and `MenuButton` ("Menu", min height 56, top-right) — mid-run exit must survive the rebuild.
   - `CountdownLabel` (center-top of board): "Next wave in 7…" ticking per second; hidden while a wave runs.
   - Root Control and all non-interactive containers set `mouse_filter = MOUSE_FILTER_IGNORE` so board taps pass through.
 - [ ] Wire to the Events bus: `coins_changed`, `lives_changed`, `wave_started`, `wave_cleared`. Countdown display is driven by a local signal from the spawner (`countdown_tick(seconds_left)`) relayed by `game.gd` — countdown is scene-local, not on the canonical bus.
@@ -110,20 +110,23 @@ Starter numbers below are deliberate first guesses — tune freely, but ONLY by 
 
 ### 9. Game orchestration (`scripts/game.gd` rewrite, `scenes/game.tscn` rebuild)
 
-- [ ] Rebuild `scenes/game.tscn` (retiring the placeholder for good):
+- [ ] Rebuild `scenes/game.tscn` (retiring Stage 1's placeholder HUD strips for good, keeping the Stage 1 display contract):
   ```
   Game (Node2D, script game.gd)
-  ├─ Board (Node2D)               # Stage 1 pastel ground decor kept/adapted
+  ├─ Board (Node2D)               # recentered via _recenter_board(); pastel ground overdraw kept/adapted
+  │  ├─ Decor (Node2D)            # SpawnMarker + BaseMarker (Skin swap points) — keep or equivalent
   │  ├─ Path (Path2D)             # curve built at runtime from MapData.path_points
-  │  │  └─ PathLine (Line2D)      # thick rounded candy path, points from the same data
-  │  └─ Pads (Node2D)             # BuildPad instances
+  │  │  └─ PathLine (Line2D)      # thick rounded candy path; PathBorder optional if PathLine alone reads
+  │  └─ Pads (Node2D)             # BuildPad instances from MapData.pad_positions
   ├─ Spawner (Node, script wave_spawner.gd)
   └─ UI (CanvasLayer)
-     ├─ Hud (instance)
-     ├─ BuildMenu (instance)
+     ├─ Hud (instance)            # replaces Stage 1 TopBar zone (incl. MenuButton)
+     ├─ BuildMenu (instance)      # occupies Stage 1 BottomBar / thumb-zone
      └─ ResultOverlay (instance)
   ```
-- [ ] `game.gd`: `var map_data: MapData` defaulting to `preload("res://data/maps/map_01.tres")` with a comment that Stage 5's MapSelect will inject it. `_ready()` builds a `Curve2D` from `path_points` into `Path`, sets `PathLine.points`, spawns pads, sets `coins = map_data.starting_coins` / `lives = map_data.starting_lives` and emits `coins_changed` / `lives_changed`.
+  Explicit retirements: Stage 1's static `TopBar` / `BottomBar` / `HintLabel` Controls are deleted once `Hud` + `BuildMenu` own those zones. Do not leave an orphaned hint bar under the sheet.
+- [ ] `game.gd`: `var map_data: MapData` defaulting to `preload("res://data/maps/map_01.tres")` with a comment that Stage 5's MapSelect will inject it. `_ready()` builds a `Curve2D` from `path_points` into `Path`, sets `PathLine.points`, spawns pads, calls `_recenter_board()` and connects `get_viewport().size_changed` to it (Stage 1 pattern — required), sets `coins = map_data.starting_coins` / `lives = map_data.starting_lives` and emits `coins_changed` / `lives_changed`.
+- [ ] Mid-run navigation: `MenuButton` (HUD) and `ui_cancel` in `_unhandled_input` both call `_go_back()` → `change_scene_to_file("res://scenes/main_menu.tscn")` this stage; Stage 5 retargets both to MapSelect. Do not drop the exit path.
 - [ ] Economy lives here: `spend(amount) -> bool` (cost-gate), `earn(amount)`; connect `Events.enemy_killed` → earn bounty; `Events.enemy_leaked` → `lives = maxi(0, lives - enemy.data.lives_cost)`, emit `lives_changed`, and at `lives == 0` → stop spawner, emit `Events.run_lost.emit(map_data.id)` exactly once (guard flag).
 - [ ] One-thumb input: `game.gd._unhandled_input` handles ONLY `InputEventMouseButton`, left button, `pressed` — with the default `emulate_mouse_from_touch=true`, real touches arrive here too as emulated mouse events; do NOT also handle `InputEventScreenTouch` or one physical tap fires the handler twice (open-then-close bug). Convert to world via `get_global_mouse_position()`, find the nearest pad in group `build_pads` within 56 px: found → open BuildMenu for that pad (build or manage mode by `pad.tower`); none → dismiss BuildMenu and hide any RangeRing. UI buttons consume their events before `_unhandled_input`, so tap-away "just works".
 
@@ -186,7 +189,7 @@ Stage 2 ships the minimal feel floor (the full toolkit is Stage 3):
 
 ## Acceptance criteria
 
-- [ ] From New Game, map 1 loads showing path, 8 pads, HUD (♥ 20, ● 100, Wave 1/6) and a ticking 7 s countdown; the wave auto-starts with no input.
+- [ ] From New Game, map 1 loads showing path, Decor markers, 8 pads at Stage 1's canonical positions, HUD (♥ 20, ● 100, Wave 1/6, Menu), and a ticking 7 s countdown; the wave auto-starts with no input. Menu and Esc return to the main menu mid-run. On Pixel 7 / iPad Mini presets the board stays centered (`_recenter_board()` intact).
 - [ ] Tapping an empty pad opens the BuildMenu bottom sheet; the build button is disabled when coins < cost; buying deducts coins, places a tower with bounce-in, and closes the sheet.
 - [ ] Tap-away anywhere (including during a wave) dismisses the sheet; tapping a different pad switches the sheet to that pad. One tap produces exactly one open/close action with mouse and with touch emulation.
 - [ ] Tapping a built tower opens manage mode with a visible range ring; upgrade raises tier (visibly bigger Skin, larger ring) and costs `cost[tier]`; tier 3 shows "MAX"; sell refunds exactly `floor(0.7 × total spent)` and empties the pad. (Waived only if the documented cut-line was taken — then the PR must say so.)
@@ -216,7 +219,7 @@ Stage 2 ships the minimal feel floor (the full toolkit is Stage 3):
 - Juice autoload, particles/confetti, pooling, screen shake, wave banner (`scenes/ui/wave_banner.tscn`), stress harness, `scripts/perf_budget.gd` — **Stage 3**.
 - The other three tower types/behaviors (SPLASH/SLOW/SNIPER logic), swarm/armored/boss archetypes, waves 7–15 of map 1, multi-tower BuildMenu grid, debug fast-forward/free-build — **Stage 4**.
 - Maps 2–3, `scenes/map_select.tscn`, endless mode, `SaveGame` autoload/persistence, Next Map/Endless buttons on ResultOverlay — **Stage 5**.
-- Kenney art, icon, theme nine-patches — **Stage 6**. All SFX/music — **Stage 7**. Balance polish beyond "a careful first-timer can win map 1's 6 waves" — **Stage 8**.
+- Kenney art, icon, theme nine-patches — **Stage 6** ([stage-06-kenney-art.md](stage-06-kenney-art.md)). All SFX/music — **Stage 7** ([stage-07-audio.md](stage-07-audio.md)). Balance polish beyond "a careful first-timer can win map 1's 6 waves" — **Stage 8** ([stage-08-release.md](stage-08-release.md)). Any cut (e.g. manage mode) must list `## Stage 8 follow-ups` in the PR.
 
 ## Handoff
 
@@ -224,6 +227,6 @@ After this stage, later stages may rely on:
 
 - The complete data schema in `scripts/data/` (TowerData/EnemyData/WaveData/SpawnGroup/MapData with behavior enum, armor, is_boss, endless params) and instances `data/towers/popper.tres`, `data/enemies/{normal,fast}.tres`, `data/maps/map_01.tres` (6 waves) — Stage 4 adds towers/enemies/waves as pure data.
 - `Events` autoload live with the full canonical signal set; HUD/economy/lives already wired through it.
-- Working scenes with `Skin` swap points and committed `.uid`s: `scenes/entities/{tower,enemy,projectile,build_pad}.tscn`, `scenes/ui/{hud,build_menu,result_overlay}.tscn`, rebuilt `scenes/game.tscn` (root `Game`) with `game.gd` orchestration, `wave_spawner.gd` state machine, and `map_data` injectable for Stage 5.
+- Working scenes with `Skin` swap points and committed `.uid`s: `scenes/entities/{tower,enemy,projectile,build_pad}.tscn`, `scenes/ui/{hud,build_menu,result_overlay}.tscn`, rebuilt `scenes/game.tscn` (root `Game`) with `game.gd` orchestration (including `_recenter_board()` + mid-run Menu/`ui_cancel`), `wave_spawner.gd` state machine, and `map_data` injectable for Stage 5. Map 1 pads/path in `data/maps/map_01.tres` match Stage 1's canonical coordinates.
 - Spawn/despawn funneled through named helpers (`_spawn_enemy`, projectile instantiation in `tower.gd`) ready for Stage 3 pooling; all feel tweens target `Skin` transforms only, ready to migrate into the Juice autoload.
 - The one-thumb interaction contract proven end-to-end: centralized pad hit-testing in `game.gd._unhandled_input` (emulated-mouse-only event path), bottom-sheet BuildMenu with cost-gating, 70% refund selling, mid-wave build/upgrade/sell.

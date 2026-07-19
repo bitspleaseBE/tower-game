@@ -2,7 +2,7 @@
 
 **Status:** not started
 
-Objective: after this stage, the live Pages build carries the complete combat vocabulary of blueprint v1.0. Tapping a pad opens a four-option candy grid — Popper (rapid), Lobber (splash), Chiller (slow), Longshot (sniper) — each with 3 linear tiers, distinct primitive silhouettes, and a per-type range ring; unaffordable options sit greyed and wiggle when tapped. Waves now mix all four critter archetypes — fast, swarm, armored (flat damage reduction), and a boss with an HP bar that caps the final wave with an entrance shake — and map 1 has grown from 6 to its full 14 handcrafted waves: beatable by an attentive first-timer in a 5–10 minute run where both tower choice and tier-3 upgrades visibly matter. Every new number is data in `.tres` files; every new interaction ships already juiced within `PerfBudget`; hidden 2×/4× fast-forward and free-build accelerators make this and all later tuning humane.
+Objective: after this stage, the live Pages build carries the complete combat roster for blueprint v1.0 (maps 2–3, endless, and saves arrive in Stage 5). Tapping a pad opens a four-option candy grid — Popper (rapid), Lobber (splash), Chiller (slow), Longshot (sniper) — each with 3 linear tiers, distinct primitive silhouettes, and a per-type range ring; unaffordable options sit greyed and wiggle when tapped. Waves now mix all four critter archetypes — fast, swarm, armored (flat damage reduction), and a boss with an HP bar that caps the final wave with an entrance shake — and map 1 has grown from 6 to its full 14 handcrafted waves: beatable by an attentive first-timer in a 5–10 minute run where both tower choice and tier-3 upgrades visibly matter. Every new number is data in `.tres` files; every new interaction ships already juiced within `PerfBudget`; hidden 2×/4× fast-forward and free-build accelerators make this and all later tuning humane.
 
 ## Prerequisites
 
@@ -90,7 +90,7 @@ All effects go through `scripts/autoload/juice.gd` helpers and its pools — ext
 - [ ] Sell: 4–5 pooled coin fliers arcing to the HUD coin label (reuse Stage 3's coin-fly) + a soft dust puff + pad Skin deflate-squash.
 - [ ] Per-behavior fire/impact FX: **Popper** existing recoil + small impact pop; **Lobber** Skin recoil-thump on fire, arcing projectile (Task 3), detonation = expanding ring (tween-scaled primitive, no particle cost) + a modest confetti puff; **Chiller** frost pulse = expanding icy ring from the tower + brief icy tint on affected enemies (the `_update_tint()` pipeline); **Longshot** muzzle flash + near-instant tracer read (stretched Skin on the fast projectile) + a single heavy impact pop with a stronger scale punch on the victim.
 - [ ] Boss entrance: when a `is_boss` enemy spawns — screen micro-shake (Stage 3's shake, stronger preset but inside its cap), boss Skin stomp-in (scale 1.4→1.0 TRANS_BACK), HP bar slides in. If `wave_banner`'s API accepts custom text, the boss wave banner reads "BOSS!" — one-line change at most, skip if the API resists.
-- [ ] Invalid-tap wiggle: confirming an unaffordable option wiggles that button horizontally (x ±6, ~3 oscillations, 0.2 s, tween on the button, pivot centered) and pulses the HUD coin label.
+- [ ] Invalid-tap wiggle via a reusable Juice helper (add now — Stage 5 MapSelect reuses it): `Juice.wiggle(item: CanvasItem, amp_px := 6.0, duration := 0.2)` — horizontal x ±amp, ~3 oscillations, pivot centered, returns to claimed rest (or pre-tween position if unclaimed). Confirming an unaffordable option calls `Juice.wiggle(button)` and pulses the HUD coin label. Do not leave this as an inline-only tween.
 - [ ] BuildMenu options pop in staggered (~0.05 s apart) when the sheet opens, reusing Stage 3's button-squish/pop helpers.
 
 ### 8. Debug accelerators + roster stress (before wave tuning)
@@ -181,14 +181,15 @@ Every new mechanic this stage ships lands already juiced (through `Juice`, insid
    ```
 2. Chrome http://localhost:8080, DevTools device toolbar, touch emulation ON, iPhone SE then Pixel 7 portrait. Playthroughs: (a) full 1× winning run with at least one of each tower type and one tier-3, timing it (5–10 min); (b) accelerated ×4 free-build run exercising every acceptance criterion — sell each type once, wiggle an unaffordable option, watch the boss bar, count leak costs against lives; (c) deliberate popper-only run to confirm wave 8 punishes it.
 3. Stress check: enable the debug gate, run the full-roster preset ≥ 60 s with the FPS overlay visible; confirm the Stage 3 floor holds and effect counts cap out gracefully. Also sanity-play with Chrome's 4× CPU throttle: no sustained drops below the Stage 3 floor, no per-frame console errors — that is what "smooth" means for this stage.
-4. Push the branch, open the PR; the `deploy.yml` PR web-export build must go green.
-5. After merge, on a real phone at https://bitspleasebe.github.io/tower-game/: one full one-thumb campaign run; confirm the four-option sheet is comfortably tappable with a right thumb and the boss finale feels like a finale.
+4. Branch deploy for roster stress on a real device (same workflow as Stage 3): `gh workflow run deploy.yml --ref stage-04-tower-roster`, `gh run watch`, then open the Pages URL with `?stress=1` on a mid-range Android phone and run the full-roster preset ≥ 60 s. Record FPS/worst-frame in the PR; if no phone is available, keep the emulation numbers and note the Stage 8 re-verify debt.
+5. Push the branch, open the PR; the `deploy.yml` PR web-export build must go green.
+6. After merge, on a real phone at https://bitspleasebe.github.io/tower-game/: one full one-thumb campaign run; confirm the four-option sheet is comfortably tappable with a right thumb and the boss finale feels like a finale. Re-run `deploy.yml` on `main` if the branch deploy overwrote Pages.
 
 ## Out of scope
 
 - Maps 2–3, `scenes/map_select.tscn`, unlock progression, endless mode, `SaveGame` autoload / `user://save.cfg`, ResultOverlay's Next Map/Endless buttons — **Stage 5**.
-- Kenney sprites, icons, theme nine-patches, any `assets/` or `inspiration/` changes — **Stage 6**. All SFX/music — **Stage 7**.
-- Final balance polish, difficulty-curve tuning beyond "beatable and interesting", performance tightening, copy pass, low-lives heart pulses and remaining idle juice — **Stage 8**.
+- Kenney sprites, icons, theme nine-patches, any `assets/` or `inspiration/` changes — **Stage 6** ([stage-06-kenney-art.md](stage-06-kenney-art.md)). All SFX/music — **Stage 7** ([stage-07-audio.md](stage-07-audio.md)).
+- Final balance polish, difficulty-curve tuning beyond "beatable and interesting", performance tightening, copy pass, low-lives heart pulses and remaining idle juice — **Stage 8** ([stage-08-release.md](stage-08-release.md)). PR must include `## Stage 8 follow-ups` for any cut (12-wave minimum, degraded FX, etc.).
 - Revisiting Stage 3 decisions: particle strategy, pool architecture, `PerfBudget` numbers (this stage may propose a cap change in the PR if measurements demand it, never silently edit).
 - Do not modify `export_presets.cfg`, renderer settings, `deploy.yml`, or the 720×1280 display contract.
 
@@ -202,3 +203,4 @@ After this stage, later stages may rely on:
 - **`data/maps/map_01.tres` complete at 14 waves** — the authoring template (teaching arc, group mixing, per-wave coin totals) for Stage 5's maps 2–3.
 - **Debug accelerators behind Stage 3's gate**: ×1/×2/×4 fast-forward (time_scale, self-resetting on run end), free-build toggle, full-roster stress preset — the tuning workflow Stages 5 and 8 are built on.
 - **Juice coverage**: every roster interaction (build/upgrade/sell, all four fire/impact styles, boss entrance, invalid tap) already wired through `Juice` within `PerfBudget` — Stage 6 only reskins `Skin` nodes; Stage 7 hooks SFX onto the same events/moments.
+- **`Juice.wiggle(item)` API**: public, unregistered-safe helper used by BuildMenu unaffordable confirms; Stage 5 locked MapCards call the same function.

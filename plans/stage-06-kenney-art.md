@@ -67,14 +67,18 @@ Skip if MISSING (same pack as task 3).
 - [ ] BuildMenu: replace the 26 px color-swatch `Icon` slot (Stage 4's named swap point in `build_menu.gd`/`.tscn`) with a `TextureRect` showing each type's weapon or composed tier-1 look, `expand_mode`/`stretch_mode` set to fit ~40 px, `mouse_filter = MOUSE_FILTER_IGNORE`. Greyed-affordability modulate keeps working on the textures.
 - [ ] Verify: build/upgrade/sell each type; recoil squash, bounce-in, upgrade sparkle + ring, sell deflate all fire on the sprites; range rings unchanged (they sit beside `Skin`).
 
-### 6. UI icons + HUD (from `ui/kenney-game-icons`)
+### 6. UI icons + HUD + MapSelect cards (from `ui/kenney-game-icons` and/or top-down pack)
 
-Skip if MISSING.
+Skip icon/HUD swaps if the icons pack is MISSING; MapSelect still gets a task-6b pass either way (primitives stay if no art).
 
-- [ ] Promote to `assets/ui/`: `icon_heart.png`, `icon_coin.png` (single-color pack sprites; tint at use sites — hearts `#FF6B81`, coins `#FFC94D` per the Stage 1 palette).
+- [ ] Promote to `assets/ui/`: `icon_heart.png`, `icon_coin.png` (single-color pack sprites; tint at use sites — hearts `#FF6B81`, coins `#FFC94D` per the Stage 1 palette). Optional extras if clearly better than primitives: `icon_star.png` (beaten badge), `icon_lock.png` (locked card affordance).
 - [ ] HUD (`scenes/ui/hud.tscn` + `hud.gd`): replace the "♥"/"●" text glyphs with a 32-ish px `TextureRect` icon beside each Label (HBox per stat); `hud.gd` format strings become plain numbers. Heart-thump / coin-pulse juice retargets the small HBox or Label exactly as before (re-check `pivot_offset` centering). `coin_anchor()` must still return the coin stat's position — coin flyers land on it.
 - [ ] Coin flyer: swap `scenes/ui/coin_flyer.tscn`'s golden disc under `Skin` for `icon_coin.png` tinted gold, ~20 px.
 - [ ] Cost glyphs elsewhere ("50●" in BuildMenu / sell labels): keeping the text glyph is acceptable; if the font swap in task 7 drops the glyph, switch those strings to `"50c"`-free form — number + small coin TextureRect. Log whichever you did.
+- [ ] **MapSelect card art (Stage 5 named swap points — required this stage):**
+  - `MapCard` Badge `Skin`: replace the gold-star Polygon2D with `icon_star.png` (or keep the primitive if icons MISSING — log follow-up). Idle pulse still targets `Skin`.
+  - `MapPreview` (`scripts/ui/map_preview.gd`): keep the data-driven `_draw()` polyline + pad dots as the default (they ARE the three route shapes). Optional upgrade only if a clear thumbnail sprite exists per map in a downloaded pack — then swap via a TextureRect sibling and hide the draw; never invent baked art that drifts from `MapData.path_points`. Document the choice in the PR.
+  - Locked-card dim + `Juice.wiggle` behavior must still read on the reskinned cards; Settings + MapSelect theme A/B in task 7.
 
 ### 7. Theme nine-patches + optional font (from `ui/kenney-ui-pack`)
 
@@ -82,7 +86,7 @@ Skip if MISSING. This category has an explicit keep-if-worse rule: the Stage 1 S
 
 - [ ] Promote the minimal button/panel sprites to `assets/ui/` (`button_9slice.png`, `button_pressed_9slice.png`, `panel_9slice.png` — pick a rounded chunky set; prefer light sprites and tint with `StyleBoxTexture.modulate_color` to the candy palette).
 - [ ] Rebuild `theme/candy_theme.tres` Button `normal/hover/pressed/disabled` and Panel/PanelContainer styles as `StyleBoxTexture` with `texture_margin_*` nine-slice margins; preserve the pressed content-sink (content margins shift ~4 px), disabled greying, and the existing StyleBoxFlat focus ring (mixing box types is fine). Keep the `ButtonSecondary` variation distinct.
-- [ ] A/B eyeball at 88 px button height on the main menu, BuildMenu sheet, and ResultOverlay: if the nine-patches read worse than the gumdrops, revert the theme (keep the promoted files out of `assets/` — reconcile ATTRIBUTION per the skill) and log the decision. Do not ship a downgrade for the sake of using the pack.
+- [ ] A/B eyeball at 88 px button height on the main menu, Settings, MapSelect, BuildMenu sheet, and ResultOverlay: if the nine-patches read worse than the gumdrops, revert the theme (keep the promoted files out of `assets/` — reconcile ATTRIBUTION per the skill) and log the decision. Do not ship a downgrade for the sake of using the pack.
 - [ ] Optional (only if it clearly improves): set the pack's rounded TTF as the theme's `default_font`. Check payload (+~50–100 KB is fine), verify every screen's text (glyph coverage is basic Latin — another reason task 6 moved ♥/● to icons), and confirm web-export rendering.
 
 ### 8. FX sprites (from `fx/kenney-particle-pack`)
@@ -106,7 +110,7 @@ Skip if MISSING.
 
 ### 11. Stage the audio proposals (end of session — unconditional)
 
-- [ ] Invoke the `find-assets` skill with args `audio` and the needs list from blueprint §13 + Stage 7's hook list: kill pops, build place / upgrade / sell, per-tower-type shots, hit, coin tink, leak/heart loss, countdown tick, wave-start, win/lose stings, UI button taps, and ONE cheerful upbeat music loop. **CC0 only** (§13 — commercial release, obligation-free). Kenney audio packs (Digital Audio, Interface Sounds, Music Jingles…) are the expected first stops.
+- [ ] Invoke the `find-assets` skill with args `audio` and the needs list from blueprint §13 + the Stage 7 hook matrix in [`stage-07-audio.md`](stage-07-audio.md) (same list, authoritative there): kill pops, build place / upgrade / sell, per-tower-type shots, hit, coin tink, leak/heart loss, countdown tick, wave-start, win/lose stings, unlock/new-best, UI button taps, and ONE cheerful upbeat music loop. **CC0 only** (§13 — commercial release, obligation-free). Kenney audio packs (Digital Audio, Interface Sounds, Music Jingles…) are the expected first stops.
 - [ ] Result: 2–4 proposals under `inspiration/audio/<pack-slug>/` each with a complete `SOURCE.md`; manual-download `Status:` lines are fine (that's the point — the team downloads before Stage 7). Do NOT promote any audio into `assets/` and do NOT wire any sound — Stage 7 owns all of that (including the ui-pack's bundled click sounds: leave them unpromoted).
 
 ### 12. Prune, reconcile attribution, verify, commit, PR
@@ -149,7 +153,7 @@ This stage's juice work is making the existing juice land on real art (regressio
 - [ ] Every DOWNLOADED category (per task 1's table) ships real Kenney art at its swap points; every MISSING category demonstrably still ships its Stage-5 primitives and appears in the PR's follow-ups list. Nothing was silently skipped.
 - [ ] One perspective family on the board: no isometric renders anywhere; `inspiration/tower/kenney-tower-defense-kit/` is gone; the decision is in the PR description.
 - [ ] Zero gameplay diffs: `git diff main -- data/ scripts/data/` is empty; a full map 1 campaign run plays identically (same waves/costs/lives outcomes) before and after the reskin; upgrade/sell math, endless mode, and saves are untouched.
-- [ ] Zero juice regressions: every item in the Juice checklist verified on the deployed build; all tweens still target `Skin`/swap-point nodes only (spot-check the diff: entity scripts changed only in skin construction).
+- [ ] Zero juice regressions: every item in the Juice checklist verified on the deployed build; all tweens still target `Skin`/swap-point nodes only (spot-check the diff: entity scripts changed only in skin construction). MapSelect cards show Badge/Preview swap results (or logged MISSING follow-ups); locked-card wiggle still works.
 - [ ] Pool hygiene survives the reskin: kill and recycle 20+ critters across archetypes — every reused enemy shows the correct sprite, tint, and HpBar state for its new identity.
 - [ ] `assets/` exists with role-named files under `background|enemies|tower|ui|fx` (only promoted categories), each with committed `.import`/`.uid` sidecars (or the PR notes Godot was unavailable); `assets/ATTRIBUTION.md` lists exactly the shipped files, one section per source pack, CC0 stated.
 - [ ] `inspiration/` contains only: still-MISSING categories' proposals and the new `audio/` proposals (2–4 packs, each with complete `SOURCE.md`, CC0, download/mirror URLs).
@@ -169,15 +173,16 @@ This stage's juice work is making the existing juice land on real art (regressio
 2. Chrome http://localhost:8080, DevTools device toolbar, touch on, iPhone SE then Pixel 7 portrait: full map 1 run on the new art — walk the Juice checklist item by item; build/upgrade/sell all four towers; check maps 2 and 3 boards (ground/path/pads coherent on their layouts); MapSelect, ResultOverlay, settings all wear the (possibly nine-patched) theme with no layout shifts; favicon check.
 3. Regression sweep: Retry mid-run, win a map, enter endless, reload the tab (saves persist), return to menu — no console errors, no missing-texture warnings, no pink placeholders.
 4. Stress: `?stress=1` (F9 locally), ≥ 60 s at the Stage 3/4 worst-case presets; FPS floor per `perf_budget.gd` holds; read the new texture-mem/draw-call lines. Also one pass with Chrome 4× CPU throttle — "smooth" here means: the stress floor from the PerfBudget header still holds on real textures, and normal play never visibly hitches on sprite-swap moments (pool prewarm covers first-use).
-5. Push the branch; PR build must go green. Optionally `gh workflow run deploy.yml --ref stage-06-kenney-art` and re-run the stress check on the real Pages deploy from a phone (re-deploy `main` after merge if you did).
-6. After merge: phone play-check of the live build — the game should read "candy screenshot" at arm's length; grab a screenshot for the PR thread.
+5. Branch deploy (required — same as Stages 3/5): `gh workflow run deploy.yml --ref stage-06-kenney-art`, `gh run watch`, then on a mid-range Android phone in Chrome re-run `?stress=1` and a short MapSelect → map 1 juice walk on the deployed artifact. Record FPS, texture-mem, and draw-call numbers in the PR. No phone → keep emulation numbers and mark Stage 8 re-verify debt.
+6. Push the branch; PR build must go green.
+7. After merge: re-deploy `main` if the branch overwrite is still live; phone play-check of the live build — the game should read "candy screenshot" at arm's length; grab a screenshot for the PR thread.
 
 ## Out of scope
 
-- Downloading or wiring ANY audio into the game, Music/SFX buses, `Sound` autoload, settings sliders, autoplay-gesture handling — **Stage 7** (this stage only stages `inspiration/audio/` proposals; even the ui-pack's bundled sounds stay unpromoted).
-- Balance or data edits of any kind, new waves/maps/towers/enemies — **Stage 8** owns further balance; this stage owns none.
+- Downloading or wiring ANY audio into the game, Music/SFX buses, `Sound` autoload, settings sliders, autoplay-gesture handling — **Stage 7** ([stage-07-audio.md](stage-07-audio.md); this stage only stages `inspiration/audio/` proposals; even the ui-pack's bundled sounds stay unpromoted).
+- Balance or data edits of any kind, new waves/maps/towers/enemies — **Stage 8** ([stage-08-release.md](stage-08-release.md)) owns further balance; this stage owns none.
 - Final juice escalation (idle tower wobbles, HUD count-up escalations, low-lives heart pulse, menu transitions), copy pass, version bump, README rewrite from "scaffold", pruning follow-up categories that never got downloads — **Stage 8**.
-- Barrel rotation toward targets, walk/death animation frames, TileMap-baked paths, PWA icons/splash — not in v1.0 unless Stage 8 explicitly picks them up.
+- Barrel rotation toward targets, walk/death animation frames, TileMap-baked paths, PWA icons/splash — not in v1.0 unless Stage 8 explicitly picks them up (default: out; see Stage 8 task 5).
 - Revisiting Stage 3 decisions: particle backend, pool architecture, `PerfBudget` caps (re-verify only — a genuine cap problem is a PR discussion, never a silent edit).
 - Never touched, any stage: `export_presets.cfg` (threads stay disabled), renderer settings, `deploy.yml`, the 720×1280 portrait contract, local-only saves.
 

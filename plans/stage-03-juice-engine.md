@@ -185,8 +185,8 @@ This stage IS the juice stage — everything below ships now, wired into real ga
 - Player-facing debug accelerators (2x/4x fast-forward, free-build toggle) — **Stage 4** (the harness's internal free tier-3 fill is not that feature).
 - Maps 2–3, endless mode, `SaveGame`, MapSelect — **Stage 5**.
 - Kenney sprites for particles/coins/entities (swap at `Skin`/`GradientTexture2D` points), theme nine-patches — **Stage 6**.
-- All SFX/music, `MAX_SFX_VOICES` in PerfBudget — **Stage 7**.
-- Idle wobbles on towers, HUD count-up escalations, hearts pulse at low lives, menu/title bounce-in, low-end re-verification of a `PROVISIONAL` budget, further balance work — **Stage 8**.
+- All SFX/music, `MAX_SFX_VOICES` in PerfBudget — **Stage 7** ([stage-07-audio.md](stage-07-audio.md)).
+- Idle wobbles on towers, HUD count-up escalations, hearts pulse at low lives, menu/title bounce-in, low-end re-verification of a `PROVISIONAL` budget, further balance work — **Stage 8** ([stage-08-release.md](stage-08-release.md)); consolidated gates in [VERIFICATION.md](VERIFICATION.md).
 - Any gameplay/balance change, new tower/enemy content, thread enablement, renderer change — never in this stage.
 
 ## Handoff

@@ -8,7 +8,7 @@ Objective: after this stage, anyone opening https://bitspleasebe.github.io/tower
 
 No earlier stages (this is Stage 1) — the prerequisite is the intact scaffold. Verify each; if any check fails, stop and investigate before changing anything.
 
-- [ ] Repo is on an up-to-date `main` with a clean tree: `git -C /home/user/tower-game status` and `git pull`.
+- [ ] Repo is on an up-to-date `main` with a clean tree: `git status` and `git pull` from the repo root.
 - [ ] Scaffold files exist: `ls scenes/main_menu.tscn scenes/settings_menu.tscn scenes/game.tscn scripts/settings.gd scripts/main_menu.gd scripts/settings_menu.gd scripts/game.gd project.godot export_presets.cfg`.
 - [ ] Viewport is still the landscape scaffold (i.e. this stage hasn't already run): `grep viewport_ project.godot` shows `1280` / `720`.
 - [ ] `Settings` autoload registered: `grep 'Settings=' project.godot` → `Settings="*res://scripts/settings.gd"`.
@@ -193,7 +193,7 @@ This stage's juice is UI-feel (board character arrives with Stages 2–3):
 - Juice autoload, particles/confetti, pooling, screen shake, wave banner, stress harness, `scripts/perf_budget.gd` — **Stage 3**.
 - Remaining tower types/enemy archetypes, full wave lists, debug accelerators — **Stage 4**.
 - Maps 2–3, `scenes/map_select.tscn`, endless mode, `SaveGame` autoload — **Stage 5**.
-- Kenney sprites, real icons (including replacing `icon.svg`), theme nine-patches, fonts — **Stage 6**. All audio — **Stage 7**. Version bump / README rewrite / final polish — **Stage 8**.
+- Kenney sprites, real icons (including replacing `icon.svg`), theme nine-patches, fonts — **Stage 6** ([stage-06-kenney-art.md](stage-06-kenney-art.md)). All audio — **Stage 7** ([stage-07-audio.md](stage-07-audio.md)). Version bump / README rewrite / final polish — **Stage 8** ([stage-08-release.md](stage-08-release.md)). Roadmap index: [README.md](README.md).
 - Do not modify `export_presets.cfg`, the renderer, `deploy.yml`, or anything in `inspiration/`.
 
 ## Handoff
@@ -202,7 +202,8 @@ After this stage, later stages may rely on:
 
 - **Display contract (final, never revisited)**: 720×1280 portrait, `canvas_items` + `expand`, `handheld/orientation=1`, GL Compatibility, no-threads web export; ground = `default_clear_color` mint; boot splash matches.
 - **`theme/candy_theme.tres`** applied project-wide via `gui/theme/custom`, with a `ButtonSecondary` type variation and the palette table in this plan — every future Control is styled by default; new UI adds theme types/variations rather than per-node overrides.
-- **`scenes/game.tscn` skeleton with canonical names**: `Game` (Node2D) ► `Board` ► `Decor` / `Path` (Path2D, with `PathBorder` + `PathLine` Line2D children) / `Pads`, and `UI` (CanvasLayer) ► `Root` (mouse-ignore) ► `TopBar` / `BottomBar` zones. Stage 2 rebuilds internals but keeps these names, the `_recenter_board()` pattern, and the bar zones (BottomBar is where the BuildMenu sheet lives).
-- **Route and pad layout to copy verbatim into `data/maps/map_01.tres`**: `PATH_POINTS` = (-40, 280), (560, 280), (560, 540), (160, 540), (160, 820), (560, 820), (560, 1000), (760, 1000); `PAD_POSITIONS` = (180, 400), (420, 400), (650, 410), (360, 660), (620, 660), (70, 690), (300, 930), (440, 1020) — thumb-tested, ≥ 90 px off-path, ≥ 110 px apart. From Stage 2 on, the `.tres` is the single source of truth and the consts are deleted.
+- **`scenes/game.tscn` skeleton with canonical names**: `Game` (Node2D) ► `Board` ► `Decor` / `Path` (Path2D, with `PathBorder` + `PathLine` Line2D children) / `Pads`, and `UI` (CanvasLayer) ► `Root` (mouse-ignore) ► `TopBar` / `BottomBar` zones.
+- **What Stage 2 must keep vs may retire**: keep `Board`, `Path`/`PathLine`, `Pads`, `_recenter_board()` + `size_changed` wiring, and a mid-run `MenuButton` + `ui_cancel` exit path. Stage 2 may retire the static `TopBar`/`BottomBar` placeholder Controls by replacing them with the live `Hud` / `BuildMenu` instances (same screen zones: status strip top, thumb sheet bottom), and may fold `PathBorder` into a single textured/colored `PathLine` if the candy look still reads. Keep `Decor` (spawn/base markers with `Skin`) or an equivalent — do not leave the path ends unmarked.
+- **Route and pad layout to copy verbatim into `data/maps/map_01.tres`**: `PATH_POINTS` = (-40, 280), (560, 280), (560, 540), (160, 540), (160, 820), (560, 820), (560, 1000), (760, 1000); `PAD_POSITIONS` = (180, 400), (420, 400), (650, 410), (360, 660), (620, 660), (70, 690), (300, 930), (440, 1020) — thumb-tested, ≥ 90 px off-path, ≥ 110 px apart. These are the canonical map-1 coordinates; Stage 2 must copy them into the `.tres` (not invent a second set). From Stage 2 on, the `.tres` is the single source of truth and the consts are deleted.
 - **Conventions documented in README** and demonstrated in code: `Skin` swap-point pattern (pads and decor already follow it), directory layout, theme rule, committed `*.uid` files.
 - **One-thumb ergonomics proven**: 88 px bottom-anchored buttons, static safe margins, `MOUSE_FILTER_IGNORE` on non-interactive UI roots, keyboard/desktop parity — the template every later screen (BuildMenu, ResultOverlay, MapSelect) follows.

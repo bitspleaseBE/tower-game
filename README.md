@@ -5,6 +5,9 @@
 A [Godot 4](https://godotengine.org/) game. Currently a scaffold: a main menu
 (New Game / Settings), a settings screen with persistent options, and a
 placeholder game scene. Game design lives in [blueprint.md](blueprint.md).
+Implementation order is the eight-stage roadmap in
+[plans/README.md](plans/README.md); consolidated verification is in
+[plans/VERIFICATION.md](plans/VERIFICATION.md).
 
 **Play the latest build:** <https://bitspleasebe.github.io/tower-game/>
 
