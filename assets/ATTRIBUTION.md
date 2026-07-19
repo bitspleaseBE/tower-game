@@ -60,3 +60,9 @@ every shipped third-party file appears here, and only shipped files do.
   - assets/fx/shine_spec.png
   - assets/fx/particle_soft.png
   - assets/fx/particle_star_soft.png
+
+## Settings chrome — original
+- Candy toggle + slider knob for Settings visibility:
+  - assets/ui/toggle_on.png
+  - assets/ui/toggle_off.png
+  - assets/ui/slider_grabber.png

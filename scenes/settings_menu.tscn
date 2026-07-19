@@ -42,9 +42,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -300.0
-offset_top = 340.0
+offset_top = 320.0
 offset_right = 300.0
-offset_bottom = 560.0
+offset_bottom = 580.0
 grow_horizontal = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="SettingsCard"]
@@ -71,6 +71,7 @@ vertical_alignment = 1
 
 [node name="FullscreenCheck" type="CheckButton" parent="SettingsCard/MarginContainer/VBoxContainer/FullscreenRow"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(112, 64)
 layout_mode = 2
 size_flags_vertical = 4
 
@@ -87,12 +88,13 @@ vertical_alignment = 1
 
 [node name="VolumeSlider" type="HSlider" parent="SettingsCard/MarginContainer/VBoxContainer/VolumeRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(280, 48)
+custom_minimum_size = Vector2(280, 56)
 layout_mode = 2
 size_flags_vertical = 4
 max_value = 1.0
 step = 0.05
 value = 1.0
+scrollable = false
 
 [node name="BackButton" type="Button" parent="."]
 unique_name_in_owner = true

@@ -1,4 +1,8 @@
-[gd_resource type="Theme" load_steps=14 format=3]
+[gd_resource type="Theme" load_steps=17 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ui/toggle_on.png" id="1_toggle_on"]
+[ext_resource type="Texture2D" path="res://assets/ui/toggle_off.png" id="2_toggle_off"]
+[ext_resource type="Texture2D" path="res://assets/ui/slider_grabber.png" id="3_grabber"]
 
 [sub_resource type="StyleBoxFlat" id="btn_normal"]
 content_margin_left = 32.0
@@ -166,32 +170,36 @@ shadow_offset = Vector2(0, 3)
 [sub_resource type="StyleBoxEmpty" id="check_empty"]
 
 [sub_resource type="StyleBoxFlat" id="slider_track"]
-content_margin_left = 0.0
-content_margin_top = 0.0
-content_margin_right = 0.0
-content_margin_bottom = 0.0
-bg_color = Color(0.902, 0.851, 0.969, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.749, 0.627, 0.91, 0.55)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+content_margin_left = 8.0
+content_margin_top = 14.0
+content_margin_right = 8.0
+content_margin_bottom = 14.0
+bg_color = Color(0.85, 0.78, 0.93, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.62, 0.48, 0.82, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [sub_resource type="StyleBoxFlat" id="slider_grabber_area"]
+content_margin_left = 8.0
+content_margin_top = 14.0
+content_margin_right = 8.0
+content_margin_bottom = 14.0
 bg_color = Color(1, 0.631, 0.745, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
 border_color = Color(0.851, 0.333, 0.498, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [resource]
 default_font_size = 30
@@ -222,11 +230,18 @@ CheckButton/colors/font_disabled_color = Color(0.31, 0.227, 0.357, 0.6)
 CheckButton/colors/font_focus_color = Color(0.31, 0.227, 0.357, 1)
 CheckButton/colors/font_hover_color = Color(0.31, 0.227, 0.357, 1)
 CheckButton/colors/font_pressed_color = Color(0.31, 0.227, 0.357, 1)
+CheckButton/icons/checked = ExtResource("1_toggle_on")
+CheckButton/icons/checked_disabled = ExtResource("1_toggle_on")
+CheckButton/icons/unchecked = ExtResource("2_toggle_off")
+CheckButton/icons/unchecked_disabled = ExtResource("2_toggle_off")
 CheckButton/styles/disabled = SubResource("check_empty")
 CheckButton/styles/focus = SubResource("btn_focus")
 CheckButton/styles/hover = SubResource("check_empty")
 CheckButton/styles/normal = SubResource("check_empty")
 CheckButton/styles/pressed = SubResource("check_empty")
+HSlider/icons/grabber = ExtResource("3_grabber")
+HSlider/icons/grabber_disabled = ExtResource("3_grabber")
+HSlider/icons/grabber_highlight = ExtResource("3_grabber")
 HSlider/styles/slider = SubResource("slider_track")
 HSlider/styles/grabber_area = SubResource("slider_grabber_area")
 HSlider/styles/grabber_area_highlight = SubResource("slider_grabber_area")
