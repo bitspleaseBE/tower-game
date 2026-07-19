@@ -4,6 +4,9 @@
 # Local export output
 build/
 
+# Asset research / proposals (local only — not shipped)
+inspiration/
+
 # Godot export credentials (keystores, signing secrets)
 export_credentials.cfg
 
