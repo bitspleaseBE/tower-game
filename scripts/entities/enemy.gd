@@ -143,7 +143,7 @@ func take_damage(amount: float, heavy := false) -> void:
 		return
 	hp -= maxf(ARMOR_MIN_DAMAGE_RATIO * amount, amount - data.armor)
 	_update_hp_bar()
-	Juice.flash(skin, Color(6, 6, 6), 0.1, get_base_tint())
+	Juice.flash(skin, Color(1.85, 1.85, 1.7), 0.1, get_base_tint())
 	if heavy:
 		Juice.punch_scale(skin, 1.45, 0.22)
 	if hp <= 0.0:
@@ -222,7 +222,9 @@ func _build_skin() -> void:
 	var body := Sprite2D.new()
 	body.name = "Body"
 	body.texture = body_tex
-	var body_scale := (2.0 * radius) / float(body_tex.get_width())
+	# Fit to diameter 2*radius with a little presence boost so archetypes read on grass.
+	var target_px := 2.0 * radius * 1.15
+	var body_scale := target_px / float(maxi(body_tex.get_width(), body_tex.get_height()))
 	body.scale = Vector2(body_scale, body_scale)
 	skin.add_child(body)
 

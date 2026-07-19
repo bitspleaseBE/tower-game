@@ -22,15 +22,20 @@ every shipped third-party file appears here, and only shipped files do.
   - assets/tower/projectile_shot.png (pack: towerDefense_tile251.png)
   - assets/tower/projectile_shell.png (pack: towerDefense_tile252.png)
 
+## Animal Pack Redux — Kenney
+- License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
+- Source: https://kenney.nl/assets/animal-pack-redux
+- Files used (Round without details, outline style):
+  - assets/enemies/critter_normal.png (pack: chick.png)
+  - assets/enemies/critter_fast.png (pack: rabbit.png)
+  - assets/enemies/critter_swarm.png (pack: frog.png)
+  - assets/enemies/critter_armored.png (pack: rhino.png)
+  - assets/enemies/critter_boss.png (pack: bear.png)
+
 ## Platformer Art Candy (Caverns) — Kenney
 - License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
 - Source: https://opengameart.org/content/platformer-art-candy-caverns
 - Files used:
-  - assets/enemies/critter_normal.png (pack: candyYellow.png; black matte knocked out)
-  - assets/enemies/critter_fast.png (pack: candyRed.png; black matte knocked out)
-  - assets/enemies/critter_swarm.png (pack: candyBlue.png; black matte knocked out)
-  - assets/enemies/critter_armored.png (pack: cookieChoco.png; black matte knocked out)
-  - assets/enemies/critter_boss.png (pack: lollipopFruitRed.png; black matte knocked out)
   - assets/ui/icon_heart.png (pack: heart.png; black matte knocked out)
 
 ## Shape Characters — Kenney
@@ -57,9 +62,9 @@ every shipped third-party file appears here, and only shipped files do.
 ## Particle Pack — Kenney
 - License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
 - Source: https://kenney.nl/assets/particle-pack
-- Files used:
+- Files used (black matte knocked out for web transparency):
   - assets/fx/particle_confetti.png (pack: star_01.png)
   - assets/fx/particle_puff.png (pack: circle_05.png)
   - assets/fx/particle_muzzle.png (pack: muzzle_01.png)
   - assets/fx/particle_sparkle.png (pack: star_03.png)
-  - assets/fx/shine_spec.png (pack: circle_05.png — unused by entity skins; kept for FX)
+  - assets/fx/shine_spec.png (pack: circle_05.png)

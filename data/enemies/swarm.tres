@@ -10,5 +10,5 @@ speed = 95.0
 bounty = 2
 lives_cost = 1
 armor = 0.0
-radius_px = 14.0
+radius_px = 18.0
 is_boss = false
