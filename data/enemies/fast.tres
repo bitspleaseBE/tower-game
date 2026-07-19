@@ -9,3 +9,6 @@ hp = 2.0
 speed = 120.0
 bounty = 6
 lives_cost = 1
+armor = 0.0
+radius_px = 22.0
+is_boss = false

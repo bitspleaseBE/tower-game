@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
 [ext_resource type="Script" path="res://scripts/wave_spawner.gd" id="2_spawner"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/wave_banner.tscn" id="6_wb"]
 [ext_resource type="Script" path="res://scripts/debug/stress_test.gd" id="7_stress"]
 [ext_resource type="PackedScene" path="res://scenes/debug/stress_overlay.tscn" id="8_so"]
+[ext_resource type="Script" path="res://scripts/ui/range_preview.gd" id="9_rp"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_game")
@@ -66,6 +67,9 @@ end_cap_mode = 2
 round_precision = 12
 
 [node name="Pads" type="Node2D" parent="Board"]
+
+[node name="RangePreview" type="Node2D" parent="Board"]
+script = ExtResource("9_rp")
 
 [node name="Projectiles" type="Node2D" parent="Board"]
 

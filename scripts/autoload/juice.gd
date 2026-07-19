@@ -75,6 +75,14 @@ func claim(item: CanvasItem) -> void:
 	}
 
 
+func set_claim_modulate(item: CanvasItem, color: Color) -> void:
+	if item == null:
+		return
+	item.modulate = color
+	if _claims.has(item):
+		_claims[item]["modulate"] = color
+
+
 func release(item: CanvasItem) -> void:
 	if item == null or not _claims.has(item):
 		return
@@ -121,16 +129,147 @@ func squash(item: CanvasItem, squish := Vector2(1.2, 0.8), duration := 0.15) -> 
 	tween.tween_property(item, "scale", rest["scale"], duration * 0.6)
 
 
-func flash(item: CanvasItem, flash_color := Color(6, 6, 6), duration := 0.1) -> void:
+func flash(
+	item: CanvasItem,
+	flash_color := Color(6, 6, 6),
+	duration := 0.1,
+	restore_to: Variant = null
+) -> void:
 	if item == null:
 		return
 	var rest := _ensure_claim(item)
 	_kill_claim_tween(item)
-	item.modulate = rest["modulate"]
+	var end_color: Color = rest["modulate"]
+	if restore_to is Color:
+		end_color = restore_to as Color
+		rest["modulate"] = end_color
+	item.modulate = end_color
 	var tween := item.create_tween()
 	_set_claim_tween(item, tween)
 	tween.tween_property(item, "modulate", flash_color, duration * 0.4)
-	tween.tween_property(item, "modulate", rest["modulate"], duration * 0.6)
+	tween.tween_property(item, "modulate", end_color, duration * 0.6)
+
+
+## Horizontal wiggle for invalid taps. Unregistered-safe; restores claimed rest or pre-tween x.
+func wiggle(item: CanvasItem, amp_px := 6.0, duration := 0.2) -> void:
+	if item == null:
+		return
+	var rest_x: float
+	if _claims.has(item):
+		rest_x = (_claims[item]["position"] as Vector2).x
+		_kill_claim_tween(item)
+	else:
+		rest_x = item.position.x
+	if item is Control:
+		var control := item as Control
+		control.pivot_offset = control.size * 0.5
+	var tween := item.create_tween()
+	if _claims.has(item):
+		_set_claim_tween(item, tween)
+	tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	var step := duration / 6.0
+	tween.tween_property(item, "position:x", rest_x + amp_px, step)
+	tween.tween_property(item, "position:x", rest_x - amp_px, step)
+	tween.tween_property(item, "position:x", rest_x + amp_px * 0.6, step)
+	tween.tween_property(item, "position:x", rest_x - amp_px * 0.6, step)
+	tween.tween_property(item, "position:x", rest_x + amp_px * 0.3, step)
+	tween.tween_property(item, "position:x", rest_x, step)
+
+
+func splash_ring(world_pos: Vector2, max_radius := 90.0) -> void:
+	if not _registered or _fx_layer == null:
+		return
+	var ring := Node2D.new()
+	ring.z_index = 20
+	_fx_layer.add_child(ring)
+	ring.global_position = world_pos
+	ring.set_meta("r", 8.0)
+	ring.set_meta("a", 0.7)
+	ring.draw.connect(func() -> void:
+		var r: float = float(ring.get_meta("r"))
+		var a: float = float(ring.get_meta("a"))
+		ring.draw_arc(Vector2.ZERO, r, 0.0, TAU, 48, Color(1.0, 0.84, 0.42, a), 4.0, true)
+	)
+	ring.queue_redraw()
+	var tween := ring.create_tween()
+	tween.tween_method(func(v: float) -> void:
+		ring.set_meta("r", lerpf(8.0, max_radius, v))
+		ring.set_meta("a", lerpf(0.7, 0.0, v))
+		ring.queue_redraw()
+	, 0.0, 1.0, 0.28)
+	tween.tween_callback(ring.queue_free)
+
+
+func frost_pulse(world_pos: Vector2, max_radius: float) -> void:
+	if not _registered or _fx_layer == null:
+		return
+	var ring := Node2D.new()
+	ring.z_index = 20
+	_fx_layer.add_child(ring)
+	ring.global_position = world_pos
+	ring.set_meta("r", 12.0)
+	ring.set_meta("a", 0.65)
+	ring.draw.connect(func() -> void:
+		var r: float = float(ring.get_meta("r"))
+		var a: float = float(ring.get_meta("a"))
+		ring.draw_circle(Vector2.ZERO, r, Color(0.75, 0.89, 1.0, a * 0.25))
+		ring.draw_arc(Vector2.ZERO, r, 0.0, TAU, 48, Color(0.55, 0.82, 0.94, a), 3.0, true)
+	)
+	ring.queue_redraw()
+	var tween := ring.create_tween()
+	tween.tween_method(func(v: float) -> void:
+		ring.set_meta("r", lerpf(12.0, max_radius, v))
+		ring.set_meta("a", lerpf(0.65, 0.0, v))
+		ring.queue_redraw()
+	, 0.0, 1.0, 0.35)
+	tween.tween_callback(ring.queue_free)
+
+
+func muzzle_flash(world_pos: Vector2) -> void:
+	if not _registered or _fx_layer == null:
+		return
+	var flash_node := Node2D.new()
+	flash_node.z_index = 20
+	_fx_layer.add_child(flash_node)
+	flash_node.global_position = world_pos
+	flash_node.set_meta("r", 6.0)
+	flash_node.set_meta("a", 1.0)
+	flash_node.draw.connect(func() -> void:
+		var r: float = float(flash_node.get_meta("r"))
+		var a: float = float(flash_node.get_meta("a"))
+		flash_node.draw_circle(Vector2.ZERO, r, Color(1.0, 0.95, 0.7, a))
+	)
+	flash_node.queue_redraw()
+	var tween := flash_node.create_tween()
+	tween.tween_method(func(v: float) -> void:
+		flash_node.set_meta("r", lerpf(6.0, 18.0, v))
+		flash_node.set_meta("a", lerpf(1.0, 0.0, v))
+		flash_node.queue_redraw()
+	, 0.0, 1.0, 0.12)
+	tween.tween_callback(flash_node.queue_free)
+
+
+func upgrade_fx(tower: Node2D) -> void:
+	if tower == null:
+		return
+	var skin_node: Node2D = tower.get_node_or_null("Skin") as Node2D
+	if skin_node != null:
+		punch_scale(skin_node, 1.25, 0.2)
+	confetti(tower.global_position)
+	var range_px := 180.0
+	if tower.get("data") != null and tower.get("tier") != null:
+		var td: TowerData = tower.data
+		var t: int = tower.tier
+		if td != null and t >= 0 and t < td.range_px.size():
+			range_px = td.range_px[t]
+	splash_ring(tower.global_position, range_px)
+
+
+func sell_fx(world_pos: Vector2, pad_skin: CanvasItem = null) -> void:
+	coin_burst(world_pos, 5)
+	confetti(world_pos)
+	if pad_skin != null:
+		squash(pad_skin, Vector2(1.3, 0.6), 0.2)
 
 
 func pop_in_out(item: CanvasItem, hold := 0.7) -> void:

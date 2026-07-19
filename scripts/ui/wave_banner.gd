@@ -16,7 +16,18 @@ func _ready() -> void:
 
 
 func _on_wave_started(number: int, _total: int) -> void:
-	label.text = "Wave %d" % number
+	# Boss wave: last wave of a map that includes a boss spawn shows "BOSS!".
+	var game := get_tree().get_first_node_in_group("game")
+	var is_boss_wave := false
+	if game != null and game.get("map_data") != null:
+		var map: MapData = game.map_data
+		var idx := number - 1
+		if idx >= 0 and idx < map.waves.size():
+			for group: SpawnGroup in map.waves[idx].spawn_groups:
+				if group.enemy != null and group.enemy.is_boss:
+					is_boss_wave = true
+					break
+	label.text = "BOSS!" if is_boss_wave else "Wave %d" % number
 	_show_banner()
 
 

@@ -23,6 +23,7 @@ var map_data: MapData
 
 var coins: int = 0
 var lives: int = 0
+var free_build: bool = false
 var _lost_emitted: bool = false
 var _suppress_game_over: bool = false
 var _enemy_pool: ObjectPool
@@ -81,15 +82,28 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func can_afford(amount: int) -> bool:
+	if free_build:
+		return true
 	return coins >= amount
 
 
 func spend(amount: int) -> bool:
+	if free_build:
+		return true
 	if coins < amount:
 		return false
 	coins -= amount
 	Events.coins_changed.emit(coins)
 	return true
+
+
+func pulse_coin_hud() -> void:
+	if hud != null and hud.has_method("pulse_coins"):
+		hud.pulse_coins()
+
+
+func _exit_tree() -> void:
+	Engine.time_scale = 1.0
 
 
 func earn(amount: int) -> void:

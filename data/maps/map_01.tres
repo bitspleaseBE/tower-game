@@ -5,87 +5,233 @@
 [ext_resource type="Script" path="res://scripts/data/spawn_group.gd" id="3_4a38b"]
 [ext_resource type="Resource" path="res://data/enemies/normal.tres" id="4_l4bsi"]
 [ext_resource type="Resource" path="res://data/enemies/fast.tres" id="5_ttdbb"]
+[ext_resource type="Resource" path="res://data/enemies/swarm.tres" id="6_swarm"]
+[ext_resource type="Resource" path="res://data/enemies/armored.tres" id="7_armor"]
+[ext_resource type="Resource" path="res://data/enemies/boss.tres" id="8_boss"]
 
-[sub_resource type="Resource" id="Resource_gjtcl"]
+[sub_resource type="Resource" id="wave1_g1"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("4_l4bsi")
 count = 6
 spawn_interval = 1.2
 
-[sub_resource type="Resource" id="Resource_xareu"]
+[sub_resource type="Resource" id="wave1"]
 script = ExtResource("2_wfgdk")
-spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("Resource_gjtcl")])
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave1_g1")])
 
-[sub_resource type="Resource" id="Resource_lt1vx"]
+[sub_resource type="Resource" id="wave2_g1"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("4_l4bsi")
 count = 10
 spawn_interval = 1.0
 
-[sub_resource type="Resource" id="Resource_4mpl2"]
+[sub_resource type="Resource" id="wave2"]
 script = ExtResource("2_wfgdk")
-spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("Resource_lt1vx")])
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave2_g1")])
 
-[sub_resource type="Resource" id="Resource_uhmsu"]
+[sub_resource type="Resource" id="wave3_g1"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("4_l4bsi")
 count = 8
 spawn_interval = 1.0
 
-[sub_resource type="Resource" id="Resource_v130r"]
+[sub_resource type="Resource" id="wave3_g2"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("5_ttdbb")
 count = 4
 spawn_interval = 0.9
 start_delay = 4.0
 
-[sub_resource type="Resource" id="Resource_1qy53"]
+[sub_resource type="Resource" id="wave3"]
 script = ExtResource("2_wfgdk")
-spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("Resource_uhmsu"), SubResource("Resource_v130r")])
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave3_g1"), SubResource("wave3_g2")])
 
-[sub_resource type="Resource" id="Resource_xkktr"]
+[sub_resource type="Resource" id="wave4_g1"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("4_l4bsi")
 count = 12
 spawn_interval = 0.8
 
-[sub_resource type="Resource" id="Resource_0vmpf"]
+[sub_resource type="Resource" id="wave4_g2"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("5_ttdbb")
 count = 6
 spawn_interval = 0.8
 start_delay = 3.0
 
-[sub_resource type="Resource" id="Resource_j4u8j"]
+[sub_resource type="Resource" id="wave4"]
 script = ExtResource("2_wfgdk")
-spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("Resource_xkktr"), SubResource("Resource_0vmpf")])
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave4_g1"), SubResource("wave4_g2")])
 
-[sub_resource type="Resource" id="Resource_4sd6f"]
+[sub_resource type="Resource" id="wave5_fast"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("5_ttdbb")
 count = 12
 spawn_interval = 0.7
 
-[sub_resource type="Resource" id="Resource_eo1qr"]
+[sub_resource type="Resource" id="wave5"]
 script = ExtResource("2_wfgdk")
-spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("Resource_4sd6f")])
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave5_fast")])
 
-[sub_resource type="Resource" id="Resource_boex3"]
+[sub_resource type="Resource" id="wave6_swarm"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("6_swarm")
+count = 20
+spawn_interval = 0.4
+
+[sub_resource type="Resource" id="wave6_normal"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("4_l4bsi")
-count = 16
-spawn_interval = 0.7
+count = 6
+spawn_interval = 1.0
+start_delay = 2.0
 
-[sub_resource type="Resource" id="Resource_ga7ix"]
+[sub_resource type="Resource" id="wave6"]
+script = ExtResource("2_wfgdk")
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave6_swarm"), SubResource("wave6_normal")])
+
+[sub_resource type="Resource" id="wave7_swarm"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("6_swarm")
+count = 24
+spawn_interval = 0.35
+
+[sub_resource type="Resource" id="wave7_fast"]
 script = ExtResource("3_4a38b")
 enemy = ExtResource("5_ttdbb")
 count = 8
 spawn_interval = 0.7
+start_delay = 3.0
+
+[sub_resource type="Resource" id="wave7"]
+script = ExtResource("2_wfgdk")
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave7_swarm"), SubResource("wave7_fast")])
+
+[sub_resource type="Resource" id="wave8_armored"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("7_armor")
+count = 4
+spawn_interval = 2.5
+
+[sub_resource type="Resource" id="wave8_normal"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("4_l4bsi")
+count = 8
+spawn_interval = 0.8
 start_delay = 2.0
 
-[sub_resource type="Resource" id="Resource_ggv7t"]
+[sub_resource type="Resource" id="wave8"]
 script = ExtResource("2_wfgdk")
-spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("Resource_boex3"), SubResource("Resource_ga7ix")])
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave8_armored"), SubResource("wave8_normal")])
+
+[sub_resource type="Resource" id="wave9_swarm"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("6_swarm")
+count = 30
+spawn_interval = 0.3
+
+[sub_resource type="Resource" id="wave9_fast"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("5_ttdbb")
+count = 6
+spawn_interval = 0.6
+start_delay = 4.0
+
+[sub_resource type="Resource" id="wave9"]
+script = ExtResource("2_wfgdk")
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave9_swarm"), SubResource("wave9_fast")])
+
+[sub_resource type="Resource" id="wave10_armored"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("7_armor")
+count = 6
+spawn_interval = 2.0
+
+[sub_resource type="Resource" id="wave10_swarm"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("6_swarm")
+count = 16
+spawn_interval = 0.35
+start_delay = 3.0
+
+[sub_resource type="Resource" id="wave10"]
+script = ExtResource("2_wfgdk")
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave10_armored"), SubResource("wave10_swarm")])
+
+[sub_resource type="Resource" id="wave11_fast_a"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("5_ttdbb")
+count = 10
+spawn_interval = 0.5
+
+[sub_resource type="Resource" id="wave11_fast_b"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("5_ttdbb")
+count = 10
+spawn_interval = 0.5
+start_delay = 6.0
+
+[sub_resource type="Resource" id="wave11"]
+script = ExtResource("2_wfgdk")
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave11_fast_a"), SubResource("wave11_fast_b")])
+
+[sub_resource type="Resource" id="wave12_armored"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("7_armor")
+count = 8
+spawn_interval = 1.6
+
+[sub_resource type="Resource" id="wave12_swarm"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("6_swarm")
+count = 20
+spawn_interval = 0.3
+start_delay = 2.0
+
+[sub_resource type="Resource" id="wave12"]
+script = ExtResource("2_wfgdk")
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave12_armored"), SubResource("wave12_swarm")])
+
+[sub_resource type="Resource" id="wave13_armored"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("7_armor")
+count = 10
+spawn_interval = 1.4
+
+[sub_resource type="Resource" id="wave13_fast"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("5_ttdbb")
+count = 10
+spawn_interval = 0.5
+start_delay = 5.0
+
+[sub_resource type="Resource" id="wave13"]
+script = ExtResource("2_wfgdk")
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("wave13_armored"), SubResource("wave13_fast")])
+
+[sub_resource type="Resource" id="w14_boss"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("8_boss")
+count = 1
+spawn_interval = 1.0
+
+[sub_resource type="Resource" id="w14_swarm"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("6_swarm")
+count = 24
+spawn_interval = 0.4
+start_delay = 3.0
+
+[sub_resource type="Resource" id="w14_fast"]
+script = ExtResource("3_4a38b")
+enemy = ExtResource("5_ttdbb")
+count = 8
+spawn_interval = 0.6
+start_delay = 8.0
+
+[sub_resource type="Resource" id="wave14"]
+script = ExtResource("2_wfgdk")
+spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("w14_boss"), SubResource("w14_swarm"), SubResource("w14_fast")])
 
 [resource]
 script = ExtResource("1_cs3hx")
@@ -95,4 +241,4 @@ path_points = PackedVector2Array(-40, 280, 560, 280, 560, 540, 160, 540, 160, 82
 pad_positions = PackedVector2Array(180, 400, 420, 400, 650, 410, 360, 660, 620, 660, 70, 690, 300, 930, 440, 1020)
 starting_coins = 100
 starting_lives = 20
-waves = Array[ExtResource("2_wfgdk")]([SubResource("Resource_xareu"), SubResource("Resource_4mpl2"), SubResource("Resource_1qy53"), SubResource("Resource_j4u8j"), SubResource("Resource_eo1qr"), SubResource("Resource_ggv7t")])
+waves = Array[ExtResource("2_wfgdk")]([SubResource("wave1"), SubResource("wave2"), SubResource("wave3"), SubResource("wave4"), SubResource("wave5"), SubResource("wave6"), SubResource("wave7"), SubResource("wave8"), SubResource("wave9"), SubResource("wave10"), SubResource("wave11"), SubResource("wave12"), SubResource("wave13"), SubResource("wave14")])

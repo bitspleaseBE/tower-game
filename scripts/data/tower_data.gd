@@ -12,3 +12,6 @@ enum Behavior { SINGLE, SPLASH, SLOW, SNIPER }
 @export var behavior: Behavior = Behavior.SINGLE
 @export var sell_refund_ratio: float = 0.7
 @export var projectile_speed: float = 520.0
+@export var splash_radius_px: Array[float] = [] ## size 3 when used; SPLASH only
+@export var slow_factor: Array[float] = [] ## speed multiplier while slowed; SLOW only
+@export var slow_duration: Array[float] = [] ## seconds; SLOW only

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="TowerData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/tower_data.gd" id="1_long"]
+
+[resource]
+script = ExtResource("1_long")
+id = &"longshot"
+display_name = "Longshot"
+cost = Array[int]([90, 120, 170])
+damage = Array[float]([7.0, 12.0, 20.0])
+range_px = Array[float]([300.0, 340.0, 380.0])
+fire_interval = Array[float]([2.2, 2.0, 1.8])
+behavior = 3
+sell_refund_ratio = 0.7
+projectile_speed = 1500.0

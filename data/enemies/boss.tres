@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_data.gd" id="1_boss"]
+
+[resource]
+script = ExtResource("1_boss")
+id = &"boss"
+hp = 220.0
+speed = 40.0
+bounty = 100
+lives_cost = 10
+armor = 3.0
+radius_px = 46.0
+is_boss = true

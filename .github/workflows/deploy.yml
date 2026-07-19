@@ -69,6 +69,9 @@ jobs:
       - name: Play smoke (build / kill / lose)
         run: godot --headless --path . --script scripts/debug/play_smoke.gd
 
+      - name: Stage 4 smoke (tower roster)
+        run: godot --headless --path . --script scripts/debug/stage04_smoke.gd
+
       - name: Export web build
         run: |
           mkdir -p build/web

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="TowerData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/tower_data.gd" id="1_lob"]
+
+[resource]
+script = ExtResource("1_lob")
+id = &"lobber"
+display_name = "Lobber"
+cost = Array[int]([70, 90, 130])
+damage = Array[float]([2.0, 3.5, 5.0])
+range_px = Array[float]([170.0, 185.0, 200.0])
+fire_interval = Array[float]([1.5, 1.4, 1.2])
+behavior = 1
+sell_refund_ratio = 0.7
+projectile_speed = 400.0
+splash_radius_px = Array[float]([70.0, 85.0, 100.0])

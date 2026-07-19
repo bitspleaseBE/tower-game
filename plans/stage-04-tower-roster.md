@@ -1,6 +1,6 @@
 # Stage 4: Full Roster & Map 1 Campaign
 
-**Status:** not started
+**Status:** done
 
 Objective: after this stage, the live Pages build carries the complete combat roster for blueprint v1.0 (maps 2–3, endless, and saves arrive in Stage 5). Tapping a pad opens a four-option candy grid — Popper (rapid), Lobber (splash), Chiller (slow), Longshot (sniper) — each with 3 linear tiers, distinct primitive silhouettes, and a per-type range ring; unaffordable options sit greyed and wiggle when tapped. Waves now mix all four critter archetypes — fast, swarm, armored (flat damage reduction), and a boss with an HP bar that caps the final wave with an entrance shake — and map 1 has grown from 6 to its full 14 handcrafted waves: beatable by an attentive first-timer in a 5–10 minute run where both tower choice and tier-3 upgrades visibly matter. Every new number is data in `.tres` files; every new interaction ships already juiced within `PerfBudget`; hidden 2×/4× fast-forward and free-build accelerators make this and all later tuning humane.
 

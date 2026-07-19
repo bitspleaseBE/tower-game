@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_data.gd" id="1_swarm"]
+
+[resource]
+script = ExtResource("1_swarm")
+id = &"swarm"
+hp = 1.0
+speed = 95.0
+bounty = 2
+lives_cost = 1
+armor = 0.0
+radius_px = 14.0
+is_boss = false

@@ -12,6 +12,21 @@ script = ExtResource("1_enemy")
 
 [node name="Skin" type="Node2D" parent="."]
 
+[node name="HpBar" type="Node2D" parent="."]
+visible = false
+
+[node name="Back" type="ColorRect" parent="HpBar"]
+offset_right = 64.0
+offset_bottom = 8.0
+mouse_filter = 2
+color = Color(0.15, 0.1, 0.18, 0.85)
+
+[node name="Fill" type="ColorRect" parent="HpBar"]
+offset_right = 64.0
+offset_bottom = 8.0
+mouse_filter = 2
+color = Color(1.0, 0.42, 0.55, 1)
+
 [node name="Hurtbox" type="Area2D" parent="."]
 collision_layer = 1
 collision_mask = 0

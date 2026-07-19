@@ -31,6 +31,7 @@ func _on_run_lost(_map_id: StringName) -> void:
 
 
 func _show_result(text: String) -> void:
+	Engine.time_scale = 1.0
 	title_label.text = text
 	visible = true
 	mouse_filter = Control.MOUSE_FILTER_STOP

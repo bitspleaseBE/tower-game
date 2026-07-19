@@ -28,14 +28,14 @@ grow_vertical = 0
 
 [node name="MarginContainer" type="MarginContainer" parent="SheetPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 20
+theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 20
+theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 16
 
 [node name="VBox" type="VBoxContainer" parent="SheetPanel/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 10
 
 [node name="TitleLabel" type="Label" parent="SheetPanel/MarginContainer/VBox"]
 unique_name_in_owner = true
@@ -43,11 +43,24 @@ layout_mode = 2
 text = "Build"
 horizontal_alignment = 1
 
+[node name="HintLabel" type="Label" parent="SheetPanel/MarginContainer/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Pick a tower"
+horizontal_alignment = 1
+
+[node name="Options" type="HBoxContainer" parent="SheetPanel/MarginContainer/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
 [node name="PrimaryButton" type="Button" parent="SheetPanel/MarginContainer/VBox"]
 unique_name_in_owner = true
+visible = false
 custom_minimum_size = Vector2(0, 88)
 layout_mode = 2
-text = "Popper — 50●"
+text = "Upgrade — 0●"
 
 [node name="SellButton" type="Button" parent="SheetPanel/MarginContainer/VBox"]
 unique_name_in_owner = true

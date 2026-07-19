@@ -2,9 +2,19 @@ extends Control
 ## Bottom-sheet build / manage menu for one-thumb play.
 
 const TowerScene: PackedScene = preload("res://scenes/entities/tower.tscn")
+const TOWER_SWATCHES := {
+	&"popper": Color(1.0, 0.56, 0.69, 1.0),
+	&"lobber": Color(1.0, 0.839, 0.42, 1.0),
+	&"chiller": Color(0.553, 0.816, 0.941, 1.0),
+	&"longshot": Color(0.749, 0.627, 0.91, 1.0),
+}
+
+@export var towers: Array[TowerData] = []
 
 @onready var panel: PanelContainer = %SheetPanel
 @onready var title_label: Label = %TitleLabel
+@onready var options_row: HBoxContainer = %Options
+@onready var hint_label: Label = %HintLabel
 @onready var primary_button: Button = %PrimaryButton
 @onready var sell_button: Button = %SellButton
 
@@ -12,24 +22,39 @@ var _pad: BuildPad
 var _mode: StringName = &""
 var _game: Node
 var _open: bool = false
-var _popper: TowerData
+var _option_buttons: Array[Button] = []
+var _button_group: ButtonGroup
+var _selected_index: int = -1
+var _range_preview: RangePreview
+var _prev_affordable: Array[bool] = []
 
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	visible = true
 	panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	_popper = load("res://data/towers/popper.tres") as TowerData
+	if towers.is_empty():
+		towers = [
+			load("res://data/towers/popper.tres") as TowerData,
+			load("res://data/towers/lobber.tres") as TowerData,
+			load("res://data/towers/chiller.tres") as TowerData,
+			load("res://data/towers/longshot.tres") as TowerData,
+		]
+	_button_group = null
+	_build_option_buttons()
 	_set_sheet_hidden_instant()
 	primary_button.pressed.connect(_on_primary_pressed)
 	sell_button.pressed.connect(_on_sell_pressed)
 	Juice.squishify_button(primary_button)
 	Juice.squishify_button(sell_button)
 	Events.coins_changed.connect(_on_coins_changed)
+	Events.tower_upgraded.connect(_on_tower_upgraded_juice)
+	Events.tower_sold.connect(_on_tower_sold_juice)
 
 
 func setup(game: Node) -> void:
 	_game = game
+	_range_preview = game.get_node_or_null("Board/RangePreview") as RangePreview
 
 
 func is_open() -> bool:
@@ -40,17 +65,27 @@ func open_build(pad: BuildPad) -> void:
 	_clear_range()
 	_pad = pad
 	_mode = &"build"
+	_selected_index = -1
 	title_label.text = "Build"
+	hint_label.visible = true
+	hint_label.text = "Pick a tower"
+	options_row.visible = true
+	primary_button.visible = false
 	sell_button.visible = false
-	_refresh_build_button()
+	_refresh_build_options()
 	_slide_in()
+	_stagger_option_pop()
 
 
 func open_manage(pad: BuildPad) -> void:
 	_clear_range()
+	_clear_selection()
 	_pad = pad
 	_mode = &"manage"
 	title_label.text = "Manage"
+	hint_label.visible = false
+	options_row.visible = false
+	primary_button.visible = true
 	sell_button.visible = true
 	if pad.tower:
 		pad.tower.show_range(true)
@@ -63,6 +98,7 @@ func close() -> void:
 		_set_sheet_hidden_instant()
 		return
 	_clear_range()
+	_clear_selection()
 	_open = false
 	_pad = null
 	_mode = &""
@@ -73,6 +109,47 @@ func close() -> void:
 	tween.tween_callback(func() -> void:
 		panel.visible = false
 	)
+
+
+func _build_option_buttons() -> void:
+	for child: Node in options_row.get_children():
+		child.queue_free()
+	_option_buttons.clear()
+	_prev_affordable.clear()
+
+	for i: int in towers.size():
+		var tower_data: TowerData = towers[i]
+		var btn := Button.new()
+		btn.toggle_mode = true
+		btn.button_group = _button_group
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		btn.custom_minimum_size = Vector2(0, 112)
+		btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
+		btn.focus_mode = Control.FOCUS_NONE
+		btn.text = "%s\n%d●" % [tower_data.display_name, tower_data.cost[0]]
+
+		var icon := Panel.new()
+		icon.custom_minimum_size = Vector2(26, 26)
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		icon.set_anchors_preset(Control.PRESET_CENTER_TOP)
+		icon.offset_left = -13.0
+		icon.offset_top = 8.0
+		icon.offset_right = 13.0
+		icon.offset_bottom = 34.0
+		var style := StyleBoxFlat.new()
+		style.bg_color = TOWER_SWATCHES.get(tower_data.id, Color.WHITE)
+		style.corner_radius_top_left = 13
+		style.corner_radius_top_right = 13
+		style.corner_radius_bottom_left = 13
+		style.corner_radius_bottom_right = 13
+		icon.add_theme_stylebox_override("panel", style)
+		btn.add_child(icon)
+
+		btn.pressed.connect(_on_option_pressed.bind(i))
+		Juice.squishify_button(btn)
+		options_row.add_child(btn)
+		_option_buttons.append(btn)
+		_prev_affordable.append(false)
 
 
 func _slide_in() -> void:
@@ -93,20 +170,54 @@ func _set_sheet_hidden_instant() -> void:
 	panel.visible = false
 
 
+func _stagger_option_pop() -> void:
+	for i: int in _option_buttons.size():
+		var btn: Button = _option_buttons[i]
+		btn.pivot_offset = btn.size * 0.5
+		btn.scale = Vector2(0.85, 0.85)
+		var tween := btn.create_tween()
+		tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tween.tween_interval(0.05 * float(i))
+		tween.tween_property(btn, "scale", Vector2.ONE, 0.22)
+
+
 func _on_coins_changed(_coins: int) -> void:
 	if not _open:
 		return
 	if _mode == &"build":
-		_refresh_build_button()
+		_refresh_build_options()
 	elif _mode == &"manage":
 		_refresh_manage_buttons()
 
 
-func _refresh_build_button() -> void:
-	var cost: int = _popper.cost[0]
-	primary_button.text = "%s — %d●" % [_popper.display_name, cost]
-	primary_button.disabled = _game == null or not _game.can_afford(cost)
-	primary_button.custom_minimum_size = Vector2(0, 88)
+func _is_free_build() -> bool:
+	return _game != null and bool(_game.get("free_build"))
+
+
+func _can_afford_option(tower_data: TowerData) -> bool:
+	if _is_free_build():
+		return true
+	return _game != null and _game.can_afford(tower_data.cost[0])
+
+
+func _refresh_build_options() -> void:
+	for i: int in _option_buttons.size():
+		var tower_data: TowerData = towers[i]
+		var btn: Button = _option_buttons[i]
+		btn.text = "%s\n%d●" % [tower_data.display_name, tower_data.cost[0]]
+		# Greyed ≠ disabled — unaffordable options must still receive taps.
+		btn.disabled = false
+		var affordable := _can_afford_option(tower_data)
+		btn.modulate = Color(1, 1, 1, 1.0) if affordable else Color(1, 1, 1, 0.55)
+		if affordable and i < _prev_affordable.size() and not _prev_affordable[i]:
+			btn.pivot_offset = btn.size * 0.5
+			var pop := btn.create_tween()
+			pop.tween_property(btn, "scale", Vector2(1.06, 1.06), 0.08)
+			pop.tween_property(btn, "scale", Vector2.ONE, 0.1)
+		if i < _prev_affordable.size():
+			_prev_affordable[i] = affordable
+		else:
+			_prev_affordable.append(affordable)
 
 
 func _refresh_manage_buttons() -> void:
@@ -122,24 +233,48 @@ func _refresh_manage_buttons() -> void:
 	else:
 		var next_cost: int = tower.data.cost[tower.tier + 1]
 		primary_button.text = "Upgrade — %d●" % next_cost
-		primary_button.disabled = _game == null or not _game.can_afford(next_cost)
+		primary_button.disabled = not _is_free_build() and (_game == null or not _game.can_afford(next_cost))
 	primary_button.custom_minimum_size = Vector2(0, 88)
+
+
+func _on_option_pressed(index: int) -> void:
+	if _mode != &"build" or _game == null or _pad == null:
+		return
+	if index < 0 or index >= towers.size():
+		return
+	var tower_data: TowerData = towers[index]
+
+	if _selected_index == index:
+		# Confirm buy.
+		if not _can_afford_option(tower_data):
+			Juice.wiggle(_option_buttons[index])
+			if _game.has_method("pulse_coin_hud"):
+				_game.pulse_coin_hud()
+			elif _game.get("hud") != null and _game.hud.has_method("pulse_coins"):
+				_game.hud.pulse_coins()
+			return
+		if not _game.spend(tower_data.cost[0]):
+			Juice.wiggle(_option_buttons[index])
+			return
+		var tower: Tower = TowerScene.instantiate()
+		_pad.add_child(tower)
+		tower.setup(tower_data)
+		_pad.tower = tower
+		Events.tower_built.emit(tower, _pad)
+		close()
+		return
+
+	# Select for preview.
+	_selected_index = index
+	hint_label.text = "Tap again to build"
+	if _range_preview != null:
+		_range_preview.show_at(_pad.global_position, tower_data.range_px[0])
 
 
 func _on_primary_pressed() -> void:
 	if _game == null or _pad == null:
 		return
-	if _mode == &"build":
-		var cost: int = _popper.cost[0]
-		if not _game.spend(cost):
-			return
-		var tower: Tower = TowerScene.instantiate()
-		_pad.add_child(tower)
-		tower.setup(_popper)
-		_pad.tower = tower
-		Events.tower_built.emit(tower, _pad)
-		close()
-	elif _mode == &"manage" and _pad.tower:
+	if _mode == &"manage" and _pad.tower:
 		var tower: Tower = _pad.tower
 		if tower.tier >= 2:
 			return
@@ -156,14 +291,37 @@ func _on_sell_pressed() -> void:
 		return
 	var tower: Tower = _pad.tower
 	var refund: int = tower.sell_refund()
+	var pad_skin: Node2D = _pad.skin if _pad.get("skin") != null else null
 	tower.show_range(false)
 	tower.queue_free()
 	_pad.tower = null
 	_game.earn(refund)
 	Events.tower_sold.emit(_pad, refund)
+	if pad_skin != null:
+		Juice.sell_fx(_pad.global_position, pad_skin)
 	close()
+
+
+func _on_tower_upgraded_juice(tower: Node) -> void:
+	# upgrade_fx already called from Tower.upgrade(); keep hook for future.
+	if tower is Tower:
+		pass
+
+
+func _on_tower_sold_juice(_pad_node: Node, _refund: int) -> void:
+	pass
+
+
+func _clear_selection() -> void:
+	_selected_index = -1
+	for btn: Button in _option_buttons:
+		btn.button_pressed = false
+	if _range_preview != null:
+		_range_preview.hide_preview()
 
 
 func _clear_range() -> void:
 	if _pad != null and _pad.tower != null:
 		_pad.tower.show_range(false)
+	if _range_preview != null:
+		_range_preview.hide_preview()
