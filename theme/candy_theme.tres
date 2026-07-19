@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=11 format=3]
+[gd_resource type="Theme" load_steps=14 format=3]
 
 [sub_resource type="StyleBoxFlat" id="btn_normal"]
 content_margin_left = 32.0
@@ -146,6 +146,26 @@ shadow_color = Color(0.31, 0.227, 0.357, 0.12)
 shadow_size = 8
 shadow_offset = Vector2(0, 3)
 
+[sub_resource type="StyleBoxEmpty" id="check_empty"]
+
+[sub_resource type="StyleBoxFlat" id="slider_track"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.902, 0.851, 0.969, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="slider_grabber_area"]
+bg_color = Color(1, 0.561, 0.694, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [resource]
 default_font_size = 30
 Button/colors/font_color = Color(1, 1, 1, 1)
@@ -170,6 +190,19 @@ ButtonSecondary/styles/focus = SubResource("btn_focus")
 ButtonSecondary/styles/hover = SubResource("btn_sec_hover")
 ButtonSecondary/styles/normal = SubResource("btn_sec_normal")
 ButtonSecondary/styles/pressed = SubResource("btn_sec_pressed")
+CheckButton/colors/font_color = Color(0.31, 0.227, 0.357, 1)
+CheckButton/colors/font_disabled_color = Color(0.31, 0.227, 0.357, 0.6)
+CheckButton/colors/font_focus_color = Color(0.31, 0.227, 0.357, 1)
+CheckButton/colors/font_hover_color = Color(0.31, 0.227, 0.357, 1)
+CheckButton/colors/font_pressed_color = Color(0.31, 0.227, 0.357, 1)
+CheckButton/styles/disabled = SubResource("check_empty")
+CheckButton/styles/focus = SubResource("btn_focus")
+CheckButton/styles/hover = SubResource("check_empty")
+CheckButton/styles/normal = SubResource("check_empty")
+CheckButton/styles/pressed = SubResource("check_empty")
+HSlider/styles/slider = SubResource("slider_track")
+HSlider/styles/grabber_area = SubResource("slider_grabber_area")
+HSlider/styles/grabber_area_highlight = SubResource("slider_grabber_area")
 Label/colors/font_color = Color(0.31, 0.227, 0.357, 1)
 Panel/styles/panel = SubResource("panel_style")
 PanelContainer/styles/panel = SubResource("panel_style")
