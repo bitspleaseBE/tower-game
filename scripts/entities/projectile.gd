@@ -212,8 +212,10 @@ func _on_area_entered(area: Area2D) -> void:
 
 
 func _build_skin() -> void:
-	for child: Node in skin.get_children():
-		child.queue_free()
+	while skin.get_child_count() > 0:
+		var child: Node = skin.get_child(0)
+		skin.remove_child(child)
+		child.free()
 	var tex: Texture2D = SHELL_TEX if mode == Mode.LOB else SHOT_TEX
 	var spr := Sprite2D.new()
 	spr.name = "Sprite"

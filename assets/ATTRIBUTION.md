@@ -22,20 +22,21 @@ every shipped third-party file appears here, and only shipped files do.
   - assets/tower/projectile_shot.png (pack: towerDefense_tile251.png)
   - assets/tower/projectile_shell.png (pack: towerDefense_tile252.png)
 
+## Platformer Art Candy (Caverns) — Kenney
+- License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
+- Source: https://opengameart.org/content/platformer-art-candy-caverns
+- Files used:
+  - assets/enemies/critter_normal.png (pack: candyYellow.png; black matte knocked out)
+  - assets/enemies/critter_fast.png (pack: candyRed.png; black matte knocked out)
+  - assets/enemies/critter_swarm.png (pack: candyBlue.png; black matte knocked out)
+  - assets/enemies/critter_armored.png (pack: cookieChoco.png; black matte knocked out)
+  - assets/enemies/critter_boss.png (pack: lollipopFruitRed.png; black matte knocked out)
+  - assets/ui/icon_heart.png (pack: heart.png; black matte knocked out)
+
 ## Shape Characters — Kenney
 - License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
 - Source: https://kenney.nl/assets/shape-characters
 - Files used:
-  - assets/enemies/critter_normal.png (pack: yellow_body_circle.png)
-  - assets/enemies/critter_fast.png (pack: pink_body_circle.png)
-  - assets/enemies/critter_swarm.png (pack: green_body_circle.png)
-  - assets/enemies/critter_armored.png (pack: blue_body_squircle.png)
-  - assets/enemies/critter_boss.png (pack: purple_body_circle.png)
-  - assets/enemies/face_normal.png (pack: face_a.png)
-  - assets/enemies/face_fast.png (pack: face_c.png)
-  - assets/enemies/face_swarm.png (pack: face_b.png)
-  - assets/enemies/face_armored.png (pack: face_l.png)
-  - assets/enemies/face_boss.png (pack: face_d.png)
   - assets/ui/icon_coin.png (pack: tile_coin.png)
 
 ## Game Icons — Kenney
@@ -57,9 +58,8 @@ every shipped third-party file appears here, and only shipped files do.
 - License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/)
 - Source: https://kenney.nl/assets/particle-pack
 - Files used:
-  - assets/ui/icon_heart.png (pack: star_04.png — tinted as lives icon)
   - assets/fx/particle_confetti.png (pack: star_01.png)
   - assets/fx/particle_puff.png (pack: circle_05.png)
   - assets/fx/particle_muzzle.png (pack: muzzle_01.png)
   - assets/fx/particle_sparkle.png (pack: star_03.png)
-  - assets/fx/shine_spec.png (pack: circle_01.png)
+  - assets/fx/shine_spec.png (pack: circle_05.png — unused by entity skins; kept for FX)

@@ -18,8 +18,6 @@ func _initialize() -> void:
 		"res://assets/enemies/critter_swarm.png",
 		"res://assets/enemies/critter_armored.png",
 		"res://assets/enemies/critter_boss.png",
-		"res://assets/enemies/face_normal.png",
-		"res://assets/enemies/face_boss.png",
 		"res://assets/tower/base_square.png",
 		"res://assets/tower/weapon_popper.png",
 		"res://assets/tower/projectile_shot.png",

@@ -15,14 +15,6 @@ const BODY_TEXTURES := {
 	&"armored": preload("res://assets/enemies/critter_armored.png"),
 	&"boss": preload("res://assets/enemies/critter_boss.png"),
 }
-const FACE_TEXTURES := {
-	&"normal": preload("res://assets/enemies/face_normal.png"),
-	&"fast": preload("res://assets/enemies/face_fast.png"),
-	&"swarm": preload("res://assets/enemies/face_swarm.png"),
-	&"armored": preload("res://assets/enemies/face_armored.png"),
-	&"boss": preload("res://assets/enemies/face_boss.png"),
-}
-const SHINE_TEX: Texture2D = preload("res://assets/fx/shine_spec.png")
 
 @onready var skin: Node2D = $Skin
 @onready var hurtbox: Area2D = $Hurtbox
@@ -212,14 +204,20 @@ func _play_boss_entrance() -> void:
 	bar_tween.tween_property(hp_bar, "modulate:a", 1.0, 0.3)
 
 
+func _clear_skin_children() -> void:
+	# queue_free is deferred — on pool reuse that stacks old black-backed sprites.
+	while skin.get_child_count() > 0:
+		var child: Node = skin.get_child(0)
+		skin.remove_child(child)
+		child.free()
+
+
 func _build_skin() -> void:
-	for child: Node in skin.get_children():
-		child.queue_free()
+	_clear_skin_children()
 
 	var id := data.id if data != null else &"normal"
 	var radius := data.radius_px if data != null else 26.0
 	var body_tex: Texture2D = BODY_TEXTURES.get(id, BODY_TEXTURES[&"normal"]) as Texture2D
-	var face_tex: Texture2D = FACE_TEXTURES.get(id, FACE_TEXTURES[&"normal"]) as Texture2D
 
 	var body := Sprite2D.new()
 	body.name = "Body"
@@ -228,18 +226,10 @@ func _build_skin() -> void:
 	body.scale = Vector2(body_scale, body_scale)
 	skin.add_child(body)
 
-	var face := Sprite2D.new()
-	face.name = "Face"
-	face.texture = face_tex
-	var face_scale := (radius * 1.15) / float(face_tex.get_width())
-	face.scale = Vector2(face_scale, face_scale)
-	face.position = Vector2(0.0, -radius * 0.08)
-	skin.add_child(face)
-
 	if id == &"boss":
 		_add_boss_crown(radius)
 
-	_add_shine(radius)
+	_add_bubble_highlight(radius)
 
 	skin.scale = Vector2.ONE
 	skin.position = Vector2.ZERO
@@ -264,13 +254,16 @@ func _add_boss_crown(radius: float) -> void:
 	skin.add_child(crown)
 
 
-func _add_shine(radius: float) -> void:
-	var shine := Sprite2D.new()
+func _add_bubble_highlight(radius: float) -> void:
+	## Soft specular disc (no textured black square — particle shine sprites are opaque).
+	var shine := Polygon2D.new()
 	shine.name = "Shine"
-	shine.texture = SHINE_TEX
-	shine.modulate = Color(1.0, 1.0, 1.0, 0.55)
-	var shine_px := maxf(10.0, radius * 0.45)
-	var shine_scale := shine_px / float(SHINE_TEX.get_width())
-	shine.scale = Vector2(shine_scale, shine_scale)
-	shine.position = Vector2(-radius * 0.38, -radius * 0.38)
+	shine.color = Color(1.0, 1.0, 1.0, 0.55)
+	var r := maxf(4.0, radius * 0.22)
+	var pts := PackedVector2Array()
+	for i: int in 12:
+		var a := TAU * float(i) / 12.0
+		pts.append(Vector2(cos(a), sin(a)) * r)
+	shine.polygon = pts
+	shine.position = Vector2(-radius * 0.32, -radius * 0.35)
 	skin.add_child(shine)

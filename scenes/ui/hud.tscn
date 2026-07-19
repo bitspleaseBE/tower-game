@@ -54,7 +54,7 @@ mouse_filter = 2
 texture = ExtResource("2_heart")
 expand_mode = 1
 stretch_mode = 5
-modulate = Color(1, 0.42, 0.506, 1)
+modulate = Color(1, 1, 1, 1)
 
 [node name="LivesLabel" type="Label" parent="TopBar/MarginContainer/HBoxContainer/LivesRow"]
 unique_name_in_owner = true

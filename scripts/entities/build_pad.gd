@@ -3,7 +3,6 @@ extends Node2D
 ## Empty build site. Taps resolved by Game hit-testing (no Area2D).
 
 const PAD_TEX: Texture2D = preload("res://assets/background/pad.png")
-const SHINE_TEX: Texture2D = preload("res://assets/fx/shine_spec.png")
 
 @onready var skin: Node2D = $Skin
 
@@ -37,8 +36,10 @@ func _ensure_shadow() -> void:
 
 
 func _build_skin() -> void:
-	for child: Node in skin.get_children():
-		child.queue_free()
+	while skin.get_child_count() > 0:
+		var child: Node = skin.get_child(0)
+		skin.remove_child(child)
+		child.free()
 
 	var pad := Sprite2D.new()
 	pad.name = "Pad"
@@ -47,12 +48,10 @@ func _build_skin() -> void:
 	pad.scale = Vector2(pad_scale, pad_scale)
 	skin.add_child(pad)
 
-	var shine := Sprite2D.new()
+	var shine := Polygon2D.new()
 	shine.name = "Shine"
-	shine.texture = SHINE_TEX
-	shine.modulate = Color(1.0, 1.0, 1.0, 0.55)
-	var shine_scale := 16.0 / float(SHINE_TEX.get_width())
-	shine.scale = Vector2(shine_scale, shine_scale)
+	shine.color = Color(1.0, 1.0, 1.0, 0.5)
+	shine.polygon = _ellipse_poly(8.0, 8.0, 12)
 	shine.position = Vector2(-14.0, -14.0)
 	skin.add_child(shine)
 

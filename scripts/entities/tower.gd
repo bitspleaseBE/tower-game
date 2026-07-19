@@ -16,7 +16,6 @@ const CANDY_TINTS := {
 	&"chiller": Color(0.553, 0.816, 0.941, 1.0), ## #8DD0F0 icy
 	&"longshot": Color(0.749, 0.627, 0.91, 1.0), ## lilac
 }
-const SHINE_TEX: Texture2D = preload("res://assets/fx/shine_spec.png")
 
 @onready var skin: Node2D = $Skin
 @onready var range_ring: Node2D = $RangeRing
@@ -195,8 +194,10 @@ func _apply_tier_visuals() -> void:
 
 
 func _rebuild_skin() -> void:
-	for child: Node in skin.get_children():
-		child.queue_free()
+	while skin.get_child_count() > 0:
+		var child: Node = skin.get_child(0)
+		skin.remove_child(child)
+		child.free()
 
 	var scale_factor := 1.0 + float(tier) * 0.08
 	var id := data.id if data != null else &"popper"
@@ -221,7 +222,7 @@ func _rebuild_skin() -> void:
 	skin.add_child(weapon)
 
 	_add_tier_stripes(scale_factor)
-	_add_shine(scale_factor)
+	_add_bubble_highlight(scale_factor)
 
 	skin.scale = Vector2.ONE
 	skin.position = Vector2.ZERO
@@ -239,14 +240,16 @@ func _add_tier_stripes(scale_factor: float) -> void:
 		skin.add_child(stripe)
 
 
-func _add_shine(scale_factor: float) -> void:
-	var shine := Sprite2D.new()
+func _add_bubble_highlight(scale_factor: float) -> void:
+	var shine := Polygon2D.new()
 	shine.name = "Shine"
-	shine.texture = SHINE_TEX
-	shine.modulate = Color(1.0, 1.0, 1.0, 0.55)
-	var shine_px := 14.0 * scale_factor
-	var shine_scale := shine_px / float(SHINE_TEX.get_width())
-	shine.scale = Vector2(shine_scale, shine_scale)
+	shine.color = Color(1.0, 1.0, 1.0, 0.55)
+	var r := 5.0 * scale_factor
+	var pts := PackedVector2Array()
+	for i: int in 12:
+		var a := TAU * float(i) / 12.0
+		pts.append(Vector2(cos(a), sin(a)) * r)
+	shine.polygon = pts
 	shine.position = Vector2(-12.0 * scale_factor, -14.0 * scale_factor)
 	skin.add_child(shine)
 
