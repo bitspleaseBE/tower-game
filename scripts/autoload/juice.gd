@@ -228,25 +228,18 @@ func frost_pulse(world_pos: Vector2, max_radius: float) -> void:
 func muzzle_flash(world_pos: Vector2) -> void:
 	if not _registered or _fx_layer == null:
 		return
-	var flash_node := Node2D.new()
-	flash_node.z_index = 20
-	_fx_layer.add_child(flash_node)
-	flash_node.global_position = world_pos
-	flash_node.set_meta("r", 6.0)
-	flash_node.set_meta("a", 1.0)
-	flash_node.draw.connect(func() -> void:
-		var r: float = float(flash_node.get_meta("r"))
-		var a: float = float(flash_node.get_meta("a"))
-		flash_node.draw_circle(Vector2.ZERO, r, Color(1.0, 0.95, 0.7, a))
-	)
-	flash_node.queue_redraw()
-	var tween := flash_node.create_tween()
-	tween.tween_method(func(v: float) -> void:
-		flash_node.set_meta("r", lerpf(6.0, 18.0, v))
-		flash_node.set_meta("a", lerpf(1.0, 0.0, v))
-		flash_node.queue_redraw()
-	, 0.0, 1.0, 0.12)
-	tween.tween_callback(flash_node.queue_free)
+	var flash := Sprite2D.new()
+	flash.z_index = 20
+	flash.texture = preload("res://assets/fx/particle_muzzle.png")
+	flash.modulate = Color(1.0, 0.95, 0.7, 1.0)
+	var flash_scale := 36.0 / float(flash.texture.get_width())
+	flash.scale = Vector2(flash_scale, flash_scale)
+	_fx_layer.add_child(flash)
+	flash.global_position = world_pos
+	var tween := flash.create_tween()
+	tween.tween_property(flash, "scale", flash.scale * 1.6, 0.12)
+	tween.parallel().tween_property(flash, "modulate:a", 0.0, 0.12)
+	tween.tween_callback(flash.queue_free)
 
 
 func upgrade_fx(tower: Node2D) -> void:
@@ -256,6 +249,7 @@ func upgrade_fx(tower: Node2D) -> void:
 	if skin_node != null:
 		punch_scale(skin_node, 1.25, 0.2)
 	confetti(tower.global_position)
+	_sparkle_burst(tower.global_position)
 	var range_px := 180.0
 	if tower.get("data") != null and tower.get("tier") != null:
 		var td: TowerData = tower.data
@@ -268,8 +262,43 @@ func upgrade_fx(tower: Node2D) -> void:
 func sell_fx(world_pos: Vector2, pad_skin: CanvasItem = null) -> void:
 	coin_burst(world_pos, 5)
 	confetti(world_pos)
+	_puff_burst(world_pos)
 	if pad_skin != null:
 		squash(pad_skin, Vector2(1.3, 0.6), 0.2)
+
+
+func _sparkle_burst(world_pos: Vector2) -> void:
+	if not _registered or _fx_layer == null:
+		return
+	var sparkle := Sprite2D.new()
+	sparkle.z_index = 20
+	sparkle.texture = preload("res://assets/fx/particle_sparkle.png")
+	sparkle.modulate = Color(1.0, 0.95, 0.7, 0.9)
+	var s := 28.0 / float(sparkle.texture.get_width())
+	sparkle.scale = Vector2(s, s)
+	_fx_layer.add_child(sparkle)
+	sparkle.global_position = world_pos
+	var tween := sparkle.create_tween()
+	tween.tween_property(sparkle, "scale", sparkle.scale * 1.8, 0.22)
+	tween.parallel().tween_property(sparkle, "modulate:a", 0.0, 0.22)
+	tween.tween_callback(sparkle.queue_free)
+
+
+func _puff_burst(world_pos: Vector2) -> void:
+	if not _registered or _fx_layer == null:
+		return
+	var puff := Sprite2D.new()
+	puff.z_index = 20
+	puff.texture = preload("res://assets/fx/particle_puff.png")
+	puff.modulate = Color(1.0, 1.0, 1.0, 0.7)
+	var s := 40.0 / float(puff.texture.get_width())
+	puff.scale = Vector2(s, s)
+	_fx_layer.add_child(puff)
+	puff.global_position = world_pos
+	var tween := puff.create_tween()
+	tween.tween_property(puff, "scale", puff.scale * 1.7, 0.28)
+	tween.parallel().tween_property(puff, "modulate:a", 0.0, 0.28)
+	tween.tween_callback(puff.queue_free)
 
 
 func pop_in_out(item: CanvasItem, hold := 0.7) -> void:

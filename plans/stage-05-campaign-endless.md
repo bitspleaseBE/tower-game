@@ -1,6 +1,6 @@
 # Stage 5: Campaign, Endless Mode & Local Saves
 
-**Status:** not started
+**Status:** done
 
 Objective: after this stage, the game has its whole final shape — tapping Play on the main menu opens a MapSelect screen with three portrait map cards (Meadow Munch, Sugar Switchback, Loop-de-Loop), each showing locked/unlocked/beaten state and its endless best wave; beating a map unlocks the next with a little confetti ceremony; every beaten map can be played in endless mode, where after the scripted waves the game generates ever-scaling waves until the player falls, the HUD showing "Wave 17 · Best 23" and defeat celebrating a "NEW BEST!"; the win overlay offers Next map! / Go endless! / Menu; and all of it — beaten flags and best waves — provably survives a browser reload of the deployed web build via `user://save.cfg`. Blueprint §11 bullets 1–3 become functionally complete in placeholder art.
 
@@ -27,68 +27,68 @@ Ordered so persistence and data exist before the flow that displays them. The sc
 
 ### 1. `SaveGame` autoload — `scripts/autoload/save_game.gd`
 
-- [ ] Plain `extends Node`, mirroring `scripts/settings.gd`'s ConfigFile pattern exactly (`const SAVE_PATH := "user://save.cfg"`, `_load()` in `_ready()`, `_save()` writing the whole file; `push_warning` if `config.save()` returns non-OK). One section per map id: `[map_01] beaten=bool best_endless_wave=int` (absent → `false`/`0`).
-- [ ] Campaign order is the single source of truth here: `const CAMPAIGN: Array[StringName] = [&"map_01", &"map_02", &"map_03"]`. MapSelect derives `.tres` paths as `"res://data/maps/%s.tres" % id`.
-- [ ] API: `is_beaten(id) -> bool`, `best_endless_wave(id) -> int`, `is_unlocked(id) -> bool` (map_01 always; else previous CAMPAIGN entry beaten), `mark_beaten(id)` (saves immediately; if this flips the next map's `is_unlocked` false→true, set `just_unlocked` to that next id), `record_endless_wave(id, wave) -> bool` (true + save immediately + `Events.endless_best.emit(id, wave)` when `wave` beats the stored best; else false, no write).
-- [ ] Transient state, clearly commented **never persisted to disk**: `var run_map: MapData = null`, `var run_endless := false` (the run request `Game` reads at `_ready`; survives `reload_current_scene()` so Retry relaunches the same setup), and `var just_unlocked: StringName = &""` (MapSelect reads + clears for the unlock ceremony).
-- [ ] In `_ready()`, connect `Events.run_won` → `mark_beaten(map_id)`. Persistence is SaveGame's job; `game.gd` never writes files.
-- [ ] Register in `project.godot` `[autoload]` **between `Events` and `Juice`**: `SaveGame="*res://scripts/autoload/save_game.gd"` (it connects to Events at ready, so Events must precede it).
-- [ ] Remove the now-stale `@warning_ignore("unused_signal")` on `endless_best` in `events.gd`.
+- [x] Plain `extends Node`, mirroring `scripts/settings.gd`'s ConfigFile pattern exactly (`const SAVE_PATH := "user://save.cfg"`, `_load()` in `_ready()`, `_save()` writing the whole file; `push_warning` if `config.save()` returns non-OK). One section per map id: `[map_01] beaten=bool best_endless_wave=int` (absent → `false`/`0`).
+- [x] Campaign order is the single source of truth here: `const CAMPAIGN: Array[StringName] = [&"map_01", &"map_02", &"map_03"]`. MapSelect derives `.tres` paths as `"res://data/maps/%s.tres" % id`.
+- [x] API: `is_beaten(id) -> bool`, `best_endless_wave(id) -> int`, `is_unlocked(id) -> bool` (map_01 always; else previous CAMPAIGN entry beaten), `mark_beaten(id)` (saves immediately; if this flips the next map's `is_unlocked` false→true, set `just_unlocked` to that next id), `record_endless_wave(id, wave) -> bool` (true + save immediately + `Events.endless_best.emit(id, wave)` when `wave` beats the stored best; else false, no write).
+- [x] Transient state, clearly commented **never persisted to disk**: `var run_map: MapData = null`, `var run_endless := false` (the run request `Game` reads at `_ready`; survives `reload_current_scene()` so Retry relaunches the same setup), and `var just_unlocked: StringName = &""` (MapSelect reads + clears for the unlock ceremony).
+- [x] In `_ready()`, connect `Events.run_won` → `mark_beaten(map_id)`. Persistence is SaveGame's job; `game.gd` never writes files.
+- [x] Register in `project.godot` `[autoload]` **between `Events` and `Juice`**: `SaveGame="*res://scripts/autoload/save_game.gd"` (it connects to Events at ready, so Events must precede it).
+- [x] Remove the now-stale `@warning_ignore("unused_signal")` on `endless_best` in `events.gd`.
 
 ### 2. Maps 2 & 3 as data — `data/maps/map_02.tres`, `data/maps/map_03.tres`
 
 Author per Stage 2's hand-authoring notes (typed arrays as `Array[ExtResource("...")]([SubResource(...)])`; or generate once via a throwaway `godot --headless --script` + `ResourceSaver.save()` and delete the script). All numbers below are first guesses — tune ONLY by editing `.tres`.
 
-- [ ] **map_02 — "Sugar Switchback"** (serpentine, enters top-RIGHT — mirrors map 1): `starting_coins 110`, `starting_lives 15`.
+- [x] **map_02 — "Sugar Switchback"** (serpentine, enters top-RIGHT — mirrors map 1): `starting_coins 110`, `starting_lives 15`.
   - `path_points`: `(760, 220), (160, 220), (160, 460), (600, 460), (600, 700), (160, 700), (160, 940), (760, 940)` — four horizontal lanes, tight 240 px spacing.
   - `pad_positions` (7 pads — fewer than map 1, choices hurt): `(300, 340), (520, 340), (300, 580), (480, 580), (300, 820), (480, 820), (360, 1040)`.
-- [ ] **map_03 — "Loop-de-Loop"** (self-crossing route; the path crosses itself at (560, 480) — a double-coverage hotspot; Line2D just overdraws, enemies walk through): `starting_coins 130`, `starting_lives 10`.
+- [x] **map_03 — "Loop-de-Loop"** (self-crossing route; the path crosses itself at (560, 480) — a double-coverage hotspot; Line2D just overdraws, enemies walk through): `starting_coins 130`, `starting_lives 10`.
   - `path_points`: `(-40, 240), (560, 240), (560, 900), (160, 900), (160, 480), (680, 480), (680, 1040), (760, 1040)`.
   - `pad_positions` (8 pads): `(70, 360), (250, 360), (430, 360), (660, 360), (300, 690), (450, 690), (300, 1020), (470, 1020)`.
   - Both coordinate sets are verified against the layout rules (pads ≥ 90 px from every path segment centerline, ≥ 110 px apart, on the 720-wide screen, board band y ≈ 160–1040) — after authoring, run `map_lint.gd` (created later in this same task) and fix any FAIL before continuing.
-- [ ] Wave lists (notation: `count×id @spawn_interval`, `(+Ns)` = group `start_delay`). Calibrate against merged map 1: map 2 wave 4 should feel like map 1 wave 7. Counts may shift ±30% in task 9.
+- [x] Wave lists (notation: `count×id @spawn_interval`, `(+Ns)` = group `start_delay`). Calibrate against merged map 1: map 2 wave 4 should feel like map 1 wave 7. Counts may shift ±30% in task 9.
   - **map_02, 13 waves:** W1 `8×normal @1.0` · W2 `10×normal @0.9 + 4×fast (+4s) @0.8` · W3 `12×swarm @0.4` · W4 `8×fast @0.7 + 6×normal @0.9` · W5 `6×armored @1.2` · W6 `14×swarm @0.35 + 6×fast (+3s) @0.7` · W7 `1×boss + 8×normal (+2s) @0.8` · W8 `8×armored @1.0 + 10×swarm (+4s) @0.4` · W9 `12×fast @0.55` · W10 `10×armored @0.9 + 8×fast (+5s) @0.6` · W11 `20×swarm @0.3 + 6×armored (+4s) @1.0` · W12 `14×fast @0.5 + 10×armored (+3s) @0.8` · W13 `2×boss @6.0 + 12×swarm (+3s) @0.4 + 8×fast (+8s) @0.6`.
   - **map_03, 14 waves:** W1 `10×normal @0.9` · W2 `8×fast @0.7 + 8×swarm (+3s) @0.4` · W3 `8×armored @1.0` · W4 `16×swarm @0.3 + 6×fast (+4s) @0.6` · W5 `1×boss + 10×swarm (+2s) @0.4` · W6 `10×fast @0.5 + 8×armored (+3s) @0.9` · W7 `24×swarm @0.25` · W8 `12×armored @0.8` · W9 `14×fast @0.45 + 12×swarm (+3s) @0.3` · W10 `1×boss + 8×armored (+2s) @0.9` · W11 `18×fast @0.4 + 10×armored (+4s) @0.7` · W12 `30×swarm @0.22 + 6×armored (+5s) @0.9` · W13 `14×armored @0.6 + 14×fast (+3s) @0.4` · W14 `2×boss @8.0 + 16×swarm (+2s) @0.3 + 10×fast (+10s) @0.5 + 8×armored (+6s) @0.8`.
-- [ ] Set explicit endless growth params in all THREE map `.tres` files (map_01 edit is in-scope for these three fields only): map_01 `1.14 / 1.06 / 1.015`, map_02 `1.16 / 1.07 / 1.02`, map_03 `1.18 / 1.08 / 1.02` (hp / count / speed).
-- [ ] `scripts/debug/map_lint.gd` — `extends SceneTree`, run as `godot --headless --script scripts/debug/map_lint.gd` (after `--import`). For every `data/maps/*.tres`: assert pad-to-path-segment distance ≥ 90, pad-to-pad ≥ 110, pads inside x 60–660 / y 190–1040, path inside x −80–800 / y 160–1060, 12–15 waves, every SpawnGroup has a non-null enemy and count > 0. Print PASS/FAIL per map, `quit(1)` on any failure. Keep it — Stage 8 reuses it while rebalancing.
+- [x] Set explicit endless growth params in all THREE map `.tres` files (map_01 edit is in-scope for these three fields only): map_01 `1.14 / 1.06 / 1.015`, map_02 `1.16 / 1.07 / 1.02`, map_03 `1.18 / 1.08 / 1.02` (hp / count / speed).
+- [x] `scripts/debug/map_lint.gd` — `extends SceneTree`, run as `godot --headless --script scripts/debug/map_lint.gd` (after `--import`). For every `data/maps/*.tres`: assert pad-to-path-segment distance ≥ 90, pad-to-pad ≥ 110, pads inside x 60–660 / y 190–1040, path inside x −80–800 / y 160–1060, 12–15 waves, every SpawnGroup has a non-null enemy and count > 0. Print PASS/FAIL per map, `quit(1)` on any failure. Keep it — Stage 8 reuses it while rebalancing.
 
 ### 3. Endless wave generator — `scripts/endless_waves.gd`
 
-- [ ] `class_name EndlessWaves extends RefCounted`, one pure static entry point — deterministic (no RNG), so every endless run of a map is the same fair gauntlet:
+- [x] `class_name EndlessWaves extends RefCounted`, one pure static entry point — deterministic (no RNG), so every endless run of a map is the same fair gauntlet:
   ```gdscript
   static func generate(map: MapData, wave_number: int) -> WaveData
   ```
   With `scripted = map.waves.size()` and `k = wave_number - scripted` (k ≥ 1): template = the last `TEMPLATE_TAIL := 5` scripted waves cycled in order (`map.waves[scripted - TAIL + ((k - 1) % TAIL)]`) — the finale boss wave recurs naturally every 5th endless wave. Multipliers: `hp_mult = pow(map.endless_hp_growth, k)`, `count_mult = pow(map.endless_count_growth, k)`, `speed_mult = minf(pow(map.endless_speed_growth, k), SPEED_MULT_CAP)`.
-- [ ] Build the returned WaveData from **fresh** `WaveData.new()`/`SpawnGroup.new()` plus `template_group.enemy.duplicate()` with `hp *= hp_mult`, `speed *= speed_mult` — NEVER mutate the loaded template resources (see Implementation notes). `bounty`, `lives_cost`, `armor`, `is_boss`, `id` stay untouched (Skin variants and boss behaviors keep keying off them).
-- [ ] Counts: `ceili(count * count_mult)`; if the wave's total spawn count exceeds `wave_cap()` (`PerfBudget.MAX_ENEMIES / 2` — pool headroom for inter-wave carryover), scale all group counts down proportionally (`maxi(1, ...)`). `spawn_interval = maxf(template interval, INTERVAL_FLOOR := 0.25)`.
-- [ ] Sanctioned constants here (fairness/perf guards, NOT balance — balance is the `.tres` growth params): `TEMPLATE_TAIL = 5`, `SPEED_MULT_CAP = 1.5`, `INTERVAL_FLOOR = 0.25`, `wave_cap()`. Comment each as such.
+- [x] Build the returned WaveData from **fresh** `WaveData.new()`/`SpawnGroup.new()` plus `template_group.enemy.duplicate()` with `hp *= hp_mult`, `speed *= speed_mult` — NEVER mutate the loaded template resources (see Implementation notes). `bounty`, `lives_cost`, `armor`, `is_boss`, `id` stay untouched (Skin variants and boss behaviors keep keying off them).
+- [x] Counts: `ceili(count * count_mult)`; if the wave's total spawn count exceeds `wave_cap()` (`PerfBudget.MAX_ENEMIES / 2` — pool headroom for inter-wave carryover), scale all group counts down proportionally (`maxi(1, ...)`). `spawn_interval = maxf(template interval, INTERVAL_FLOOR := 0.25)`.
+- [x] Sanctioned constants here (fairness/perf guards, NOT balance — balance is the `.tres` growth params): `TEMPLATE_TAIL = 5`, `SPEED_MULT_CAP = 1.5`, `INTERVAL_FLOOR = 0.25`, `wave_cap()`. Comment each as such.
 
 ### 4. Run modes — `scripts/game.gd` + `scripts/wave_spawner.gd`
 
-- [ ] `game.gd` gains `var endless := false` and reads the run request in `_ready()`: if `SaveGame.run_map` is set, `map_data = SaveGame.run_map; endless = SaveGame.run_endless`; else keep the Stage 2 map_01 preload fallback with `endless = false` (editor F5 on game.tscn still works). Snapshot `var best_at_run_start := SaveGame.best_endless_wave(map_data.id)`.
-- [ ] `game.gd` exposes `get_wave(n: int) -> WaveData`: `map_data.waves[n - 1]` while `n <= map_data.waves.size()`, else `EndlessWaves.generate(map_data, n)`. The spawner stops touching `map_data.waves` directly and requests every wave through this.
-- [ ] `wave_spawner.gd` loop change: after CLEARING wave `n` — campaign mode AND `n == total_scripted` → WON (emit `run_won`, exactly as today); otherwise re-arm COUNTDOWN for wave `n + 1` forever. Keep emitting `Events.wave_started.emit(n, total_scripted)` unchanged (consumers key off mode, not a changed payload). Audit every `run_over`-style guard from Stage 2: a won run must be *resumable* (next bullet), a lost run must not.
-- [ ] `game.gd.enter_endless()` (called by the win overlay's Go endless! button): set `endless = true`, tell the HUD to flip to endless display, call `spawner.resume_endless()` — which clears the won/halt flag and re-enters COUNTDOWN at wave `total_scripted + 1`. Lives, coins, and towers carry over untouched; that continuity is the whole point.
-- [ ] Best-wave recording is EAGER (a mid-run browser close still keeps your wave): `game.gd` connects `Events.wave_started` → if `endless`, `SaveGame.record_endless_wave(map_data.id, number)`. Recording starts from whenever the run is endless: a from-scratch endless run records wave 1 up; a converted post-win run records from `total_scripted + 1`. The defeat overlay only *celebrates*; it never writes.
-- [ ] Endless defeat is the existing 0-lives path (`Events.run_lost.emit(map_data.id)`) — no new signal. Navigation retargets: the top-bar Menu button and `ui_cancel` in game now go to `res://scenes/map_select.tscn` (canonical flow: ResultOverlay/Game → MapSelect).
+- [x] `game.gd` gains `var endless := false` and reads the run request in `_ready()`: if `SaveGame.run_map` is set, `map_data = SaveGame.run_map; endless = SaveGame.run_endless`; else keep the Stage 2 map_01 preload fallback with `endless = false` (editor F5 on game.tscn still works). Snapshot `var best_at_run_start := SaveGame.best_endless_wave(map_data.id)`.
+- [x] `game.gd` exposes `get_wave(n: int) -> WaveData`: `map_data.waves[n - 1]` while `n <= map_data.waves.size()`, else `EndlessWaves.generate(map_data, n)`. The spawner stops touching `map_data.waves` directly and requests every wave through this.
+- [x] `wave_spawner.gd` loop change: after CLEARING wave `n` — campaign mode AND `n == total_scripted` → WON (emit `run_won`, exactly as today); otherwise re-arm COUNTDOWN for wave `n + 1` forever. Keep emitting `Events.wave_started.emit(n, total_scripted)` unchanged (consumers key off mode, not a changed payload). Audit every `run_over`-style guard from Stage 2: a won run must be *resumable* (next bullet), a lost run must not.
+- [x] `game.gd.enter_endless()` (called by the win overlay's Go endless! button): set `endless = true`, tell the HUD to flip to endless display, call `spawner.resume_endless()` — which clears the won/halt flag and re-enters COUNTDOWN at wave `total_scripted + 1`. Lives, coins, and towers carry over untouched; that continuity is the whole point.
+- [x] Best-wave recording is EAGER (a mid-run browser close still keeps your wave): `game.gd` connects `Events.wave_started` → if `endless`, `SaveGame.record_endless_wave(map_data.id, number)`. Recording starts from whenever the run is endless: a from-scratch endless run records wave 1 up; a converted post-win run records from `total_scripted + 1`. The defeat overlay only *celebrates*; it never writes.
+- [x] Endless defeat is the existing 0-lives path (`Events.run_lost.emit(map_data.id)`) — no new signal. Navigation retargets: the top-bar Menu button and `ui_cancel` in game now go to `res://scenes/map_select.tscn` (canonical flow: ResultOverlay/Game → MapSelect).
 
 ### 5. HUD — current vs best wave
 
-- [ ] `hud.gd` gains `setup_run(total_waves: int, endless: bool, best: int)` called from `Game._ready()` (and again from `enter_endless()`). Campaign renders the wave label as today (`"Wave 3/13"`); endless renders `"Wave 14 · Best 23"` (best 0 → just `"Wave 14"`). Store `best` locally.
-- [ ] Connect `Events.endless_best` → update the stored best, re-render, and `Juice.punch_scale` the wave label (pivot centered) — the mid-run "new best" tick. The big celebration stays on the defeat overlay.
+- [x] `hud.gd` gains `setup_run(total_waves: int, endless: bool, best: int)` called from `Game._ready()` (and again from `enter_endless()`). Campaign renders the wave label as today (`"Wave 3/13"`); endless renders `"Wave 14 · Best 23"` (best 0 → just `"Wave 14"`). Store `best` locally.
+- [x] Connect `Events.endless_best` → update the stored best, re-render, and `Juice.punch_scale` the wave label (pivot centered) — the mid-run "new best" tick. The big celebration stays on the defeat overlay.
 
 ### 6. ResultOverlay grows — `scenes/ui/result_overlay.tscn` + `scripts/ui/result_overlay.gd`
 
-- [ ] `Game._ready()` hands the overlay its context: `result_overlay.setup(game)` (it reads `game.map_data`, `game.endless`, `game.best_at_run_start` at show time; it already tracks the current wave from `wave_started`). Three variants, all short and bouncy (blueprint §8), all buttons ≥ 88 px, bottom-anchored, squishified:
+- [x] `Game._ready()` hands the overlay its context: `result_overlay.setup(game)` (it reads `game.map_data`, `game.endless`, `game.best_at_run_start` at show time; it already tracks the current wave from `wave_started`). Three variants, all short and bouncy (blueprint §8), all buttons ≥ 88 px, bottom-anchored, squishified:
   - **Campaign win** (`run_won`): title "Path defended!". Buttons: `Next map!` (only when `SaveGame.CAMPAIGN` has a successor — hidden after map_03, where the title becomes "All paths defended!"), `Go endless!`, `Menu`.
   - **Campaign lose** (`run_lost`, not endless): title "The critters got through!" — Retry / Menu, as today.
   - **Endless defeat** (`run_lost`, endless): title `"Wave %d wants a word."` (the blueprint's own line), below it `"Best: wave %d"` from SaveGame; when the best beat `best_at_run_start`, add a big "NEW BEST!" label punch-scaled in, and fire the celebration confetti. Buttons: Retry / Menu.
   - Button wiring (every one unpauses FIRST — Stage 2's rule): `Next map!` → `SaveGame.run_map = load(next map path); SaveGame.run_endless = false; change_scene_to_file("res://scenes/game.tscn")` (changing to the currently-running scene file is fine). `Go endless!` → unpause, hide overlay, `game.enter_endless()` — no scene change. `Retry` → `reload_current_scene()` (run_map/run_endless persist, so an endless retry restarts endless). `Menu` → `res://scenes/map_select.tscn`.
-- [ ] Celebration confetti: the overlay embeds two instances of the surviving `scenes/fx/confetti_*.tscn` (positioned upper-left/upper-right of the panel), `process_mode = PROCESS_MODE_ALWAYS` — the tree is paused under the overlay and `Juice.confetti()` pool bursts would freeze; these local one-shots `restart()` on new-best reveal instead. Do not route them through Juice's pools.
+- [x] Celebration confetti: the overlay embeds two instances of the surviving `scenes/fx/confetti_*.tscn` (positioned upper-left/upper-right of the panel), `process_mode = PROCESS_MODE_ALWAYS` — the tree is paused under the overlay and `Juice.confetti()` pool bursts would freeze; these local one-shots `restart()` on new-best reveal instead. Do not route them through Juice's pools.
 
 ### 7. MapSelect flow — `scenes/map_select.tscn`, `scenes/ui/map_card.tscn`
 
-- [ ] `scenes/ui/map_card.tscn` (root `MapCard`, PanelContainer, `custom_minimum_size ≈ (640, 270)`, script `scripts/ui/map_card.gd`):
+- [x] `scenes/ui/map_card.tscn` (root `MapCard`, PanelContainer, `custom_minimum_size ≈ (640, 270)`, script `scripts/ui/map_card.gd`):
   ```
   MapCard (PanelContainer)
   └─ Margin (MarginContainer, 20) ► HBox (HBoxContainer, sep 16)
@@ -99,17 +99,17 @@ Author per Stage 2's hand-authoring notes (typed arrays as `Array[ExtResource(".
         └─ Buttons (HBoxContainer): PlayButton · EndlessButton
   ```
   `setup(map: MapData, unlocked: bool, beaten: bool, best: int, prev_name: String)` drives three states: **locked** — `modulate` dimmed to ~0.55, buttons hidden, StatusLabel "Beat %s first!" (prev_name), any tap on the card calls `Juice.wiggle(card)` (Stage 4 API — horizontal rejection wiggle, returns to claimed rest); **unlocked** — PlayButton "Play!", StatusLabel "A fresh path!"; **beaten** — Badge shown, PlayButton "Replay", EndlessButton "Endless!", StatusLabel "Best: wave %d" (best 0 → "Endless awaits!"). Buttons ≥ 88 px tall. Card emits `play_pressed(endless: bool)`.
-- [ ] `scripts/ui/map_preview.gd`: store `PackedVector2Array` points + pad positions scaled by ~0.16 into the 130×230 box; `_draw()` with `draw_polyline(points, path sand color, 6.0, true)` + `draw_circle` per pad (lilac, r 5) — the three route shapes ARE the card art, straight from data. This Control is a named Stage 6 swap point (thumbnail sprites replace the draw).
-- [ ] `scenes/map_select.tscn` (root `MapSelect`, Control full rect, script `scripts/map_select.gd`): cream `Background` ColorRect; `Title` Label "Pick a path!" top-center; `Cards` VBoxContainer (center-anchored, width 640, separation 24) with three MapCard instances; `BackButton` (ButtonSecondary, 520×88, bottom-center, 56 px margin) → main menu, `ui_cancel` ditto; `UnlockFx` (Node2D) holding one instance of the surviving confetti scene for the unlock ceremony. Keyboard: `grab_focus()` the first visible enabled button (desktop parity).
-- [ ] `map_select.gd._ready()`: for each id in `SaveGame.CAMPAIGN`, `load("res://data/maps/%s.tres" % id)` and `setup` its card from SaveGame state. `play_pressed(endless)` → `SaveGame.run_map = map; SaveGame.run_endless = endless; change_scene_to_file("res://scenes/game.tscn")`.
-- [ ] Flow rewiring: `main_menu` New Game button now reads "Play" and opens `map_select.tscn` (same handler method, retargeted path + text). Confirm the full canonical loop: MainMenu → MapSelect → Game → ResultOverlay → MapSelect.
+- [x] `scripts/ui/map_preview.gd`: store `PackedVector2Array` points + pad positions scaled by ~0.16 into the 130×230 box; `_draw()` with `draw_polyline(points, path sand color, 6.0, true)` + `draw_circle` per pad (lilac, r 5) — the three route shapes ARE the card art, straight from data. This Control is a named Stage 6 swap point (thumbnail sprites replace the draw).
+- [x] `scenes/map_select.tscn` (root `MapSelect`, Control full rect, script `scripts/map_select.gd`): cream `Background` ColorRect; `Title` Label "Pick a path!" top-center; `Cards` VBoxContainer (center-anchored, width 640, separation 24) with three MapCard instances; `BackButton` (ButtonSecondary, 520×88, bottom-center, 56 px margin) → main menu, `ui_cancel` ditto; `UnlockFx` (Node2D) holding one instance of the surviving confetti scene for the unlock ceremony. Keyboard: `grab_focus()` the first visible enabled button (desktop parity).
+- [x] `map_select.gd._ready()`: for each id in `SaveGame.CAMPAIGN`, `load("res://data/maps/%s.tres" % id)` and `setup` its card from SaveGame state. `play_pressed(endless)` → `SaveGame.run_map = map; SaveGame.run_endless = endless; change_scene_to_file("res://scenes/game.tscn")`.
+- [x] Flow rewiring: `main_menu` New Game button now reads "Play" and opens `map_select.tscn` (same handler method, retargeted path + text). Confirm the full canonical loop: MainMenu → MapSelect → Game → ResultOverlay → MapSelect.
 
 ### 8. Unlock & selection juice
 
-- [ ] Cards staggered bounce-in on MapSelect load (scale 0→1, `TRANS_BACK`, ~0.08 s apart — the Stage 1 menu pattern; set `pivot_offset = size / 2.0` after layout).
-- [ ] Unlock ceremony: if `SaveGame.just_unlocked` matches a card, clear it, then ~0.5 s after load: punch-scale that card, position `UnlockFx` over it and `restart()` the confetti, pop a small "Unlocked!" label above the card (local tween — Juice's pooled floaters are game-scene-only). One burst, within `PerfBudget` amounts.
-- [ ] Badge star idle: gentle scale pulse loop on its `Skin` (~1.0→1.08, sine, randomized phase) — beaten cards read alive.
-- [ ] Press feedback: `Juice.squishify_button` on every new button (cards, back, overlay); locked-card wiggle per task 7; WaveBanner gains `announce(text)` and `enter_endless()` calls `announce("Endless!")` once.
+- [x] Cards staggered bounce-in on MapSelect load (scale 0→1, `TRANS_BACK`, ~0.08 s apart — the Stage 1 menu pattern; set `pivot_offset = size / 2.0` after layout).
+- [x] Unlock ceremony: if `SaveGame.just_unlocked` matches a card, clear it, then ~0.5 s after load: punch-scale that card, position `UnlockFx` over it and `restart()` the confetti, pop a small "Unlocked!" label above the card (local tween — Juice's pooled floaters are game-scene-only). One burst, within `PerfBudget` amounts.
+- [x] Badge star idle: gentle scale pulse loop on its `Skin` (~1.0→1.08, sine, randomized phase) — beaten cards read alive.
+- [x] Press feedback: `Juice.squishify_button` on every new button (cards, back, overlay); locked-card wiggle per task 7; WaveBanner gains `announce(text)` and `enter_endless()` calls `announce("Endless!")` once.
 
 ### 9. Campaign beatability + endless validation pass (the flex task)
 
@@ -140,13 +140,13 @@ Author per Stage 2's hand-authoring notes (typed arrays as `Array[ExtResource(".
 
 ## Juice checklist
 
-- [ ] MapSelect cards staggered bounce-in; every new button press-squishes.
-- [ ] Locked-card tap wiggles (rejection you can feel); beaten badge star idles with a gentle pulse.
-- [ ] Map-unlock ceremony on the freshly unlocked card: punch + confetti burst + "Unlocked!" pop — once, then consumed.
-- [ ] "Endless!" banner announcement when a won run rolls into endless.
-- [ ] HUD wave label punches on every new-best tick mid-run.
-- [ ] Endless defeat: "NEW BEST!" label punch + overlay confetti celebration (pause-proof).
-- [ ] All within `PerfBudget` caps — MapSelect and overlays use single local one-shot emitters, never unbounded effects.
+- [x] MapSelect cards staggered bounce-in; every new button press-squishes.
+- [x] Locked-card tap wiggles (rejection you can feel); beaten badge star idles with a gentle pulse.
+- [x] Map-unlock ceremony on the freshly unlocked card: punch + confetti burst + "Unlocked!" pop — once, then consumed.
+- [x] "Endless!" banner announcement when a won run rolls into endless.
+- [x] HUD wave label punches on every new-best tick mid-run.
+- [x] Endless defeat: "NEW BEST!" label punch + overlay confetti celebration (pause-proof).
+- [x] All within `PerfBudget` caps — MapSelect and overlays use single local one-shot emitters, never unbounded effects.
 
 ## Acceptance criteria
 

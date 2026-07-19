@@ -242,3 +242,6 @@ pad_positions = PackedVector2Array(180, 400, 420, 400, 650, 410, 360, 660, 620, 
 starting_coins = 100
 starting_lives = 20
 waves = Array[ExtResource("2_wfgdk")]([SubResource("wave1"), SubResource("wave2"), SubResource("wave3"), SubResource("wave4"), SubResource("wave5"), SubResource("wave6"), SubResource("wave7"), SubResource("wave8"), SubResource("wave9"), SubResource("wave10"), SubResource("wave11"), SubResource("wave12"), SubResource("wave13"), SubResource("wave14")])
+endless_hp_growth = 1.14
+endless_count_growth = 1.06
+endless_speed_growth = 1.015

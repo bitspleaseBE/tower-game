@@ -1,6 +1,6 @@
 # Stage 6: Candy Coat — Kenney Art via /select-asset
 
-**Status:** not started
+**Status:** done
 
 Objective: after this stage, the live Pages build stops looking like tinted geometry and starts looking like the blueprint's candy screenshot — critters are cute round Kenney characters wobbling down a real grass-and-path board, the four tower types are distinct flat-vector turrets that visibly grow through their tiers, hearts and coins in the HUD are real icons, confetti bursts use real particle sprites, the buttons wear chunky Kenney nine-patch skins, and the browser tab shows a real game icon — with **zero gameplay or juice regressions**: same waves, same numbers, same squash/wobble/pop feel, same PerfBudget-verified frame rate. Because the packs need manual team download, every category degrades gracefully: whatever isn't in `inspiration/` yet keeps its release-shaped primitives and is logged as a follow-up — the stage merges shippable regardless. The session ends by staging CC0 audio proposals under `inspiration/audio/` so the team can download them before Stage 7.
 

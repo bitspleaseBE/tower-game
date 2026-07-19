@@ -15,15 +15,18 @@ func _ready() -> void:
 	Events.run_lost.connect(_on_run_end)
 
 
+func announce(text: String) -> void:
+	label.text = text
+	_show_banner()
+
+
 func _on_wave_started(number: int, _total: int) -> void:
-	# Boss wave: last wave of a map that includes a boss spawn shows "BOSS!".
 	var game := get_tree().get_first_node_in_group("game")
 	var is_boss_wave := false
-	if game != null and game.get("map_data") != null:
-		var map: MapData = game.map_data
-		var idx := number - 1
-		if idx >= 0 and idx < map.waves.size():
-			for group: SpawnGroup in map.waves[idx].spawn_groups:
+	if game != null and game.has_method("get_wave"):
+		var wave: WaveData = game.get_wave(number)
+		if wave != null:
+			for group: SpawnGroup in wave.spawn_groups:
 				if group.enemy != null and group.enemy.is_boss:
 					is_boss_wave = true
 					break

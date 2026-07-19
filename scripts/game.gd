@@ -1,5 +1,5 @@
 extends Node2D
-## Stage 2 core loop + Stage 3 pooling / juice registration.
+## Stage 2 core loop + Stage 3 pooling / juice + Stage 5 run modes.
 
 const DESIGN_SIZE := Vector2(720, 1280)
 const TAP_RADIUS_PX := 56.0
@@ -7,19 +7,24 @@ const EnemyScene: PackedScene = preload("res://scenes/entities/enemy.tscn")
 const ProjectileScene: PackedScene = preload("res://scenes/entities/projectile.tscn")
 const BuildPadScene: PackedScene = preload("res://scenes/entities/build_pad.tscn")
 
-## Stage 5 MapSelect will inject map_data; default is map 1.
+## Stage 5 MapSelect injects via SaveGame; default is map 1 for editor F5.
 var map_data: MapData
+var endless := false
+var best_at_run_start: int = 0
 
 @onready var board: Node2D = $Board
 @onready var path: Path2D = $Board/Path
 @onready var path_border: Line2D = $Board/Path/PathBorder
 @onready var path_line: Line2D = $Board/Path/PathLine
+@onready var path_highlight: Line2D = $Board/Path/PathHighlight
 @onready var pads_root: Node2D = $Board/Pads
 @onready var projectiles_root: Node2D = $Board/Projectiles
 @onready var fx_layer: Node2D = $FxLayer
 @onready var spawner: Node = $Spawner
 @onready var hud: Control = $UI/Hud
 @onready var build_menu: Control = $UI/BuildMenu
+@onready var result_overlay: Control = $UI/ResultOverlay
+@onready var wave_banner: Control = $UI/WaveBanner
 
 var coins: int = 0
 var lives: int = 0
@@ -28,13 +33,19 @@ var _lost_emitted: bool = false
 var _suppress_game_over: bool = false
 var _enemy_pool: ObjectPool
 var _projectile_pool: ObjectPool
+var _current_wave: int = 1
 
 
 func _ready() -> void:
 	add_to_group("game")
-	# Stage 5 MapSelect will inject map_data before _ready; default is map 1.
-	if map_data == null:
+	if SaveGame.run_map != null:
+		map_data = SaveGame.run_map
+		endless = SaveGame.run_endless
+	elif map_data == null:
 		map_data = load("res://data/maps/map_01.tres") as MapData
+		endless = false
+	best_at_run_start = SaveGame.best_endless_wave(map_data.id)
+
 	_build_path()
 	_spawn_pads()
 	_recenter_board()
@@ -56,7 +67,9 @@ func _ready() -> void:
 	lives = map_data.starting_lives
 	Events.coins_changed.emit(coins)
 	Events.lives_changed.emit(lives)
-	hud.set_wave(1, map_data.waves.size())
+	hud.setup_run(map_data.waves.size(), endless, best_at_run_start)
+	if result_overlay.has_method("setup"):
+		result_overlay.setup(self)
 
 	hud.menu_requested.connect(_go_back)
 	build_menu.setup(self)
@@ -64,8 +77,23 @@ func _ready() -> void:
 	spawner.countdown_tick.connect(_on_countdown_tick)
 	Events.enemy_killed.connect(_on_enemy_killed)
 	Events.enemy_leaked.connect(_on_enemy_leaked)
+	Events.wave_started.connect(_on_wave_started)
 
 	spawner.start()
+
+
+func get_wave(n: int) -> WaveData:
+	if n <= map_data.waves.size():
+		return map_data.waves[n - 1]
+	return EndlessWaves.generate(map_data, n)
+
+
+func enter_endless() -> void:
+	endless = true
+	hud.setup_run(map_data.waves.size(), true, SaveGame.best_endless_wave(map_data.id))
+	if wave_banner != null and wave_banner.has_method("announce"):
+		wave_banner.announce("Endless!")
+	spawner.resume_endless()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -164,7 +192,7 @@ func set_stress_mode(enabled: bool) -> void:
 
 func _go_back() -> void:
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+	get_tree().change_scene_to_file("res://scenes/map_select.tscn")
 
 
 func _recenter_board() -> void:
@@ -179,6 +207,8 @@ func _build_path() -> void:
 	path.curve = curve
 	path_border.points = map_data.path_points
 	path_line.points = map_data.path_points
+	if path_highlight != null:
+		path_highlight.points = map_data.path_points
 
 
 func _spawn_pads() -> void:
@@ -222,6 +252,12 @@ func _hide_all_range_rings() -> void:
 
 func _on_countdown_tick(seconds_left: int) -> void:
 	hud.show_countdown(seconds_left)
+
+
+func _on_wave_started(number: int, _total: int) -> void:
+	_current_wave = number
+	if endless:
+		SaveGame.record_endless_wave(map_data.id, number)
 
 
 func _on_enemy_killed(_enemy: Node, bounty: int) -> void:

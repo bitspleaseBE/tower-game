@@ -1,0 +1,222 @@
+[gd_resource type="Resource" script_class="MapData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/map_data.gd" id="1_5em27"]
+[ext_resource type="Script" path="res://scripts/data/wave_data.gd" id="2_l5v5n"]
+[ext_resource type="Script" path="res://scripts/data/spawn_group.gd" id="3_d4hsn"]
+[ext_resource type="Resource" path="res://data/enemies/normal.tres" id="4_wv0tk"]
+[ext_resource type="Resource" path="res://data/enemies/fast.tres" id="5_fxdq4"]
+[ext_resource type="Resource" path="res://data/enemies/swarm.tres" id="6_13d8w"]
+[ext_resource type="Resource" path="res://data/enemies/armored.tres" id="7_anvho"]
+[ext_resource type="Resource" path="res://data/enemies/boss.tres" id="8_vqvtf"]
+
+[sub_resource type="Resource" id="Resource_prup8"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("4_wv0tk")
+count = 8
+spawn_interval = 1.0
+
+[sub_resource type="Resource" id="Resource_ydhys"]
+script = ExtResource("2_l5v5n")
+spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_prup8")])
+
+[sub_resource type="Resource" id="Resource_ow5ey"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("4_wv0tk")
+count = 10
+spawn_interval = 0.9
+
+[sub_resource type="Resource" id="Resource_jhwa7"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("5_fxdq4")
+count = 4
+spawn_interval = 0.8
+start_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_2v883"]
+script = ExtResource("2_l5v5n")
+spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_ow5ey"), SubResource("Resource_jhwa7")])
+
+[sub_resource type="Resource" id="Resource_86epu"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("6_13d8w")
+count = 12
+spawn_interval = 0.4
+
+[sub_resource type="Resource" id="Resource_oknmm"]
+script = ExtResource("2_l5v5n")
+spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_86epu")])
+
+[sub_resource type="Resource" id="Resource_6enjb"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("5_fxdq4")
+count = 8
+spawn_interval = 0.7
+
+[sub_resource type="Resource" id="Resource_dk2y4"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("4_wv0tk")
+count = 6
+spawn_interval = 0.9
+
+[sub_resource type="Resource" id="Resource_qix0s"]
+script = ExtResource("2_l5v5n")
+spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_6enjb"), SubResource("Resource_dk2y4")])
+
+[sub_resource type="Resource" id="Resource_c54gf"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("7_anvho")
+count = 6
+spawn_interval = 1.2
+
+[sub_resource type="Resource" id="Resource_y00tf"]
+script = ExtResource("2_l5v5n")
+spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_c54gf")])
+
+[sub_resource type="Resource" id="Resource_1uor4"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("6_13d8w")
+count = 14
+spawn_interval = 0.35
+
+[sub_resource type="Resource" id="Resource_5rna6"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("5_fxdq4")
+count = 6
+spawn_interval = 0.7
+start_delay = 3.0
+
+[sub_resource type="Resource" id="Resource_8xifs"]
+script = ExtResource("2_l5v5n")
+spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_1uor4"), SubResource("Resource_5rna6")])
+
+[sub_resource type="Resource" id="Resource_i1c73"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("8_vqvtf")
+count = 1
+spawn_interval = 1.0
+
+[sub_resource type="Resource" id="Resource_gm8qc"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("4_wv0tk")
+count = 8
+spawn_interval = 0.8
+start_delay = 2.0
+
+[sub_resource type="Resource" id="Resource_3jor5"]
+script = ExtResource("2_l5v5n")
+spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_i1c73"), SubResource("Resource_gm8qc")])
+
+[sub_resource type="Resource" id="Resource_t2mq8"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("7_anvho")
+count = 8
+spawn_interval = 1.0
+
+[sub_resource type="Resource" id="Resource_rbr25"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("6_13d8w")
+count = 10
+spawn_interval = 0.4
+start_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_wicq1"]
+script = ExtResource("2_l5v5n")
+spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_t2mq8"), SubResource("Resource_rbr25")])
+
+[sub_resource type="Resource" id="Resource_is7o1"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("5_fxdq4")
+count = 12
+spawn_interval = 0.55
+
+[sub_resource type="Resource" id="Resource_ugheh"]
+script = ExtResource("2_l5v5n")
+spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_is7o1")])
+
+[sub_resource type="Resource" id="Resource_8vajc"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("7_anvho")
+count = 10
+spawn_interval = 0.9
+
+[sub_resource type="Resource" id="Resource_mi3x5"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("5_fxdq4")
+count = 8
+spawn_interval = 0.6
+start_delay = 5.0
+
+[sub_resource type="Resource" id="Resource_6p8i1"]
+script = ExtResource("2_l5v5n")
+spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_8vajc"), SubResource("Resource_mi3x5")])
+
+[sub_resource type="Resource" id="Resource_pbdvi"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("6_13d8w")
+count = 20
+spawn_interval = 0.3
+
+[sub_resource type="Resource" id="Resource_1qw4t"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("7_anvho")
+count = 6
+spawn_interval = 1.0
+start_delay = 4.0
+
+[sub_resource type="Resource" id="Resource_gh20f"]
+script = ExtResource("2_l5v5n")
+spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_pbdvi"), SubResource("Resource_1qw4t")])
+
+[sub_resource type="Resource" id="Resource_ocy1b"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("5_fxdq4")
+count = 14
+spawn_interval = 0.5
+
+[sub_resource type="Resource" id="Resource_ewnd5"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("7_anvho")
+count = 10
+spawn_interval = 0.8
+start_delay = 3.0
+
+[sub_resource type="Resource" id="Resource_gn40p"]
+script = ExtResource("2_l5v5n")
+spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_ocy1b"), SubResource("Resource_ewnd5")])
+
+[sub_resource type="Resource" id="Resource_0q14c"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("8_vqvtf")
+count = 2
+spawn_interval = 6.0
+
+[sub_resource type="Resource" id="Resource_82ka2"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("6_13d8w")
+count = 12
+spawn_interval = 0.4
+start_delay = 3.0
+
+[sub_resource type="Resource" id="Resource_fx50w"]
+script = ExtResource("3_d4hsn")
+enemy = ExtResource("5_fxdq4")
+count = 8
+spawn_interval = 0.6
+start_delay = 8.0
+
+[sub_resource type="Resource" id="Resource_6sicu"]
+script = ExtResource("2_l5v5n")
+spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_0q14c"), SubResource("Resource_82ka2"), SubResource("Resource_fx50w")])
+
+[resource]
+script = ExtResource("1_5em27")
+id = &"map_02"
+display_name = "Sugar Switchback"
+path_points = PackedVector2Array(760, 220, 160, 220, 160, 460, 600, 460, 600, 700, 160, 700, 160, 940, 760, 940)
+pad_positions = PackedVector2Array(300, 340, 520, 340, 300, 580, 480, 580, 300, 820, 480, 820, 360, 1040)
+starting_coins = 110
+starting_lives = 15
+waves = Array[ExtResource("2_l5v5n")]([SubResource("Resource_ydhys"), SubResource("Resource_2v883"), SubResource("Resource_oknmm"), SubResource("Resource_qix0s"), SubResource("Resource_y00tf"), SubResource("Resource_8xifs"), SubResource("Resource_3jor5"), SubResource("Resource_wicq1"), SubResource("Resource_ugheh"), SubResource("Resource_6p8i1"), SubResource("Resource_gh20f"), SubResource("Resource_gn40p"), SubResource("Resource_6sicu")])
+endless_hp_growth = 1.16
+endless_count_growth = 1.07
+endless_speed_growth = 1.02

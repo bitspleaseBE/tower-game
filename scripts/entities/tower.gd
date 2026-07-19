@@ -2,6 +2,22 @@ class_name Tower
 extends Node2D
 ## Auto-targeting tower. Stats from TowerData; Skin + RangeRing are visual only.
 
+const BASE_SQUARE: Texture2D = preload("res://assets/tower/base_square.png")
+const BASE_HEX: Texture2D = preload("res://assets/tower/base_hex.png")
+const WEAPON_TEXTURES := {
+	&"popper": preload("res://assets/tower/weapon_popper.png"),
+	&"lobber": preload("res://assets/tower/weapon_lobber.png"),
+	&"chiller": preload("res://assets/tower/weapon_chiller.png"),
+	&"longshot": preload("res://assets/tower/weapon_longshot.png"),
+}
+const CANDY_TINTS := {
+	&"popper": Color(1.0, 0.56, 0.69, 1.0), ## pink
+	&"lobber": Color(1.0, 0.84, 0.42, 1.0), ## gold
+	&"chiller": Color(0.553, 0.816, 0.941, 1.0), ## #8DD0F0 icy
+	&"longshot": Color(0.749, 0.627, 0.91, 1.0), ## lilac
+}
+const SHINE_TEX: Texture2D = preload("res://assets/fx/shine_spec.png")
+
 @onready var skin: Node2D = $Skin
 @onready var range_ring: Node2D = $RangeRing
 @onready var range_area: Area2D = $RangeArea
@@ -184,111 +200,32 @@ func _rebuild_skin() -> void:
 
 	var scale_factor := 1.0 + float(tier) * 0.08
 	var id := data.id if data != null else &"popper"
+	var tint: Color = CANDY_TINTS.get(id, Color.WHITE) as Color
+	var footprint := 44.0 * scale_factor
 
-	match id:
-		&"lobber":
-			_build_lobber_skin(scale_factor)
-		&"chiller":
-			_build_chiller_skin(scale_factor)
-		&"longshot":
-			_build_longshot_skin(scale_factor)
-		_:
-			_build_popper_skin(scale_factor)
+	var base := Sprite2D.new()
+	base.name = "Base"
+	base.texture = BASE_HEX if id == &"chiller" else BASE_SQUARE
+	var base_scale := footprint / float(base.texture.get_width())
+	base.scale = Vector2(base_scale, base_scale)
+	base.self_modulate = tint
+	skin.add_child(base)
+
+	var weapon := Sprite2D.new()
+	weapon.name = "Weapon"
+	weapon.texture = WEAPON_TEXTURES.get(id, WEAPON_TEXTURES[&"popper"]) as Texture2D
+	var weapon_scale := (footprint * 0.95) / float(weapon.texture.get_width())
+	weapon.scale = Vector2(weapon_scale, weapon_scale)
+	weapon.position = Vector2(0.0, -6.0 * scale_factor)
+	weapon.self_modulate = tint
+	skin.add_child(weapon)
 
 	_add_tier_stripes(scale_factor)
+	_add_shine(scale_factor)
+
 	skin.scale = Vector2.ONE
 	skin.position = Vector2.ZERO
 	skin.modulate = Color.WHITE
-
-
-func _build_popper_skin(scale_factor: float) -> void:
-	# Round base + short stubby barrel, pink/coral.
-	var base_r := 22.0 * scale_factor
-	var base := Polygon2D.new()
-	base.color = Color(1.0, 0.56, 0.69, 1.0)
-	base.polygon = _rounded_poly(base_r)
-	skin.add_child(base)
-
-	var top := Polygon2D.new()
-	top.color = Color(1.0, 0.72, 0.82, 1.0)
-	top.polygon = _rounded_poly(base_r * 0.72)
-	top.position = Vector2(0, -4)
-	skin.add_child(top)
-
-	var barrel := Polygon2D.new()
-	barrel.color = Color(0.31, 0.227, 0.357, 1.0)
-	barrel.polygon = PackedVector2Array([
-		Vector2(-5, -8), Vector2(5, -8), Vector2(4, -28 * scale_factor), Vector2(-4, -28 * scale_factor),
-	])
-	skin.add_child(barrel)
-
-
-func _build_lobber_skin(scale_factor: float) -> void:
-	# Squat wide dome + fat up-angled tube, sunny #FFD66B.
-	var base_r := 26.0 * scale_factor
-	var base := Polygon2D.new()
-	base.color = Color(1.0, 0.839, 0.42, 1.0)
-	base.polygon = _rounded_poly(base_r, 16)
-	base.scale = Vector2(1.15, 0.75)
-	skin.add_child(base)
-
-	var dome := Polygon2D.new()
-	dome.color = Color(1.0, 0.92, 0.65, 1.0)
-	dome.polygon = _rounded_poly(base_r * 0.7, 14)
-	dome.position = Vector2(0, -6)
-	skin.add_child(dome)
-
-	var tube := Polygon2D.new()
-	tube.color = Color(0.75, 0.45, 0.2, 1.0)
-	tube.polygon = PackedVector2Array([
-		Vector2(-8, -4), Vector2(8, -4), Vector2(14, -32 * scale_factor), Vector2(2, -34 * scale_factor),
-	])
-	skin.add_child(tube)
-
-
-func _build_chiller_skin(scale_factor: float) -> void:
-	# Hexagonal crystal with 3 small orbit dots, sky #8DD0F0.
-	var base_r := 22.0 * scale_factor
-	var crystal := Polygon2D.new()
-	crystal.color = Color(0.553, 0.816, 0.941, 1.0)
-	crystal.polygon = _regular_poly(6, base_r)
-	skin.add_child(crystal)
-
-	var core := Polygon2D.new()
-	core.color = Color(0.75, 0.92, 1.0, 1.0)
-	core.polygon = _regular_poly(6, base_r * 0.55)
-	skin.add_child(core)
-
-	for i: int in 3:
-		var dot := Polygon2D.new()
-		dot.color = Color(0.4, 0.7, 0.95, 1.0)
-		dot.polygon = _rounded_poly(4.0 * scale_factor, 10)
-		var angle := TAU * float(i) / 3.0 - PI * 0.5
-		dot.position = Vector2(cos(angle), sin(angle)) * (base_r + 8.0)
-		skin.add_child(dot)
-
-
-func _build_longshot_skin(scale_factor: float) -> void:
-	# Narrow tall base + one long thin barrel, lilac #BFA0E8.
-	var base_r := 16.0 * scale_factor
-	var base := Polygon2D.new()
-	base.color = Color(0.749, 0.627, 0.91, 1.0)
-	base.polygon = _rounded_poly(base_r, 14)
-	base.scale = Vector2(0.7, 1.25)
-	skin.add_child(base)
-
-	var barrel := Polygon2D.new()
-	barrel.color = Color(0.4, 0.3, 0.55, 1.0)
-	barrel.polygon = PackedVector2Array([
-		Vector2(-3, -10), Vector2(3, -10), Vector2(2, -48 * scale_factor), Vector2(-2, -48 * scale_factor),
-	])
-	skin.add_child(barrel)
-
-	var tip := Polygon2D.new()
-	tip.color = Color(0.9, 0.8, 1.0, 1.0)
-	tip.polygon = _rounded_poly(4.0 * scale_factor, 8)
-	tip.position = Vector2(0, -48 * scale_factor)
-	skin.add_child(tip)
 
 
 func _add_tier_stripes(scale_factor: float) -> void:
@@ -302,27 +239,21 @@ func _add_tier_stripes(scale_factor: float) -> void:
 		skin.add_child(stripe)
 
 
+func _add_shine(scale_factor: float) -> void:
+	var shine := Sprite2D.new()
+	shine.name = "Shine"
+	shine.texture = SHINE_TEX
+	shine.modulate = Color(1.0, 1.0, 1.0, 0.55)
+	var shine_px := 14.0 * scale_factor
+	var shine_scale := shine_px / float(SHINE_TEX.get_width())
+	shine.scale = Vector2(shine_scale, shine_scale)
+	shine.position = Vector2(-12.0 * scale_factor, -14.0 * scale_factor)
+	skin.add_child(shine)
+
+
 func _on_range_ring_draw() -> void:
 	var range_px: float = float(range_ring.get_meta("range_px", 0.0))
 	if range_px <= 0.0:
 		return
 	range_ring.draw_circle(Vector2.ZERO, range_px, Color(0.55, 0.82, 0.94, 0.18))
 	range_ring.draw_arc(Vector2.ZERO, range_px, 0.0, TAU, 64, Color(0.55, 0.82, 0.94, 0.55), 3.0, true)
-
-
-func _rounded_poly(radius: float, segments: int = 20) -> PackedVector2Array:
-	var points := PackedVector2Array()
-	points.resize(segments)
-	for i: int in segments:
-		var angle := TAU * float(i) / float(segments)
-		points[i] = Vector2(cos(angle), sin(angle)) * radius
-	return points
-
-
-func _regular_poly(sides: int, radius: float) -> PackedVector2Array:
-	var points := PackedVector2Array()
-	points.resize(sides)
-	for i: int in sides:
-		var angle := -PI * 0.5 + TAU * float(i) / float(sides)
-		points[i] = Vector2(cos(angle), sin(angle)) * radius
-	return points

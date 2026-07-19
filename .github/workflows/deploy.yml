@@ -72,6 +72,15 @@ jobs:
       - name: Stage 4 smoke (tower roster)
         run: godot --headless --path . --script scripts/debug/stage04_smoke.gd
 
+      - name: Map lint (campaign layouts)
+        run: godot --headless --path . --script scripts/debug/map_lint.gd
+
+      - name: Stage 5 smoke (campaign / endless)
+        run: godot --headless --path . --script scripts/debug/stage05_smoke.gd
+
+      - name: Stage 6 smoke (candy art)
+        run: godot --headless --path . --script scripts/debug/stage06_smoke.gd
+
       - name: Export web build
         run: |
           mkdir -p build/web

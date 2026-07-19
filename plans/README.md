@@ -8,8 +8,8 @@ Build order for Tower Game v1.0. Product intent lives in [`blueprint.md`](../blu
 | 2 | Data-Driven Core Loop on Map 1 | [stage-02-core-loop.md](stage-02-core-loop.md) | Stage 1 | done |
 | 3 | Juice Engine & Web Performance Proof | [stage-03-juice-engine.md](stage-03-juice-engine.md) | Stage 2 | done |
 | 4 | Full Roster & Map 1 Campaign | [stage-04-tower-roster.md](stage-04-tower-roster.md) | Stages 1–3 | done |
-| 5 | Campaign, Endless Mode & Local Saves | [stage-05-campaign-endless.md](stage-05-campaign-endless.md) | Stage 4 | not started |
-| 6 | Candy Coat — Kenney Art | [stage-06-kenney-art.md](stage-06-kenney-art.md) | Stage 5 | not started |
+| 5 | Campaign, Endless Mode & Local Saves | [stage-05-campaign-endless.md](stage-05-campaign-endless.md) | Stage 4 | done |
+| 6 | Candy Coat — Kenney Art | [stage-06-kenney-art.md](stage-06-kenney-art.md) | Stage 5 | done |
 | 7 | Audio — SFX, Music & Web Autoplay | [stage-07-audio.md](stage-07-audio.md) | Stage 6 | not started |
 | 8 | Release Polish & v1.0 Sign-off | [stage-08-release.md](stage-08-release.md) | Stage 7 | not started |
 

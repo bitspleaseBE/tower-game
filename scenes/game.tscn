@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
 [ext_resource type="Script" path="res://scripts/wave_spawner.gd" id="2_spawner"]
@@ -9,18 +9,136 @@
 [ext_resource type="Script" path="res://scripts/debug/stress_test.gd" id="7_stress"]
 [ext_resource type="PackedScene" path="res://scenes/debug/stress_overlay.tscn" id="8_so"]
 [ext_resource type="Script" path="res://scripts/ui/range_preview.gd" id="9_rp"]
+[ext_resource type="Texture2D" path="res://assets/background/grass_tile.png" id="10_grass"]
+[ext_resource type="Texture2D" path="res://assets/background/decor_tree.png" id="11_tree"]
+[ext_resource type="Texture2D" path="res://assets/background/decor_bush.png" id="12_bush"]
+[ext_resource type="Texture2D" path="res://assets/background/decor_rock.png" id="13_rock"]
+
+[sub_resource type="Gradient" id="Gradient_vignette"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0.04, 0, 0, 0, 0.18)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_vignette"]
+gradient = SubResource("Gradient_vignette")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_game")
 
 [node name="Board" type="Node2D" parent="."]
 
-[node name="Ground" type="Polygon2D" parent="Board"]
+[node name="Ground" type="Sprite2D" parent="Board"]
 z_index = -10
-color = Color(0.78, 0.914, 0.745, 1)
-polygon = PackedVector2Array(-200, -200, 920, -200, 920, 1480, -200, 1480)
+position = Vector2(360, 640)
+texture = ExtResource("10_grass")
+centered = true
+region_enabled = true
+region_rect = Rect2(0, 0, 1120, 1680)
+texture_repeat = 1
 
 [node name="Decor" type="Node2D" parent="Board"]
+
+[node name="Props" type="Node2D" parent="Board/Decor"]
+
+[node name="TreeNW" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(90, 140)
+
+[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/TreeNW"]
+z_index = -1
+position = Vector2(0, 22)
+color = Color(0, 0, 0, 0.25)
+polygon = PackedVector2Array(28, 0, 24.249, 6, 14, 10.392, 0, 12, -14, 10.392, -24.249, 6, -28, 0, -24.249, -6, -14, -10.392, 0, -12, 14, -10.392, 24.249, -6)
+
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/TreeNW"]
+texture = ExtResource("11_tree")
+
+[node name="BushNE" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(640, 160)
+
+[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/BushNE"]
+z_index = -1
+position = Vector2(0, 18)
+color = Color(0, 0, 0, 0.25)
+polygon = PackedVector2Array(22, 0, 19.053, 4.5, 11, 7.794, 0, 9, -11, 7.794, -19.053, 4.5, -22, 0, -19.053, -4.5, -11, -7.794, 0, -9, 11, -7.794, 19.053, -4.5)
+
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/BushNE"]
+texture = ExtResource("12_bush")
+
+[node name="RockW" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(70, 460)
+
+[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/RockW"]
+z_index = -1
+position = Vector2(0, 14)
+color = Color(0, 0, 0, 0.25)
+polygon = PackedVector2Array(18, 0, 15.588, 4, 9, 6.928, 0, 8, -9, 6.928, -15.588, 4, -18, 0, -15.588, -4, -9, -6.928, 0, -8, 9, -6.928, 15.588, -4)
+
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/RockW"]
+texture = ExtResource("13_rock")
+
+[node name="TreeE" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(680, 580)
+
+[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/TreeE"]
+z_index = -1
+position = Vector2(0, 22)
+color = Color(0, 0, 0, 0.25)
+polygon = PackedVector2Array(28, 0, 24.249, 6, 14, 10.392, 0, 12, -14, 10.392, -24.249, 6, -28, 0, -24.249, -6, -14, -10.392, 0, -12, 14, -10.392, 24.249, -6)
+
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/TreeE"]
+texture = ExtResource("11_tree")
+
+[node name="BushSW" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(100, 980)
+
+[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/BushSW"]
+z_index = -1
+position = Vector2(0, 18)
+color = Color(0, 0, 0, 0.25)
+polygon = PackedVector2Array(22, 0, 19.053, 4.5, 11, 7.794, 0, 9, -11, 7.794, -19.053, 4.5, -22, 0, -19.053, -4.5, -11, -7.794, 0, -9, 11, -7.794, 19.053, -4.5)
+
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/BushSW"]
+texture = ExtResource("12_bush")
+
+[node name="RockSE" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(680, 880)
+
+[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/RockSE"]
+z_index = -1
+position = Vector2(0, 14)
+color = Color(0, 0, 0, 0.25)
+polygon = PackedVector2Array(18, 0, 15.588, 4, 9, 6.928, 0, 8, -9, 6.928, -15.588, 4, -18, 0, -15.588, -4, -9, -6.928, 0, -8, 9, -6.928, 15.588, -4)
+
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/RockSE"]
+texture = ExtResource("13_rock")
+
+[node name="BushMid" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(360, 150)
+
+[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/BushMid"]
+z_index = -1
+position = Vector2(0, 18)
+color = Color(0, 0, 0, 0.25)
+polygon = PackedVector2Array(22, 0, 19.053, 4.5, 11, 7.794, 0, 9, -11, 7.794, -19.053, 4.5, -22, 0, -19.053, -4.5, -11, -7.794, 0, -9, 11, -7.794, 19.053, -4.5)
+
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/BushMid"]
+texture = ExtResource("12_bush")
+
+[node name="TreeS" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(40, 1100)
+
+[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/TreeS"]
+z_index = -1
+position = Vector2(0, 22)
+color = Color(0, 0, 0, 0.25)
+polygon = PackedVector2Array(28, 0, 24.249, 6, 14, 10.392, 0, 12, -14, 10.392, -24.249, 6, -28, 0, -24.249, -6, -14, -10.392, 0, -12, 14, -10.392, 24.249, -6)
+
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/TreeS"]
+texture = ExtResource("11_tree")
 
 [node name="SpawnMarker" type="Node2D" parent="Board/Decor"]
 position = Vector2(40, 280)
@@ -66,6 +184,14 @@ begin_cap_mode = 2
 end_cap_mode = 2
 round_precision = 12
 
+[node name="PathHighlight" type="Line2D" parent="Board/Path"]
+width = 28.0
+default_color = Color(1, 0.98, 0.9, 0.55)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+round_precision = 12
+
 [node name="Pads" type="Node2D" parent="Board"]
 
 [node name="RangePreview" type="Node2D" parent="Board"]
@@ -82,6 +208,17 @@ script = ExtResource("2_spawner")
 script = ExtResource("7_stress")
 
 [node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Vignette" type="TextureRect" parent="UI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_vignette")
+expand_mode = 1
+stretch_mode = 0
 
 [node name="Hud" parent="UI" instance=ExtResource("3_hud")]
 

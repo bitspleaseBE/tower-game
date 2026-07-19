@@ -13,5 +13,4 @@ signal tower_sold(pad: Node, refund: int)
 signal run_won(map_id: StringName)
 signal run_lost(map_id: StringName)
 
-@warning_ignore("unused_signal")
 signal endless_best(map_id: StringName, wave: int)

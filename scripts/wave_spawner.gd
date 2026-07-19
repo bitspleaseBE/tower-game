@@ -10,9 +10,10 @@ enum State { IDLE, COUNTDOWN, SPAWNING, CLEARING, DONE }
 var map_data: MapData
 var _game: Node
 var _state: State = State.IDLE
-var _wave_index: int = 0 ## 0-based index into map_data.waves
+var _wave_index: int = 0 ## 0-based; wave number = index + 1
 var _alive_enemies: int = 0
 var _run_over: bool = false
+var _lost: bool = false ## permanent halt; resume_endless may clear a won halt only
 var _groups_remaining: int = 0
 
 
@@ -21,8 +22,8 @@ func setup(game: Node, data: MapData) -> void:
 	map_data = data
 	Events.enemy_killed.connect(_on_enemy_killed)
 	Events.enemy_leaked.connect(_on_enemy_leaked)
-	Events.run_lost.connect(_on_run_over)
-	Events.run_won.connect(_on_run_over)
+	Events.run_lost.connect(_on_run_lost)
+	Events.run_won.connect(_on_run_won)
 
 
 func start() -> void:
@@ -30,12 +31,22 @@ func start() -> void:
 		return
 	_wave_index = 0
 	_run_over = false
+	_lost = false
 	_begin_countdown()
 
 
 func stop() -> void:
 	_run_over = true
 	_state = State.DONE
+
+
+func resume_endless() -> void:
+	## Clear a won halt and continue past the scripted list. Lost runs stay halted.
+	if _lost:
+		return
+	_run_over = false
+	_wave_index = map_data.waves.size() ## next wave number = scripted + 1
+	_begin_countdown()
 
 
 func _begin_countdown() -> void:
@@ -62,10 +73,10 @@ func _spawn_wave() -> void:
 		return
 	_state = State.SPAWNING
 	var wave_number := _wave_index + 1
-	var total := map_data.waves.size()
-	Events.wave_started.emit(wave_number, total)
+	var total_scripted := map_data.waves.size()
+	Events.wave_started.emit(wave_number, total_scripted)
 
-	var wave: WaveData = map_data.waves[_wave_index]
+	var wave: WaveData = _game.get_wave(wave_number)
 	_groups_remaining = wave.spawn_groups.size()
 	for group: SpawnGroup in wave.spawn_groups:
 		_spawn_group(group) # fire-and-forget parallel coroutines
@@ -89,7 +100,9 @@ func _spawn_wave() -> void:
 	if _run_over:
 		return
 
-	if _wave_index >= map_data.waves.size() - 1:
+	var endless: bool = bool(_game.get("endless"))
+	# Campaign: clearing the last scripted wave wins. Endless: keep going forever.
+	if not endless and wave_number >= total_scripted:
 		_state = State.DONE
 		if _game.lives > 0:
 			Events.run_won.emit(map_data.id)
@@ -128,6 +141,12 @@ func _on_enemy_leaked(_enemy: Node) -> void:
 	_alive_enemies = maxi(0, _alive_enemies - 1)
 
 
-func _on_run_over(_map_id: StringName) -> void:
+func _on_run_lost(_map_id: StringName) -> void:
+	_lost = true
+	_run_over = true
+	_state = State.DONE
+
+
+func _on_run_won(_map_id: StringName) -> void:
 	_run_over = true
 	_state = State.DONE

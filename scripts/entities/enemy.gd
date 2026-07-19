@@ -8,6 +8,22 @@ extends PathFollow2D
 const ARMOR_MIN_DAMAGE_RATIO := 0.25
 const SLOW_TINT := Color(0.749, 0.89, 1.0, 1.0) ## #BFE3FF-ish
 
+const BODY_TEXTURES := {
+	&"normal": preload("res://assets/enemies/critter_normal.png"),
+	&"fast": preload("res://assets/enemies/critter_fast.png"),
+	&"swarm": preload("res://assets/enemies/critter_swarm.png"),
+	&"armored": preload("res://assets/enemies/critter_armored.png"),
+	&"boss": preload("res://assets/enemies/critter_boss.png"),
+}
+const FACE_TEXTURES := {
+	&"normal": preload("res://assets/enemies/face_normal.png"),
+	&"fast": preload("res://assets/enemies/face_fast.png"),
+	&"swarm": preload("res://assets/enemies/face_swarm.png"),
+	&"armored": preload("res://assets/enemies/face_armored.png"),
+	&"boss": preload("res://assets/enemies/face_boss.png"),
+}
+const SHINE_TEX: Texture2D = preload("res://assets/fx/shine_spec.png")
+
 @onready var skin: Node2D = $Skin
 @onready var hurtbox: Area2D = $Hurtbox
 @onready var hurtbox_shape: CollisionShape2D = $Hurtbox/CollisionShape2D
@@ -202,67 +218,36 @@ func _build_skin() -> void:
 
 	var id := data.id if data != null else &"normal"
 	var radius := data.radius_px if data != null else 26.0
+	var body_tex: Texture2D = BODY_TEXTURES.get(id, BODY_TEXTURES[&"normal"]) as Texture2D
+	var face_tex: Texture2D = FACE_TEXTURES.get(id, FACE_TEXTURES[&"normal"]) as Texture2D
 
-	match id:
-		&"swarm":
-			_build_swarm_skin(radius)
-		&"armored":
-			_build_armored_skin(radius)
-		&"boss":
-			_build_boss_skin(radius)
-		&"fast":
-			_build_blob_skin(radius, Color(1.0, 0.62, 0.49, 1.0), Color(0.95, 0.42, 0.28, 1.0), true)
-		_:
-			_build_blob_skin(radius, Color(0.55, 0.82, 0.94, 1.0), Color(0.35, 0.65, 0.85, 1.0), true)
+	var body := Sprite2D.new()
+	body.name = "Body"
+	body.texture = body_tex
+	var body_scale := (2.0 * radius) / float(body_tex.get_width())
+	body.scale = Vector2(body_scale, body_scale)
+	skin.add_child(body)
+
+	var face := Sprite2D.new()
+	face.name = "Face"
+	face.texture = face_tex
+	var face_scale := (radius * 1.15) / float(face_tex.get_width())
+	face.scale = Vector2(face_scale, face_scale)
+	face.position = Vector2(0.0, -radius * 0.08)
+	skin.add_child(face)
+
+	if id == &"boss":
+		_add_boss_crown(radius)
+
+	_add_shine(radius)
 
 	skin.scale = Vector2.ONE
 	skin.position = Vector2.ZERO
 
 
-func _build_blob_skin(radius: float, body_color: Color, border_color: Color, two_eyes: bool) -> void:
-	var border := Polygon2D.new()
-	border.color = border_color
-	border.polygon = _circle_poly(radius + 4.0)
-	skin.add_child(border)
-
-	var body := Polygon2D.new()
-	body.color = body_color
-	body.polygon = _circle_poly(radius)
-	skin.add_child(body)
-
-	if two_eyes:
-		_add_eye(Vector2(-radius * 0.28, -radius * 0.18), maxf(2.5, radius * 0.12))
-		_add_eye(Vector2(radius * 0.28, -radius * 0.18), maxf(2.5, radius * 0.12))
-	else:
-		_add_eye(Vector2(0, -radius * 0.15), maxf(2.5, radius * 0.18))
-
-
-func _build_swarm_skin(radius: float) -> void:
-	# Tiny pale-pink dot with a single eye.
-	_build_blob_skin(radius, Color(1.0, 0.82, 0.88, 1.0), Color(0.95, 0.55, 0.7, 1.0), false)
-
-
-func _build_armored_skin(radius: float) -> void:
-	# Octagonal grape body with a thicker darker candy-shell rim.
-	var rim := Polygon2D.new()
-	rim.color = Color(0.45, 0.35, 0.62, 1.0)
-	rim.polygon = _regular_poly(8, radius + 5.0)
-	skin.add_child(rim)
-
-	var body := Polygon2D.new()
-	body.color = Color(0.608, 0.541, 0.796, 1.0) ## #9B8ACB
-	body.polygon = _regular_poly(8, radius)
-	skin.add_child(body)
-
-	_add_eye(Vector2(-radius * 0.3, -radius * 0.15), 3.5)
-	_add_eye(Vector2(radius * 0.3, -radius * 0.15), 3.5)
-
-
-func _build_boss_skin(radius: float) -> void:
-	# Big deep-magenta blob with a 3-spike candy crown.
-	_build_blob_skin(radius, Color(0.72, 0.22, 0.55, 1.0), Color(0.45, 0.1, 0.35, 1.0), true)
-
+func _add_boss_crown(radius: float) -> void:
 	var crown := Polygon2D.new()
+	crown.name = "Crown"
 	crown.color = Color(1.0, 0.84, 0.42, 1.0)
 	var tip_y := -(radius + 10.0)
 	crown.polygon = PackedVector2Array([
@@ -279,27 +264,13 @@ func _build_boss_skin(radius: float) -> void:
 	skin.add_child(crown)
 
 
-func _add_eye(pos: Vector2, radius: float) -> void:
-	var eye := Polygon2D.new()
-	eye.color = Color(0.31, 0.227, 0.357, 1.0)
-	eye.polygon = _circle_poly(radius)
-	eye.position = pos
-	skin.add_child(eye)
-
-
-func _circle_poly(radius: float, segments: int = 20) -> PackedVector2Array:
-	var points := PackedVector2Array()
-	points.resize(segments)
-	for i: int in segments:
-		var angle := TAU * float(i) / float(segments)
-		points[i] = Vector2(cos(angle), sin(angle)) * radius
-	return points
-
-
-func _regular_poly(sides: int, radius: float) -> PackedVector2Array:
-	var points := PackedVector2Array()
-	points.resize(sides)
-	for i: int in sides:
-		var angle := -PI * 0.5 + TAU * float(i) / float(sides)
-		points[i] = Vector2(cos(angle), sin(angle)) * radius
-	return points
+func _add_shine(radius: float) -> void:
+	var shine := Sprite2D.new()
+	shine.name = "Shine"
+	shine.texture = SHINE_TEX
+	shine.modulate = Color(1.0, 1.0, 1.0, 0.55)
+	var shine_px := maxf(10.0, radius * 0.45)
+	var shine_scale := shine_px / float(SHINE_TEX.get_width())
+	shine.scale = Vector2(shine_scale, shine_scale)
+	shine.position = Vector2(-radius * 0.38, -radius * 0.38)
+	skin.add_child(shine)

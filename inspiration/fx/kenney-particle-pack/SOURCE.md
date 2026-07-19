@@ -3,6 +3,8 @@
 - Source: https://kenney.nl/assets/particle-pack
 - Author: Kenney (https://kenney.nl)
 - License: CC0 1.0 Universal (https://creativecommons.org/publicdomain/zero/1.0/) — Kenney's site-wide license; confirmed via its listing and the OpenGameArt mirror on 2026-07-18
-- Status: manual-download needed — https://kenney.nl/assets/particle-pack (Download button) · mirror: https://opengameart.org/content/particle-pack-80-sprites (also packaged for Godot: https://godotengine.org/asset-library/asset/783) — unzip the sprite PNGs into this folder (skip the Unity sample package)
+- Downloaded: 2026-07-19 (agent, via OpenGameArt mirror)
 - Contents: subset (sprite PNGs only; the pack also ships a Unity samples package we don't need): 80 particle sprites — smoke puffs, stars, sparks, magic glows, hearts, circles/dots.
 - Why it fits: raw material for the §4 juice hook — confetti bursts on kills are these dots/stars tinted candy colors in Godot's GPUParticles2D; muzzle puffs and upgrade sparkles come from the same sheet, keeping every effect in one visual family (§9). Mostly-white sprites tint freely.
+
+- Note: Pack media pruned after promote to assets/ (2026-07-19); re-download via Status URL if needed.

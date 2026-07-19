@@ -105,7 +105,7 @@ theme_override_constants/separation = 20
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 88)
 layout_mode = 2
-text = "New Game"
+text = "Play"
 
 [node name="SettingsButton" type="Button" parent="Buttons"]
 unique_name_in_owner = true
@@ -127,7 +127,7 @@ offset_bottom = -12.0
 grow_vertical = 0
 theme_override_colors/font_color = Color(0.31, 0.227, 0.357, 0.4)
 theme_override_font_sizes/font_size = 20
-text = "v0.1.0"
+text = "v0.3.0"
 
 [connection signal="pressed" from="Buttons/NewGameButton" to="." method="_on_new_game_button_pressed"]
 [connection signal="pressed" from="Buttons/SettingsButton" to="." method="_on_settings_button_pressed"]

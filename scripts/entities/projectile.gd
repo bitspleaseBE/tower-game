@@ -4,6 +4,8 @@ extends Area2D
 
 const LIFETIME_SECONDS := 1.5
 const LOB_ARC_HEIGHT := 56.0
+const SHOT_TEX: Texture2D = preload("res://assets/tower/projectile_shot.png")
+const SHELL_TEX: Texture2D = preload("res://assets/tower/projectile_shell.png")
 
 enum Mode { HOMING, LOB }
 
@@ -78,6 +80,7 @@ func activate() -> void:
 
 func launch(target: Enemy, damage: float, speed: float, heavy := false) -> void:
 	mode = Mode.HOMING
+	_build_skin()
 	_target = target
 	_target_generation = target.generation if target != null else -1
 	_damage = damage
@@ -96,6 +99,7 @@ func launch(target: Enemy, damage: float, speed: float, heavy := false) -> void:
 
 func launch_lob(dest: Vector2, damage: float, speed: float, splash_radius: float) -> void:
 	mode = Mode.LOB
+	_build_skin()
 	_target = null
 	_target_generation = -1
 	_damage = damage
@@ -210,16 +214,11 @@ func _on_area_entered(area: Area2D) -> void:
 func _build_skin() -> void:
 	for child: Node in skin.get_children():
 		child.queue_free()
-	var blob := Polygon2D.new()
-	blob.color = Color(1.0, 0.84, 0.42, 1.0)
-	blob.polygon = _circle_poly(8.0)
-	skin.add_child(blob)
-
-
-func _circle_poly(radius: float, segments: int = 12) -> PackedVector2Array:
-	var points := PackedVector2Array()
-	points.resize(segments)
-	for i: int in segments:
-		var angle := TAU * float(i) / float(segments)
-		points[i] = Vector2(cos(angle), sin(angle)) * radius
-	return points
+	var tex: Texture2D = SHELL_TEX if mode == Mode.LOB else SHOT_TEX
+	var spr := Sprite2D.new()
+	spr.name = "Sprite"
+	spr.texture = tex
+	var target_px := 28.0 if mode == Mode.LOB else 18.0
+	var spr_scale := target_px / float(tex.get_width())
+	spr.scale = Vector2(spr_scale, spr_scale)
+	skin.add_child(spr)

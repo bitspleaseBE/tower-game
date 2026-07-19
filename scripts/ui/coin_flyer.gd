@@ -4,6 +4,8 @@ extends Node2D
 
 signal finished
 
+const COIN_TEX: Texture2D = preload("res://assets/ui/icon_coin.png")
+
 @onready var skin: Node2D = $Skin
 
 var _tween: Tween
@@ -43,21 +45,10 @@ func _follow_bezier(t: float) -> void:
 
 
 func _build_skin() -> void:
-	var coin := Polygon2D.new()
-	coin.color = Color(1.0, 0.84, 0.42, 1.0)
-	coin.polygon = _circle_poly(10.0)
+	var coin := Sprite2D.new()
+	coin.name = "Coin"
+	coin.texture = COIN_TEX
+	coin.modulate = Color(1.0, 0.788, 0.302, 1.0) ## #FFC94D
+	var coin_scale := 20.0 / float(COIN_TEX.get_width())
+	coin.scale = Vector2(coin_scale, coin_scale)
 	skin.add_child(coin)
-	var shine := Polygon2D.new()
-	shine.color = Color(1.0, 0.95, 0.7, 1.0)
-	shine.polygon = _circle_poly(4.0)
-	shine.position = Vector2(-2, -2)
-	skin.add_child(shine)
-
-
-func _circle_poly(radius: float, segments: int = 14) -> PackedVector2Array:
-	var points := PackedVector2Array()
-	points.resize(segments)
-	for i: int in segments:
-		var angle := TAU * float(i) / float(segments)
-		points[i] = Vector2(cos(angle), sin(angle)) * radius
-	return points
