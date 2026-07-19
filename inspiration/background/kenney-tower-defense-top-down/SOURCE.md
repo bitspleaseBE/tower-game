@@ -7,4 +7,3 @@
 - Contents: full pack (300 assets): grass/sand ground tiles, dirt roads/paths with corners, towers + weapon parts, round enemies, particle/projectile sprites, HUD numbers. Ships as separate PNGs, tilesheets, and vector files.
 - Why it fits: §9 flat vector with rounded shapes — this is the reference pack for exactly that style, and §13's top priority (ground/path tileset) in the same family as towers/enemies/FX, so the whole board stays coherent. THE anchor candidate: it can cover `background`, `tower`, parts of `enemies` and `fx` by itself.
 
-- Note: Pack media pruned after promote to assets/ (2026-07-19); re-download via Status URL if needed.

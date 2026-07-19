@@ -7,4 +7,3 @@
 - Contents: full pack (430+ sprites): chunky rounded buttons, panels, sliders, checkboxes in several color themes; spritesheets + vector files; bonus 2 TTF fonts and 6 UI sound effects.
 - Why it fits: §9's "chunky and friendly" UI in candy colors, big touch targets for §7's one-thumb portrait play. The bundled rounded fonts + click sounds knock out pieces of §8 and §10 for free.
 
-- Note: Pack media pruned after promote to assets/ (2026-07-19); re-download via Status URL if needed.
