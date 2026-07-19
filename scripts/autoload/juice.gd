@@ -480,6 +480,7 @@ func _center_button_pivot(button: Button) -> void:
 func _on_button_down(button: Button) -> void:
 	if button.disabled:
 		return
+	Sound.play_sfx(&"ui_tap")
 	_center_button_pivot(button)
 	var tween := button.create_tween()
 	tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)

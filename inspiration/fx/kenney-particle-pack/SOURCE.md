@@ -7,4 +7,3 @@
 - Contents: subset (sprite PNGs only; the pack also ships a Unity samples package we don't need): 80 particle sprites — smoke puffs, stars, sparks, magic glows, hearts, circles/dots.
 - Why it fits: raw material for the §4 juice hook — confetti bursts on kills are these dots/stars tinted candy colors in Godot's GPUParticles2D; muzzle puffs and upgrade sparkles come from the same sheet, keeping every effect in one visual family (§9). Mostly-white sprites tint freely.
 
-- Note: Pack media pruned after promote to assets/ (2026-07-19); re-download via Status URL if needed.

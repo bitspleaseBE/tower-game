@@ -19,6 +19,8 @@ func _ready() -> void:
 	_play_intro()
 	_maybe_unlock_ceremony()
 	_focus_first()
+	Sound.set_music_ducked(true)
+	Sound.play_music(&"music_game")
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -79,6 +81,7 @@ func _maybe_unlock_ceremony() -> void:
 	await get_tree().create_timer(0.5).timeout
 	card.pivot_offset = card.size * 0.5
 	Juice.punch_scale(card, 1.12, 0.28)
+	Sound.play_sfx(&"unlock")
 	unlock_fx.global_position = card.global_position + card.size * 0.5
 	if unlock_fx.get_child_count() == 0:
 		var burst: Node = ConfettiScene.instantiate()
@@ -122,4 +125,5 @@ func _focus_first() -> void:
 
 
 func _go_menu() -> void:
+	Sound.stop_music()
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")

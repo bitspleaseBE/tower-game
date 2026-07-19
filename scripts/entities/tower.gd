@@ -178,6 +178,7 @@ func _fire_homing(target: Enemy, heavy: bool) -> void:
 	var barrel_tip := _barrel_tip(28.0)
 	projectile.global_position = barrel_tip
 	projectile.launch(target, data.damage[tier], data.projectile_speed, heavy)
+	Sound.play_sfx(&"shot_longshot" if heavy else &"shot_popper")
 	if heavy:
 		Juice.muzzle_flash(barrel_tip)
 	Juice.squash(skin)
@@ -194,6 +195,7 @@ func _fire_lob(target: Enemy) -> void:
 	projectile.global_position = barrel_tip
 	var splash: float = data.splash_radius_px[tier] if tier < data.splash_radius_px.size() else 70.0
 	projectile.launch_lob(target.global_position, data.damage[tier], data.projectile_speed, splash)
+	Sound.play_sfx(&"shot_lobber")
 	Juice.squash(skin, Vector2(1.15, 0.75), 0.18)
 
 
@@ -208,6 +210,7 @@ func _fire_slow_pulse() -> void:
 		enemy.apply_slow(factor, duration)
 		if dmg > 0.0:
 			enemy.take_damage(dmg)
+	Sound.play_sfx(&"shot_chiller")
 	Juice.frost_pulse(global_position, data.range_px[tier])
 	Juice.squash(skin, Vector2(1.1, 0.9), 0.12)
 

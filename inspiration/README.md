@@ -37,3 +37,12 @@ Aim for 2–4 proposals per category and keep each proposal under ~10 MB
 3. Review them (the folder is browsable in any PR).
 4. Run `/select-asset` on the winner — files move to `assets/`,
    `assets/ATTRIBUTION.md` gets the credit entry.
+
+## Audio note (OGG)
+
+Kenney packs ship as **Ogg Vorbis** on purpose — that is the *light* web format
+(Stage 7 prefers OGG over WAV/MP3). A full pack in `inspiration/audio/` can be
+~1–2 MB because it holds dozens of unused takes; **the live game only loads what
+`/select-asset` copies into `assets/audio/`** (roughly ~20 short SFX + one music
+loop, usually a few hundred KB). `inspiration/` has `.gdignore`, so nothing here
+is imported by Godot or bundled in the Pages build.

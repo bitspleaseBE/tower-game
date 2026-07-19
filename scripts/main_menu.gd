@@ -5,6 +5,7 @@ func _ready() -> void:
 	%VersionLabel.text = "v%s · meadow" % ProjectSettings.get_setting("application/config/version", "dev")
 	Juice.squishify_button(%NewGameButton)
 	Juice.squishify_button(%SettingsButton)
+	Sound.stop_music()
 	_play_intro_juice()
 	%NewGameButton.grab_focus()
 

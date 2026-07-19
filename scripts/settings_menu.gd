@@ -18,6 +18,8 @@ func _on_fullscreen_check_toggled(toggled_on: bool) -> void:
 
 
 func _on_volume_slider_value_changed(value: float) -> void:
+	# Slider drag is a user gesture — unlock so volume previews can play.
+	Sound.unlock_audio()
 	Settings.set_master_volume(value)
 
 

@@ -156,6 +156,8 @@ func take_damage(amount: float, heavy := false) -> void:
 		Juice.punch_scale(skin, 1.45, 0.22)
 	if hp <= 0.0:
 		_die()
+	else:
+		Sound.play_sfx(&"hit")
 
 
 func _die() -> void:
@@ -165,6 +167,8 @@ func _die() -> void:
 	wobbling = false
 	hurtbox.set_deferred("monitorable", false)
 	Events.enemy_killed.emit(self, data.bounty)
+	Sound.play_sfx(&"kill_pop")
+	Sound.play_sfx(&"coin")
 	Juice.confetti(global_position)
 	Juice.coin_burst(global_position)
 	Juice.floater("+%d" % data.bounty, global_position, Color(1.0, 0.79, 0.3, 1.0))
