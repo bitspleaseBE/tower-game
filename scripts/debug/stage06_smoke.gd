@@ -91,6 +91,7 @@ func _initialize() -> void:
 		return
 
 	var game: Node = game_packed.instantiate()
+	game.set_meta("smoke_silent", true)
 	root.add_child(game)
 	await process_frame
 	await process_frame
@@ -269,7 +270,19 @@ func _initialize() -> void:
 	if ResourceLoader.exists("res://scenes/map_select.tscn"):
 		print("OK MapSelect present")
 
+	# Stop countdown before teardown so it can't fire SFX after audio release.
+	var spawner_node: Node = game.get_node_or_null("Spawner")
+	if spawner_node != null and spawner_node.has_method("stop"):
+		spawner_node.call("stop")
+
 	game.queue_free()
+	await process_frame
+
+	# Drop Ogg playbacks/cached streams before SceneTree quit (--script leak check).
+	var sound: Node = root.get_node_or_null("/root/Sound")
+	if sound != null and sound.has_method("release_for_exit"):
+		sound.call("release_for_exit")
+	await process_frame
 	await process_frame
 	Engine.time_scale = 1.0
 	_finish(failed)

@@ -79,6 +79,7 @@ func _initialize() -> void:
 		return
 
 	var game: Node = game_packed.instantiate()
+	game.set_meta("smoke_silent", true)
 	root.add_child(game)
 	await process_frame
 	await process_frame

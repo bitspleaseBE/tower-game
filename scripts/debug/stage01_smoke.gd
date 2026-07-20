@@ -52,6 +52,7 @@ func _initialize() -> void:
 	# Spot-check game handoff contracts without entering gameplay.
 	var game_packed: PackedScene = load("res://scenes/game.tscn") as PackedScene
 	var game: Node = game_packed.instantiate()
+	game.set_meta("smoke_silent", true)
 	root.add_child(game)
 	await process_frame
 	await process_frame

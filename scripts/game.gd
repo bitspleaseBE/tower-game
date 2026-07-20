@@ -93,6 +93,11 @@ func _ready() -> void:
 	Events.enemy_leaked.connect(_on_enemy_leaked)
 	Events.wave_started.connect(_on_wave_started)
 
+	# Headless smokes set meta `smoke_silent` before add_child to avoid Ogg
+	# playback ObjectDB noise on SceneTree.quit().
+	if get_meta("smoke_silent", false):
+		return
+
 	Sound.set_music_ducked(false)
 	Sound.play_music(&"music_game")
 	spawner.start()
@@ -150,6 +155,7 @@ func pulse_coin_hud() -> void:
 func _exit_tree() -> void:
 	Engine.time_scale = 1.0
 	Sound.stop_sfx()
+	Sound.stop_music()
 
 
 func earn(amount: int) -> void:

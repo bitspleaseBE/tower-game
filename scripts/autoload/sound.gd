@@ -135,8 +135,12 @@ func play_music(id: StringName = &"music_game") -> void:
 
 func stop_music() -> void:
 	_pending_music_id = &""
-	if _music_player != null and _music_player.playing:
+	if _music_player == null:
+		return
+	if _music_player.playing:
 		_music_player.stop()
+	# Drop stream so Ogg playback packets don't leak on headless SceneTree quit.
+	_music_player.stream = null
 
 
 func set_music_ducked(ducked: bool) -> void:
@@ -149,9 +153,26 @@ func stop_sfx() -> void:
 	for player: AudioStreamPlayer in _sfx_players:
 		if player.playing:
 			player.stop()
+		player.stream = null
 	for player: AudioStreamPlayer in _sting_players:
 		if player.playing:
 			player.stop()
+		player.stream = null
+
+
+func release_for_exit() -> void:
+	## Headless smoke / process shutdown: drop player streams + cached Ogg refs so
+	## SceneTree quit doesn't report ObjectDB audio leaks.
+	## Prefer: stop_* → await process_frame → release_for_exit (lets playbacks drop).
+	stop_sfx()
+	stop_music()
+	_streams.clear()
+	_sfx_players.clear()
+	_sting_players.clear()
+	_music_player = null
+	for child in get_children():
+		remove_child(child)
+		child.free()
 
 
 func set_enabled_from_settings() -> void:
@@ -187,7 +208,10 @@ func _load_streams() -> void:
 		var path: String = STREAM_PATHS[id]
 		if not ResourceLoader.exists(path):
 			continue
-		var stream := load(path) as AudioStream
+		# IGNORE keeps Ogg packet graphs out of the global ResourceLoader cache so
+		# headless --script smokes can drop them via release_for_exit() without
+		# false ObjectDB "still in use" noise at quit.
+		var stream := ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_IGNORE) as AudioStream
 		if stream == null:
 			continue
 		if id == &"music_game" and stream is AudioStreamOggVorbis:

@@ -138,6 +138,7 @@ func _initialize() -> void:
 	sg.set("run_endless", true)
 	var game_ps: PackedScene = load("res://scenes/game.tscn") as PackedScene
 	var game: Node = game_ps.instantiate()
+	game.set_meta("smoke_silent", true)
 	root.add_child(game)
 	for _i: int in 6:
 		await process_frame

@@ -102,6 +102,9 @@ func _initialize() -> void:
 	sound.call("set_music_ducked", false)
 	sound.call("stop_sfx")
 	sound.call("stop_music")
+	# Let AudioServer drop Ogg playbacks before freeing players.
+	await process_frame
+	await process_frame
 	print("OK Sound API calls")
 
 	var juice_src := FileAccess.get_file_as_string("res://scripts/autoload/juice.gd")
@@ -118,6 +121,10 @@ func _initialize() -> void:
 	else:
 		print("OK Game music lifecycle")
 
+	if sound.has_method("release_for_exit"):
+		sound.call("release_for_exit")
+	await process_frame
+	await process_frame
 	_finish(failed)
 
 
