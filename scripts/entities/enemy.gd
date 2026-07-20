@@ -240,15 +240,7 @@ func _build_skin() -> void:
 	body.scale = Vector2(body_scale, body_scale)
 	skin.add_child(body)
 
-	var face_tex: Texture2D = FACE_TEXTURES.get(id, FACE_TEXTURES[&"normal"]) as Texture2D
-	var face := Sprite2D.new()
-	face.name = "Face"
-	face.texture = face_tex
-	var face_scale := (target_px * 0.58) / float(maxi(face_tex.get_width(), 1))
-	face.scale = Vector2(face_scale, face_scale)
-	face.position = Vector2(0.0, -radius * 0.06)
-	skin.add_child(face)
-
+	# Candy body sprites already include faces — skip Kenney face overlay.
 	if id == &"boss":
 		_add_boss_crown(radius)
 

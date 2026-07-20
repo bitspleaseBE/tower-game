@@ -99,6 +99,12 @@ every shipped third-party file appears here, and only shipped files do.
   - assets/background/decor_swirl_mint.png (top-down mint soft-serve)
   - assets/background/decor_candy_cane.png (top-down candy cane)
   - assets/background/decor_bubblegum.png (top-down bubble-gum blob)
+  - assets/enemies/critter_*.png (gumball / marshmallow candy critters)
+  - assets/tower/weapon_chiller*.png (slushie sprayer)
+  - assets/tower/weapon_longshot*.png (candy-cane sniper)
+  - assets/tower/base_square.png (marshmallow pedestal refresh)
+  - assets/background/pad.png (marshmallow pad refresh)
+  - assets/ui/icon_star.png (candy sugar star — no green)
   - assets/ui/boot_splash.png (Bubble Pop boot / web loading splash)
 
 ## Settings chrome — original

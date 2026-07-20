@@ -17,7 +17,8 @@
 
 1. **Big shapes only** — one clear read at phone size; no tiny filigree.
 2. **Thick outlines** + flat candy fills; soft glossy highlight is enough.
-3. **Pastels with punch** — pink, mint, lilac, cream, cyan; avoid muddy greys.
+3. **Pastels with punch** — pink, mint, lilac, cream, cyan; avoid muddy greys and lone green accents.
+3b. **Keep the pink gumdrop buttons** — primary CTAs stay juicy pink; other chrome should match marshmallow / frosting, not tech UI.
 4. **Top-down friendly** — weapons face **up** at rest so rotation stays honest.
 5. **Kenney backups** live under `assets/tower_kenney/` and `assets/background_kenney/`; live candy art is in `assets/tower/` and `assets/background/`.
 6. **Upgrades change the sprite** — each tower has `_t2` / `_t3` weapon + base art and grows footprint (~1.0 → 1.28 → 1.55). No yellow stripe pips.
