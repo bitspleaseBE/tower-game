@@ -85,8 +85,8 @@ every shipped third-party file appears here, and only shipped files do.
   - assets/fx/particle_water_pool.png
   - assets/tower/base_square.png / base_square_t2.png / base_square_t3.png (marshmallow pedestal)
   - assets/tower/base_hex.png / base_hex_t2.png / base_hex_t3.png (sugar-crystal hex pedestal)
-  - assets/background/grass_tile.png (pastel candy meadow — pink / purple / blue)
-  - assets/background/ground_meadow.png (full board candy meadow — no web texture-repeat)
+  - assets/background/grass_tile.png (white frosting sample tile — swirls / plastic bubbles)
+  - assets/background/ground_meadow.png (full board white frosting + colored swirls / bubbles)
   - assets/background/path_straight.png (frosting path tile)
   - assets/background/pad.png (marshmallow pad)
   - assets/background/decor_tree.png (top-down planted lollipop)

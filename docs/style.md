@@ -1,6 +1,6 @@
 # Bubble Pop — Style bible
 
-**Mood:** Alice-in-Wonderland candy land meets *Up!* cloudy soft shapes — chewing-gum bubbles, frosting paths, marshmallow pads. Everything is **big, simple, and juicy**. Prefer one readable silhouette over busy detail.
+**Mood:** Modern HD candy land — glossy **white plastic frosting** terrain with sparse colored swirls and toy-like plastic bubbles; Alice/Up! softness without muddy pastel washes. Everything is **big, simple, and juicy**. Prefer one readable silhouette over busy detail.
 
 ## North stars
 
@@ -26,7 +26,7 @@
 
 | Role | Feel | Notes |
 |------|------|--------|
-| Meadow | Bubblegum pink + Smurf blue + lilac frosting | `ground_meadow.png`, clear color ≈ `(0.894, 0.804, 0.925)` |
+| Meadow | White glossy frosting + pink/cyan/lilac plastic swirls & bubbles | `ground_meadow.png`, clear color ≈ `(0.988, 0.988, 1.0)` |
 | Path | Strawberry frosting | Line2D pinks in `game.tscn` |
 | Pads | Lilac marshmallow | `pad.png` |
 | UI | Cream + gumdrop buttons | `theme/candy_theme.tres` |
@@ -39,7 +39,7 @@ All map props are **top-down orthographic** (footprints looking straight down �
 
 | Asset | Fantasy | Image |
 |-------|---------|-------|
-| Ground | Cotton-candy / bubblegum frosting meadow | ![meadow](images/ground_candy_meadow.png) (`ground_meadow.png` on board) |
+| Ground | White plastic frosting with colored swirls / bubbles | ![meadow](images/ground_candy_meadow.png) (`ground_meadow.png` on board) |
 | Pad | Marshmallow squircle | ![pad](images/pad_marshmallow.png) |
 | Tree | Planted swirl lollipop (disk + tiny stick tip) | ![tree](images/decor_lollipop_tree.png) |
 | Lolli blue | Smurf-blue swirl lollipop | ![lolli blue](images/decor_lollipop_blue.png) |
@@ -57,6 +57,7 @@ Everything that moves should **squash, wobble, or pop**. Kills = confetti. Water
 ## Don’t
 
 - Military metal, realistic grass blades, gravel roads
+- Full-field pastel camouflage washes (meadow must stay **white-first**)
 - Tiny high-frequency noise on tiles (kills the “big candy” read)
 - Heavy tint overlays on already-colored candy sprites
 - Side-view / standing-profile props on the board — map candy is top-down footprints
