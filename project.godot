@@ -50,4 +50,4 @@ theme/custom="res://theme/candy_theme.tres"
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-environment/defaults/default_clear_color=Color(0.92, 0.78, 0.94, 1)
+environment/defaults/default_clear_color=Color(0.894, 0.804, 0.925, 1)

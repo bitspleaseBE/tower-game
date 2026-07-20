@@ -7,6 +7,7 @@ func _initialize() -> void:
 	var failed := false
 
 	var required_assets := [
+		"res://assets/background/ground_meadow.png",
 		"res://assets/background/grass_tile.png",
 		"res://assets/background/path_straight.png",
 		"res://assets/background/pad.png",
@@ -62,11 +63,17 @@ func _initialize() -> void:
 		print("OK assets present (%d)" % required_assets.size())
 
 	var grass: Texture2D = load("res://assets/background/grass_tile.png") as Texture2D
+	var meadow: Texture2D = load("res://assets/background/ground_meadow.png") as Texture2D
 	if grass == null:
 		push_error("grass_tile failed to load")
 		failed = true
 	else:
 		print("OK grass_tile loads %dx%d" % [grass.get_width(), grass.get_height()])
+	if meadow == null:
+		push_error("ground_meadow failed to load")
+		failed = true
+	else:
+		print("OK ground_meadow loads %dx%d" % [meadow.get_width(), meadow.get_height()])
 
 	var heart: Texture2D = load("res://assets/ui/icon_heart.png") as Texture2D
 	var coin: Texture2D = load("res://assets/ui/icon_coin.png") as Texture2D
@@ -97,8 +104,14 @@ func _initialize() -> void:
 		if ground_spr.texture == null:
 			push_error("Ground Sprite2D has no texture")
 			failed = true
+		elif ground_spr.texture.resource_path != "res://assets/background/ground_meadow.png":
+			push_error("Ground texture should be ground_meadow.png, got %s" % ground_spr.texture.resource_path)
+			failed = true
+		elif ground_spr.region_enabled:
+			push_error("Ground should not use region tiling (web GL compat)")
+			failed = true
 		else:
-			print("OK Ground is Sprite2D with texture")
+			print("OK Ground is Sprite2D with meadow texture")
 	else:
 		# Fallback: grass must still load even if scene mid-edit.
 		if grass == null:

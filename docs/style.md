@@ -26,7 +26,7 @@
 
 | Role | Feel | Notes |
 |------|------|--------|
-| Meadow | Bubblegum pink + Smurf blue + lilac frosting | `grass_tile.png`, clear color ≈ `(0.92, 0.78, 0.94)` |
+| Meadow | Bubblegum pink + Smurf blue + lilac frosting | `ground_meadow.png`, clear color ≈ `(0.894, 0.804, 0.925)` |
 | Path | Strawberry frosting | Line2D pinks in `game.tscn` |
 | Pads | Lilac marshmallow | `pad.png` |
 | UI | Cream + gumdrop buttons | `theme/candy_theme.tres` |
@@ -39,7 +39,7 @@ All map props are **top-down orthographic** (footprints looking straight down �
 
 | Asset | Fantasy | Image |
 |-------|---------|-------|
-| Ground | Cotton-candy / bubblegum frosting meadow | ![meadow](images/ground_candy_meadow.png) |
+| Ground | Cotton-candy / bubblegum frosting meadow | ![meadow](images/ground_candy_meadow.png) (`ground_meadow.png` on board) |
 | Pad | Marshmallow squircle | ![pad](images/pad_marshmallow.png) |
 | Tree | Planted swirl lollipop (disk + tiny stick tip) | ![tree](images/decor_lollipop_tree.png) |
 | Lolli blue | Smurf-blue swirl lollipop | ![lolli blue](images/decor_lollipop_blue.png) |
