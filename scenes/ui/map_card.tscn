@@ -6,7 +6,8 @@
 [ext_resource type="Texture2D" path="res://assets/ui/icon_lock.png" id="4_lock"]
 
 [node name="MapCard" type="PanelContainer"]
-custom_minimum_size = Vector2(640, 270)
+custom_minimum_size = Vector2(0, 270)
+size_flags_horizontal = 3
 script = ExtResource("1_card")
 
 [node name="Margin" type="MarginContainer" parent="."]

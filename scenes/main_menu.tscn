@@ -50,6 +50,25 @@ text = "BUBBLE POP"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="GreetingLabel" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -320.0
+offset_top = 308.0
+offset_right = 320.0
+offset_bottom = 368.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.42, 0.506, 1)
+theme_override_font_sizes/font_size = 36
+text = "Hi!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Buttons" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 7

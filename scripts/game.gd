@@ -87,9 +87,12 @@ func _ready() -> void:
 		result_overlay.setup(self)
 
 	hud.menu_requested.connect(_on_menu_requested)
+	hud.early_call_pressed.connect(_on_early_call_pressed)
 	build_menu.setup(self)
 	spawner.setup(self, map_data)
 	spawner.countdown_tick.connect(_on_countdown_tick)
+	spawner.early_call_available.connect(_on_early_call_available)
+	spawner.early_call_hidden.connect(_on_early_call_hidden)
 	Events.enemy_killed.connect(_on_enemy_killed)
 	Events.enemy_leaked.connect(_on_enemy_leaked)
 	Events.wave_started.connect(_on_wave_started)
@@ -304,6 +307,25 @@ func _on_countdown_tick(seconds_left: int) -> void:
 	hud.show_countdown(seconds_left)
 	if seconds_left > 0:
 		Sound.play_sfx(&"countdown_tick")
+
+
+func _on_early_call_available(_seconds_left: int, bonus: int) -> void:
+	hud.show_early_call(bonus)
+
+
+func _on_early_call_hidden() -> void:
+	hud.hide_early_call()
+
+
+func _on_early_call_pressed() -> void:
+	var bonus: int = spawner.request_early_call()
+	if bonus <= 0:
+		return
+	earn(bonus)
+	Sound.play_sfx(&"coin")
+	# Mint — distinct from gold kill-bounty floaters.
+	Juice.floater("+%d" % bonus, Vector2(360, 520), Color(0.35, 0.92, 0.78, 1.0))
+	hud.pulse_coins()
 
 
 func _on_wave_started(number: int, _total: int) -> void:

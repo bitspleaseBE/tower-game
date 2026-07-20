@@ -2,6 +2,7 @@ extends Control
 ## Top-strip HUD: lives, coins, wave, menu, and wave countdown.
 
 signal menu_requested
+signal early_call_pressed
 
 @onready var lives_row: HBoxContainer = %LivesRow
 @onready var coins_row: HBoxContainer = %CoinsRow
@@ -11,6 +12,7 @@ signal menu_requested
 @onready var menu_button: Button = %MenuButton
 @onready var countdown_chip: PanelContainer = %CountdownChip
 @onready var countdown_label: Label = %CountdownLabel
+@onready var next_wave_button: Button = %NextWaveButton
 
 var _displayed_coins: float = 0.0
 var _coin_tween: Tween
@@ -24,6 +26,7 @@ var _current_wave: int = 1
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	countdown_chip.visible = false
+	next_wave_button.visible = false
 	coins_row.resized.connect(func() -> void:
 		coins_row.pivot_offset = coins_row.size * 0.5
 	)
@@ -36,10 +39,16 @@ func _ready() -> void:
 	countdown_chip.resized.connect(func() -> void:
 		countdown_chip.pivot_offset = countdown_chip.size * 0.5
 	)
+	next_wave_button.resized.connect(func() -> void:
+		next_wave_button.pivot_offset = next_wave_button.size * 0.5
+	)
 	menu_button.pressed.connect(func() -> void: menu_requested.emit())
+	next_wave_button.pressed.connect(func() -> void: early_call_pressed.emit())
 	Juice.squishify_button(menu_button)
+	Juice.squishify_button(next_wave_button)
 	Juice.claim(lives_row)
 	Juice.claim(countdown_chip)
+	Juice.claim(next_wave_button)
 	Events.coins_changed.connect(_on_coins_changed)
 	Events.lives_changed.connect(_on_lives_changed)
 	Events.wave_started.connect(_on_wave_started)
@@ -72,10 +81,27 @@ func show_countdown(seconds_left: int) -> void:
 			Juice.punch_scale(countdown_chip, 1.08, 0.12)
 	else:
 		countdown_chip.visible = false
+		hide_early_call()
 
 
 func hide_countdown() -> void:
 	countdown_chip.visible = false
+	hide_early_call()
+
+
+func show_early_call(bonus: int) -> void:
+	var was_visible := next_wave_button.visible
+	next_wave_button.visible = true
+	next_wave_button.text = "Next wave  (+%d)" % bonus
+	next_wave_button.pivot_offset = next_wave_button.size * 0.5
+	if not was_visible:
+		Juice.bounce_in(next_wave_button, 0.22)
+	else:
+		Juice.punch_scale(next_wave_button, 1.06, 0.1)
+
+
+func hide_early_call() -> void:
+	next_wave_button.visible = false
 
 
 ## World/screen position of the coin counter. No Camera2D — world == screen.
