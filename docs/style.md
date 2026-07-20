@@ -8,7 +8,7 @@
 - **Alice / candy land** — pastel wonder, swirls, lollipops
 - **Up!** — soft rounded volumes, friendly clouds of color
 - **Chewing gum / bubble pop** — glossy spheres, stretch, burst
-- **Main menu** — big rising candy bubbles float up and pop (tap them!)
+- **Main menu** — ice-cream scoop bubbles (one flavor each) float up and pop; **shake the phone** to spill more
 
 ## Visual rules
 
@@ -23,7 +23,7 @@
 
 | Role | Feel | Notes |
 |------|------|--------|
-| Meadow | Soft pink + lilac + sky-blue clouds | `grass_tile.png`, clear color ≈ `(0.90, 0.75, 0.94)` |
+| Meadow | Bubblegum pink + Smurf blue + lilac frosting | `grass_tile.png`, clear color ≈ `(0.92, 0.78, 0.94)` |
 | Path | Strawberry frosting | Line2D pinks in `game.tscn` |
 | Pads | Lilac marshmallow | `pad.png` |
 | UI | Cream + gumdrop buttons | `theme/candy_theme.tres` |
@@ -31,15 +31,20 @@
 
 ## World dressing
 
+All map props are **top-down orthographic** (footprints looking straight down — no side-view cones or standing profiles).
+
 | Asset | Fantasy | Image |
 |-------|---------|-------|
-| Ground | Cotton-candy meadow (pink / purple / blue) | ![meadow](images/ground_candy_meadow.png) |
+| Ground | Cotton-candy / bubblegum frosting meadow | ![meadow](images/ground_candy_meadow.png) |
 | Pad | Marshmallow squircle | ![pad](images/pad_marshmallow.png) |
-| Tree | Giant lollipop | ![tree](images/decor_lollipop_tree.png) |
+| Tree | Planted swirl lollipop (disk + tiny stick tip) | ![tree](images/decor_lollipop_tree.png) |
+| Lolli blue | Smurf-blue swirl lollipop | ![lolli blue](images/decor_lollipop_blue.png) |
 | Bush | Cotton-candy puff | ![bush](images/decor_cotton_bush.png) |
 | Rock | Jellybean lump | ![rock](images/decor_jelly_rock.png) |
-| Gumdrop | Faceted sugar gumdrop | ![gumdrop](images/decor_gumdrop.png) |
-| Swirl | Soft-serve ice-cream scoop | ![swirl](images/decor_swirl.png) |
+| Gumdrop | Faceted sugar gumdrop (pink / blue) | ![gumdrop](images/decor_gumdrop.png) ![gumdrop blue](images/decor_gumdrop_blue.png) |
+| Swirl | Soft-serve scoop from above | ![swirl](images/decor_swirl.png) ![mint](images/decor_swirl_mint.png) |
+| Candy cane | Red/white cane flat on the frosting | ![cane](images/decor_candy_cane.png) |
+| Bubble gum | Chewed gum blob + blue bubble | ![gum](images/decor_bubblegum.png) |
 
 ## Juice verbs
 
@@ -50,3 +55,4 @@ Everything that moves should **squash, wobble, or pop**. Kills = confetti. Water
 - Military metal, realistic grass blades, gravel roads
 - Tiny high-frequency noise on tiles (kills the “big candy” read)
 - Heavy tint overlays on already-colored candy sprites
+- Side-view / standing-profile props on the board — map candy is top-down footprints

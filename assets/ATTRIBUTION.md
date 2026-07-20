@@ -88,11 +88,16 @@ every shipped third-party file appears here, and only shipped files do.
   - assets/background/grass_tile.png (pastel candy meadow — pink / purple / blue)
   - assets/background/path_straight.png (frosting path tile)
   - assets/background/pad.png (marshmallow pad)
-  - assets/background/decor_tree.png (lollipop tree)
-  - assets/background/decor_bush.png (cotton-candy bush)
+  - assets/background/decor_tree.png (top-down planted lollipop)
+  - assets/background/decor_lollipop_blue.png (top-down Smurf-blue lollipop)
+  - assets/background/decor_bush.png (top-down cotton-candy bush)
   - assets/background/decor_rock.png (jellybean rock)
-  - assets/background/decor_gumdrop.png (faceted gumdrop)
-  - assets/background/decor_swirl.png (soft-serve ice-cream swirl)
+  - assets/background/decor_gumdrop.png (top-down pink gumdrop)
+  - assets/background/decor_gumdrop_blue.png (top-down Smurf-blue gumdrop)
+  - assets/background/decor_swirl.png (top-down soft-serve scoop)
+  - assets/background/decor_swirl_mint.png (top-down mint soft-serve)
+  - assets/background/decor_candy_cane.png (top-down candy cane)
+  - assets/background/decor_bubblegum.png (top-down bubble-gum blob)
 
 ## Settings chrome — original
 - Candy toggle + slider knob for Settings visibility:

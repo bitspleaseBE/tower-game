@@ -1,17 +1,28 @@
 extends Control
-## Rising candy bubbles for the main menu — float up, pop at random or on tap.
+## Rising ice-cream bubbles for the main menu — float up, pop on tap, burst on shake.
 
-const MAX_BUBBLES := 12
+const MAX_BUBBLES := 14
+const MAX_SHAKE_BURST := 22
 const SPAWN_INTERVAL := 0.45
-const GUM_COLORS: Array[Color] = [
-	Color(0.55, 0.82, 0.98, 0.92),
-	Color(1.0, 0.56, 0.72, 0.92),
-	Color(0.78, 0.58, 0.95, 0.92),
-	Color(1.0, 0.98, 1.0, 0.88),
-	Color(1.0, 0.84, 0.55, 0.9),
+const SHAKE_JERK := 4.5
+const SHAKE_COOLDOWN := 0.4
+const SOFT_TEX: Texture2D = preload("res://assets/fx/particle_soft.png")
+
+## One scoop per bubble — ice-cream parlor flavors.
+const SCOOP_COLORS: Array[Color] = [
+	Color(1.0, 0.62, 0.74, 1.0), ## strawberry
+	Color(0.72, 0.92, 0.86, 1.0), ## mint chip
+	Color(0.78, 0.68, 0.96, 1.0), ## ube / lavender
+	Color(1.0, 0.94, 0.82, 1.0), ## vanilla
+	Color(0.62, 0.84, 0.98, 1.0), ## blueberry soft-serve
+	Color(1.0, 0.78, 0.58, 1.0), ## peach
+	Color(0.92, 0.72, 0.62, 1.0), ## caramel
 ]
 
 var _spawn_cd := 0.0
+var _shake_cd := 0.0
+var _prev_accel := Vector3.ZERO
+var _accel_primed := false
 
 
 func _ready() -> void:
@@ -21,13 +32,14 @@ func _ready() -> void:
 	offset_top = 0.0
 	offset_right = 0.0
 	offset_bottom = 0.0
-	# Seed a few mid-rise so the screen isn't empty on first paint.
 	await get_tree().process_frame
 	for i: int in 5:
 		_spawn_bubble(randf_range(0.15, 0.85))
 
 
 func _process(delta: float) -> void:
+	_shake_cd = maxf(0.0, _shake_cd - delta)
+	_poll_shake()
 	_spawn_cd -= delta
 	if _spawn_cd > 0.0:
 		return
@@ -37,12 +49,40 @@ func _process(delta: float) -> void:
 	_spawn_cd = SPAWN_INTERVAL * randf_range(0.65, 1.35)
 
 
+func _poll_shake() -> void:
+	if _shake_cd > 0.0:
+		return
+	var accel := Input.get_accelerometer()
+	# Desktop / no-sensor builds report zero — stay quiet.
+	if accel.length_squared() < 0.0001:
+		_accel_primed = false
+		_prev_accel = Vector3.ZERO
+		return
+	if not _accel_primed:
+		_prev_accel = accel
+		_accel_primed = true
+		return
+	var jerk := (accel - _prev_accel).length()
+	_prev_accel = accel
+	if jerk >= SHAKE_JERK:
+		_burst_from_shake()
+
+
+func _burst_from_shake() -> void:
+	_shake_cd = SHAKE_COOLDOWN
+	Sound.play_sfx(&"ui_tap")
+	var room := MAX_SHAKE_BURST - get_child_count()
+	var count := mini(room, randi_range(4, 7))
+	for i: int in count:
+		_spawn_bubble(0.0)
+
+
 func _spawn_bubble(rise_progress: float) -> void:
 	var bubble := _MenuBubble.new()
-	var radius := randf_range(36.0, 78.0)
-	var color: Color = GUM_COLORS[randi() % GUM_COLORS.size()]
+	var radius := randf_range(40.0, 88.0)
+	var color: Color = SCOOP_COLORS[randi() % SCOOP_COLORS.size()]
 	add_child(bubble)
-	bubble.setup(radius, color)
+	bubble.setup(radius, color, SOFT_TEX)
 	var view := get_viewport_rect().size
 	if view.x < 1.0 or view.y < 1.0:
 		view = Vector2(720, 1280)
@@ -63,8 +103,7 @@ class _MenuBubble extends Control:
 
 	var _radius := 48.0
 	var _color := Color.WHITE
-	var _swirl_a := Color.WHITE
-	var _swirl_b := Color.WHITE
+	var _soft: Texture2D
 	var _rise_speed := 40.0
 	var _sway_amp := 18.0
 	var _sway_phase := 0.0
@@ -75,24 +114,16 @@ class _MenuBubble extends Control:
 	var _life := 5.0
 
 
-	func setup(radius: float, color: Color) -> void:
+	func setup(radius: float, color: Color, soft_tex: Texture2D) -> void:
 		_radius = radius
 		_color = color
-		var swirl_pool: Array[Color] = [
-			Color(0.55, 0.82, 0.98, 0.92),
-			Color(1.0, 0.56, 0.72, 0.92),
-			Color(0.78, 0.58, 0.95, 0.92),
-			Color(1.0, 0.98, 1.0, 0.88),
-			Color(1.0, 0.84, 0.55, 0.9),
-		]
-		_swirl_a = swirl_pool[randi() % swirl_pool.size()]
-		_swirl_b = swirl_pool[randi() % swirl_pool.size()]
+		_soft = soft_tex
 		_rise_speed = randf_range(28.0, 62.0)
 		_sway_amp = randf_range(12.0, 34.0)
 		_sway_phase = randf() * TAU
 		_sway_speed = randf_range(1.1, 2.2)
 		_wobble = randf() * TAU
-		_life = randf_range(3.0, 8.0)
+		_life = randf_range(3.5, 8.5)
 		custom_minimum_size = Vector2(radius * 2.0, radius * 2.0)
 		size = custom_minimum_size
 		mouse_filter = Control.MOUSE_FILTER_STOP
@@ -112,7 +143,6 @@ class _MenuBubble extends Control:
 		_base_x = position.x
 
 
-	## Circular hit so rect corners don't steal taps from buttons behind.
 	func _has_point(point: Vector2) -> bool:
 		return point.distance_to(size * 0.5) <= _radius
 
@@ -137,10 +167,10 @@ class _MenuBubble extends Control:
 			return
 		_life -= delta
 		_sway_phase += delta * _sway_speed
-		_wobble += delta * 3.2
+		_wobble += delta * 2.6
 		position.y -= _rise_speed * delta
 		position.x = _base_x + sin(_sway_phase) * _sway_amp
-		var pulse := 1.0 + sin(_wobble) * 0.04
+		var pulse := 1.0 + sin(_wobble) * 0.035
 		scale = Vector2(pulse, pulse)
 		queue_redraw()
 		if _life <= 0.0:
@@ -153,11 +183,37 @@ class _MenuBubble extends Control:
 	func _draw() -> void:
 		var c := size * 0.5
 		var r := _radius
-		draw_circle(c, r, _color)
-		draw_circle(c + Vector2(-r * 0.28, -r * 0.18), r * 0.5, Color(_swirl_a.r, _swirl_a.g, _swirl_a.b, 0.7))
-		draw_circle(c + Vector2(r * 0.3, r * 0.22), r * 0.38, Color(_swirl_b.r, _swirl_b.g, _swirl_b.b, 0.65))
-		draw_arc(c, r * 0.92, 0.0, TAU, 40, Color(1.0, 1.0, 1.0, 0.35), 2.5, true)
-		draw_circle(c + Vector2(-r * 0.35, -r * 0.4), r * 0.16, Color(1.0, 1.0, 1.0, 0.8))
+		# Soft contact shadow (ice-cream scoop sitting in light).
+		_draw_soft(c + Vector2(r * 0.08, r * 0.22), r * 1.05, Color(0.35, 0.22, 0.35, 0.18))
+		# Outer glow halo — same flavor, airy.
+		_draw_soft(c, r * 1.28, Color(_color.r, _color.g, _color.b, 0.22))
+		# Volume body: soft disc + solid core for scoop density.
+		_draw_soft(c, r * 1.08, Color(_color.r, _color.g, _color.b, 0.55))
+		draw_circle(c, r * 0.82, Color(_color.r, _color.g, _color.b, 0.92))
+		# Same-hue shading — darker underside, lighter crown (one color family).
+		var shade := _color.darkened(0.18)
+		shade.a = 0.35
+		_draw_soft(c + Vector2(r * 0.12, r * 0.28), r * 0.7, shade)
+		var cream := _color.lightened(0.28)
+		cream.a = 0.55
+		_draw_soft(c + Vector2(-r * 0.22, -r * 0.28), r * 0.55, cream)
+		# Glossy specular (soft-serve shine).
+		draw_circle(c + Vector2(-r * 0.32, -r * 0.38), r * 0.18, Color(1.0, 1.0, 1.0, 0.78))
+		_draw_soft(c + Vector2(-r * 0.18, -r * 0.42), r * 0.42, Color(1.0, 1.0, 1.0, 0.28))
+		# Thin rim catch-light.
+		draw_arc(c, r * 0.86, -2.2, -0.4, 24, Color(1.0, 1.0, 1.0, 0.45), 2.0, true)
+
+
+	func _draw_soft(center: Vector2, diameter: float, tint: Color) -> void:
+		if _soft == null:
+			draw_circle(center, diameter * 0.5, tint)
+			return
+		draw_texture_rect(
+			_soft,
+			Rect2(center - Vector2(diameter, diameter) * 0.5, Vector2(diameter, diameter)),
+			false,
+			tint
+		)
 
 
 	func pop(from_tap: bool) -> void:
@@ -171,6 +227,6 @@ class _MenuBubble extends Control:
 			Sound.play_sfx(&"ui_tap")
 		var tween := create_tween()
 		tween.set_parallel(true)
-		tween.tween_property(self, "scale", Vector2(1.55, 1.55), 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tween.tween_property(self, "scale", Vector2(1.6, 1.6), 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		tween.tween_property(self, "modulate:a", 0.0, 0.16)
 		tween.chain().tween_callback(func() -> void: popped.emit())

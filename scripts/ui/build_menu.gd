@@ -104,8 +104,8 @@ func close() -> void:
 	_mode = &""
 	var tween := create_tween()
 	tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
-	tween.tween_property(panel, "offset_top", 280.0, 0.18)
-	tween.parallel().tween_property(panel, "offset_bottom", 280.0, 0.18)
+	tween.tween_property(panel, "offset_top", 312.0, 0.18)
+	tween.parallel().tween_property(panel, "offset_bottom", 312.0, 0.18)
 	tween.tween_callback(func() -> void:
 		panel.visible = false
 	)
@@ -122,7 +122,7 @@ func _build_option_buttons() -> void:
 		var btn := Button.new()
 		btn.toggle_mode = false
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		btn.custom_minimum_size = Vector2(0, 128)
+		btn.custom_minimum_size = Vector2(0, 156)
 		btn.focus_mode = Control.FOCUS_NONE
 		btn.text = "" # Content is laid out below — avoids swatch/text overlap.
 		btn.clip_text = true
@@ -197,18 +197,18 @@ func _option_name_label(btn: Button) -> Label:
 func _slide_in() -> void:
 	_open = true
 	panel.visible = true
-	panel.offset_top = 280.0
-	panel.offset_bottom = 280.0
+	panel.offset_top = 312.0
+	panel.offset_bottom = 312.0
 	var tween := create_tween()
 	tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.tween_property(panel, "offset_top", -280.0, 0.28)
+	tween.tween_property(panel, "offset_top", -312.0, 0.28)
 	tween.parallel().tween_property(panel, "offset_bottom", -12.0, 0.28)
 
 
 func _set_sheet_hidden_instant() -> void:
 	_open = false
-	panel.offset_top = 280.0
-	panel.offset_bottom = 280.0
+	panel.offset_top = 312.0
+	panel.offset_bottom = 312.0
 	panel.visible = false
 
 

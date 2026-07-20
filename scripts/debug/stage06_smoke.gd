@@ -14,7 +14,12 @@ func _initialize() -> void:
 		"res://assets/background/decor_bush.png",
 		"res://assets/background/decor_rock.png",
 		"res://assets/background/decor_gumdrop.png",
+		"res://assets/background/decor_gumdrop_blue.png",
 		"res://assets/background/decor_swirl.png",
+		"res://assets/background/decor_swirl_mint.png",
+		"res://assets/background/decor_candy_cane.png",
+		"res://assets/background/decor_bubblegum.png",
+		"res://assets/background/decor_lollipop_blue.png",
 		"res://assets/enemies/critter_normal.png",
 		"res://assets/enemies/critter_fast.png",
 		"res://assets/enemies/critter_swarm.png",
@@ -114,8 +119,8 @@ func _initialize() -> void:
 		failed = true
 	else:
 		var props: Node = game.get_node("Board/Decor/Props")
-		if props.get_child_count() < 4:
-			push_error("Expected ≥4 decor props, got %d" % props.get_child_count())
+		if props.get_child_count() < 12:
+			push_error("Expected ≥12 decor props, got %d" % props.get_child_count())
 			failed = true
 		else:
 			print("OK decor props=%d" % props.get_child_count())
