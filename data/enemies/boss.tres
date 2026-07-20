@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1_boss")
 id = &"boss"
+display_name = "Big Boss"
 hp = 220.0
 speed = 40.0
 bounty = 100

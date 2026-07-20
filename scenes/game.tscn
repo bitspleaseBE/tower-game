@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=25 format=3]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
 [ext_resource type="Script" path="res://scripts/wave_spawner.gd" id="2_spawner"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/result_overlay.tscn" id="5_ro"]
 [ext_resource type="PackedScene" path="res://scenes/ui/wave_banner.tscn" id="6_wb"]
 [ext_resource type="PackedScene" path="res://scenes/ui/pause_overlay.tscn" id="14_po"]
+[ext_resource type="PackedScene" path="res://scenes/ui/coach.tscn" id="22_coach"]
 [ext_resource type="Script" path="res://scripts/debug/stress_test.gd" id="7_stress"]
 [ext_resource type="PackedScene" path="res://scenes/debug/stress_overlay.tscn" id="8_so"]
 [ext_resource type="Script" path="res://scripts/ui/range_preview.gd" id="9_rp"]
@@ -21,6 +22,7 @@
 [ext_resource type="Texture2D" path="res://assets/background/decor_gumdrop_blue.png" id="19_gblue"]
 [ext_resource type="Texture2D" path="res://assets/background/decor_lollipop_blue.png" id="20_lblue"]
 [ext_resource type="Texture2D" path="res://assets/background/decor_swirl_mint.png" id="21_smint"]
+[ext_resource type="Texture2D" path="res://assets/background/path_straight.png" id="23_path"]
 
 [sub_resource type="Gradient" id="Gradient_vignette"]
 offsets = PackedFloat32Array(0, 0.5, 1)
@@ -342,24 +344,26 @@ polygon = PackedVector2Array(18, 0, 15.588, 9, 9, 15.588, 0, 18, -9, 15.588, -15
 [node name="Path" type="Path2D" parent="Board"]
 
 [node name="PathBorder" type="Line2D" parent="Board/Path"]
-width = 64.0
-default_color = Color(0.95, 0.62, 0.72, 1)
+width = 68.0
+default_color = Color(0.92, 0.48, 0.62, 1)
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 round_precision = 12
 
 [node name="PathLine" type="Line2D" parent="Board/Path"]
-width = 48.0
-default_color = Color(1.0, 0.86, 0.9, 1)
+width = 50.0
+default_color = Color(1, 1, 1, 1)
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 round_precision = 12
+texture = ExtResource("23_path")
+texture_mode = 1
 
 [node name="PathHighlight" type="Line2D" parent="Board/Path"]
-width = 28.0
-default_color = Color(1.0, 0.96, 0.98, 0.55)
+width = 22.0
+default_color = Color(1.0, 0.98, 0.99, 0.4)
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
@@ -402,5 +406,7 @@ stretch_mode = 0
 [node name="ResultOverlay" parent="UI" instance=ExtResource("5_ro")]
 
 [node name="PauseOverlay" parent="UI" instance=ExtResource("14_po")]
+
+[node name="Coach" parent="UI" instance=ExtResource("22_coach")]
 
 [node name="StressOverlay" parent="UI" instance=ExtResource("8_so")]

@@ -2,6 +2,7 @@ extends Node
 ## Persistent campaign progress + transient run handoff for MapSelect → Game.
 
 const SAVE_PATH := "user://save.cfg"
+const META_SECTION := "meta"
 const CAMPAIGN: Array[StringName] = [&"map_01", &"map_02", &"map_03"]
 
 ## Never persisted to disk — MapSelect / Next map! set these; Game reads at _ready.
@@ -34,6 +35,28 @@ func is_unlocked(id: StringName) -> bool:
 	if idx <= 0:
 		return false
 	return is_beaten(CAMPAIGN[idx - 1])
+
+
+## Towers available on a given map (per-map roster, including endless on that map).
+func available_tower_ids(map_id: StringName) -> Array[StringName]:
+	var ids: Array[StringName] = [&"popper", &"lobber"]
+	var idx := CAMPAIGN.find(map_id)
+	if idx < 0:
+		idx = 0
+	if idx >= 1:
+		ids.append(&"chiller")
+	if idx >= 2:
+		ids.append(&"longshot")
+	return ids
+
+
+func has_seen_tip(key: String) -> bool:
+	return bool(_config.get_value(META_SECTION, "tip_%s" % key, false))
+
+
+func mark_tip_seen(key: String) -> void:
+	_config.set_value(META_SECTION, "tip_%s" % key, true)
+	_save()
 
 
 func mark_beaten(id: StringName) -> void:

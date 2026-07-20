@@ -50,6 +50,9 @@ func _initialize() -> void:
 		if swarm.radius_px <= 0.0 or armored.armor < 1.0 or not boss.is_boss:
 			push_error("enemy archetype fields wrong")
 			failed = true
+		elif swarm.display_name.is_empty() or armored.display_name.is_empty() or boss.display_name.is_empty():
+			push_error("enemy display_name missing")
+			failed = true
 		else:
 			print("OK enemy archetypes swarm/armored/boss")
 

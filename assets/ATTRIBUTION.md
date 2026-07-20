@@ -105,6 +105,7 @@ every shipped third-party file appears here, and only shipped files do.
   - assets/tower/base_square.png (marshmallow pedestal refresh)
   - assets/background/pad.png (marshmallow pad refresh)
   - assets/ui/icon_star.png (candy sugar star — no green)
+  - assets/ui/tip_how_to_play.png (simple bubble-gum tip icon)
   - assets/ui/boot_splash.png (Bubble Pop boot / web loading splash)
 
 ## Settings chrome — original

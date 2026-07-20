@@ -1,6 +1,8 @@
 extends Control
 ## Bottom-sheet build / manage menu for one-thumb play.
 
+signal build_opened(pad: BuildPad)
+
 const TowerScene: PackedScene = preload("res://scenes/entities/tower.tscn")
 const COIN_ICON: Texture2D = preload("res://assets/ui/icon_coin.png")
 const TOWER_ICONS := {
@@ -27,6 +29,7 @@ var _open: bool = false
 var _option_buttons: Array[Button] = []
 var _range_preview: RangePreview
 var _prev_affordable: Array[bool] = []
+var _all_towers: Array[TowerData] = []
 
 
 func _ready() -> void:
@@ -40,6 +43,7 @@ func _ready() -> void:
 			load("res://data/towers/chiller.tres") as TowerData,
 			load("res://data/towers/longshot.tres") as TowerData,
 		]
+	_all_towers = towers.duplicate()
 	_build_option_buttons()
 	_set_sheet_hidden_instant()
 	primary_button.pressed.connect(_on_primary_pressed)
@@ -56,6 +60,20 @@ func _ready() -> void:
 func setup(game: Node) -> void:
 	_game = game
 	_range_preview = game.get_node_or_null("Board/RangePreview") as RangePreview
+	_apply_map_roster()
+
+
+func _apply_map_roster() -> void:
+	var map_id: StringName = &"map_01"
+	if _game != null and _game.get("map_data") != null:
+		map_id = (_game.map_data as MapData).id
+	var allowed: Array[StringName] = SaveGame.available_tower_ids(map_id)
+	var filtered: Array[TowerData] = []
+	for tower_data: TowerData in _all_towers:
+		if allowed.has(tower_data.id):
+			filtered.append(tower_data)
+	towers = filtered
+	_build_option_buttons()
 
 
 func is_open() -> bool:
@@ -75,6 +93,7 @@ func open_build(pad: BuildPad) -> void:
 	_refresh_build_options()
 	_slide_in()
 	_stagger_option_pop()
+	build_opened.emit(pad)
 
 
 func open_manage(pad: BuildPad) -> void:
@@ -113,7 +132,8 @@ func close() -> void:
 
 func _build_option_buttons() -> void:
 	for child: Node in options_row.get_children():
-		child.queue_free()
+		options_row.remove_child(child)
+		child.free()
 	_option_buttons.clear()
 	_prev_affordable.clear()
 

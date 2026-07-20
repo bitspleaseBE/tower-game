@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/coach_controller.gd" id="1_coach"]
+[ext_resource type="PackedScene" path="res://scenes/ui/tip_card.tscn" id="2_tip"]
+[ext_resource type="PackedScene" path="res://scenes/ui/toast_balloon.tscn" id="3_toast"]
+
+[node name="Coach" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_coach")
+
+[node name="TipCard" parent="." instance=ExtResource("2_tip")]
+unique_name_in_owner = true
+
+[node name="ToastBalloon" parent="." instance=ExtResource("3_toast")]
+unique_name_in_owner = true

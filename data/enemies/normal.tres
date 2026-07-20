@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1_qjnvf")
 id = &"normal"
+display_name = "Bubble"
 hp = 3.0
 speed = 70.0
 bounty = 5

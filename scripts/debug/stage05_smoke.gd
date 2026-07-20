@@ -60,6 +60,35 @@ func _initialize() -> void:
 	else:
 		print("OK unlock chain map_01→map_02 just_unlocked=%s" % String(sg.get("just_unlocked")))
 
+	# --- Per-map tower roster ---
+	var roster_01: Array = sg.call("available_tower_ids", &"map_01")
+	var roster_02: Array = sg.call("available_tower_ids", &"map_02")
+	var roster_03: Array = sg.call("available_tower_ids", &"map_03")
+	if roster_01.size() != 2 or not roster_01.has(&"popper") or not roster_01.has(&"lobber"):
+		push_error("map_01 should unlock popper+lobber only")
+		failed = true
+	elif roster_02.size() != 3 or not roster_02.has(&"chiller"):
+		push_error("map_02 should add chiller")
+		failed = true
+	elif roster_03.size() != 4 or not roster_03.has(&"longshot"):
+		push_error("map_03 should add longshot")
+		failed = true
+	else:
+		print("OK tower roster 2/3/4")
+
+	# --- Once-ever tip flags ---
+	sg.call("mark_tip_seen", "smoke_test_tip")
+	if not bool(sg.call("has_seen_tip", "smoke_test_tip")):
+		push_error("mark_tip_seen/has_seen_tip failed")
+		failed = true
+	else:
+		var tip_cfg := ConfigFile.new()
+		if tip_cfg.load("user://save.cfg") != OK or not tip_cfg.has_section_key("meta", "tip_smoke_test_tip"):
+			push_error("tip flag missing from save.cfg meta")
+			failed = true
+		else:
+			print("OK tip_seen persistence")
+
 	# Transient fields must not appear in save.cfg
 	var cfg := ConfigFile.new()
 	if cfg.load("user://save.cfg") == OK:

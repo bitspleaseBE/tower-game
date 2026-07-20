@@ -9,6 +9,7 @@ signal menu_requested
 @onready var coins_label: Label = %CoinsLabel
 @onready var wave_label: Label = %WaveLabel
 @onready var menu_button: Button = %MenuButton
+@onready var countdown_chip: PanelContainer = %CountdownChip
 @onready var countdown_label: Label = %CountdownLabel
 
 var _displayed_coins: float = 0.0
@@ -22,7 +23,7 @@ var _current_wave: int = 1
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	countdown_label.visible = false
+	countdown_chip.visible = false
 	coins_row.resized.connect(func() -> void:
 		coins_row.pivot_offset = coins_row.size * 0.5
 	)
@@ -32,9 +33,13 @@ func _ready() -> void:
 	wave_label.resized.connect(func() -> void:
 		wave_label.pivot_offset = wave_label.size * 0.5
 	)
+	countdown_chip.resized.connect(func() -> void:
+		countdown_chip.pivot_offset = countdown_chip.size * 0.5
+	)
 	menu_button.pressed.connect(func() -> void: menu_requested.emit())
 	Juice.squishify_button(menu_button)
 	Juice.claim(lives_row)
+	Juice.claim(countdown_chip)
 	Events.coins_changed.connect(_on_coins_changed)
 	Events.lives_changed.connect(_on_lives_changed)
 	Events.wave_started.connect(_on_wave_started)
@@ -56,15 +61,21 @@ func set_wave(current: int, total: int) -> void:
 
 
 func show_countdown(seconds_left: int) -> void:
-	countdown_label.visible = seconds_left > 0
+	var was_visible := countdown_chip.visible
+	countdown_chip.visible = seconds_left > 0
 	if seconds_left > 0:
 		countdown_label.text = "Next wave in %d…" % seconds_left
+		countdown_chip.pivot_offset = countdown_chip.size * 0.5
+		if not was_visible:
+			Juice.bounce_in(countdown_chip, 0.22)
+		else:
+			Juice.punch_scale(countdown_chip, 1.08, 0.12)
 	else:
-		countdown_label.visible = false
+		countdown_chip.visible = false
 
 
 func hide_countdown() -> void:
-	countdown_label.visible = false
+	countdown_chip.visible = false
 
 
 ## World/screen position of the coin counter. No Camera2D — world == screen.

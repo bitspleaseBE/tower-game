@@ -27,6 +27,7 @@ var best_at_run_start: int = 0
 @onready var result_overlay: Control = $UI/ResultOverlay
 @onready var pause_overlay: Control = $UI/PauseOverlay
 @onready var wave_banner: Control = $UI/WaveBanner
+@onready var coach: Control = $UI/Coach
 
 var coins: int = 0
 var lives: int = 0
@@ -100,6 +101,8 @@ func _ready() -> void:
 
 	Sound.set_music_ducked(false)
 	Sound.play_music(&"music_game")
+	if coach != null and coach.has_method("setup"):
+		coach.setup(self)
 	spawner.start()
 
 
