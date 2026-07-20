@@ -98,6 +98,7 @@ every shipped third-party file appears here, and only shipped files do.
   - assets/background/decor_swirl_mint.png (top-down mint soft-serve)
   - assets/background/decor_candy_cane.png (top-down candy cane)
   - assets/background/decor_bubblegum.png (top-down bubble-gum blob)
+  - assets/ui/boot_splash.png (Bubble Pop boot / web loading splash)
 
 ## Settings chrome — original
 - Candy toggle + slider knob for Settings visibility:

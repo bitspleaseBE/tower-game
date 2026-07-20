@@ -9,6 +9,9 @@
 - **Up!** — soft rounded volumes, friendly clouds of color
 - **Chewing gum / bubble pop** — glossy spheres, stretch, burst
 - **Main menu** — ice-cream scoop bubbles (one flavor each) float up and pop; **shake the phone** to spill more
+- **Boot / web loading** — candy title card `assets/ui/boot_splash.png` (Godot boot splash + HTML `$GODOT_SPLASH`)
+
+![boot splash](images/boot_splash.png)
 
 ## Visual rules
 
@@ -27,6 +30,7 @@
 | Path | Strawberry frosting | Line2D pinks in `game.tscn` |
 | Pads | Lilac marshmallow | `pad.png` |
 | UI | Cream + gumdrop buttons | `theme/candy_theme.tres` |
+| Boot splash | Lilac candy sky + title | `assets/ui/boot_splash.png`, bg ≈ `(0.929, 0.729, 0.945)` |
 | Slow tint | Icy blue wash on critters | `enemy.gd` `SLOW_TINT` |
 
 ## World dressing
