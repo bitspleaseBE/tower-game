@@ -158,16 +158,17 @@ func _initialize() -> void:
 				push_error("enemy Skin missing Sprite2D children")
 				failed = true
 			else:
-				var has_face := false
+				# Candy bodies bake the face into the body sprite (no separate Face overlay).
+				var has_body := false
 				for child: Node in skin.get_children():
-					if String(child.name) == "Face" and child is Sprite2D:
-						has_face = true
+					if String(child.name) == "Body" and child is Sprite2D:
+						has_body = true
 						break
-				if not has_face:
-					push_error("enemy Skin missing Face sprite")
+				if not has_body:
+					push_error("enemy Skin missing Body sprite")
 					failed = true
 				else:
-					print("OK enemy Skin has body+face")
+					print("OK enemy Skin has candy body")
 			e_swarm.call("deactivate")
 
 	if boss != null and game.has_method("_spawn_enemy"):

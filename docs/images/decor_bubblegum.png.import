@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://f8xgm32olnoj"
-path="res://.godot/imported/ground_meadow.png-a43ba9aef7ac50ff07adb0350e429114.ctex"
+uid="uid://bfteho1tljmih"
+path="res://.godot/imported/decor_bubblegum.png-5d356ed7513b93d62af235c9d7041caa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/background/ground_meadow.png"
-dest_files=["res://.godot/imported/ground_meadow.png-a43ba9aef7ac50ff07adb0350e429114.ctex"]
+source_file="res://docs/images/decor_bubblegum.png"
+dest_files=["res://.godot/imported/decor_bubblegum.png-5d356ed7513b93d62af235c9d7041caa.ctex"]
 
 [params]
 

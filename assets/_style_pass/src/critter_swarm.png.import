@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://f8xgm32olnoj"
-path="res://.godot/imported/ground_meadow.png-a43ba9aef7ac50ff07adb0350e429114.ctex"
+uid="uid://dlv28bggmync"
+path="res://.godot/imported/critter_swarm.png-73d769c30e029dc60fc50357f5df0131.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/background/ground_meadow.png"
-dest_files=["res://.godot/imported/ground_meadow.png-a43ba9aef7ac50ff07adb0350e429114.ctex"]
+source_file="res://assets/_style_pass/src/critter_swarm.png"
+dest_files=["res://.godot/imported/critter_swarm.png-73d769c30e029dc60fc50357f5df0131.ctex"]
 
 [params]
 

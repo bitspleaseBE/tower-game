@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://f8xgm32olnoj"
-path="res://.godot/imported/ground_meadow.png-a43ba9aef7ac50ff07adb0350e429114.ctex"
+uid="uid://btrxggl8brhjq"
+path="res://.godot/imported/decor_gumdrop_blue.png-48016a0bedd007a283224258ce9df230.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/background/ground_meadow.png"
-dest_files=["res://.godot/imported/ground_meadow.png-a43ba9aef7ac50ff07adb0350e429114.ctex"]
+source_file="res://docs/images/decor_gumdrop_blue.png"
+dest_files=["res://.godot/imported/decor_gumdrop_blue.png-48016a0bedd007a283224258ce9df230.ctex"]
 
 [params]
 

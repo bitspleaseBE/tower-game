@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://f8xgm32olnoj"
-path="res://.godot/imported/ground_meadow.png-a43ba9aef7ac50ff07adb0350e429114.ctex"
+uid="uid://bogrli0u3733s"
+path="res://.godot/imported/decor_candy_cane.png-d8ce66d99b7a2aec534c140b5682ef90.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/background/ground_meadow.png"
-dest_files=["res://.godot/imported/ground_meadow.png-a43ba9aef7ac50ff07adb0350e429114.ctex"]
+source_file="res://docs/images/decor_candy_cane.png"
+dest_files=["res://.godot/imported/decor_candy_cane.png-d8ce66d99b7a2aec534c140b5682ef90.ctex"]
 
 [params]
 

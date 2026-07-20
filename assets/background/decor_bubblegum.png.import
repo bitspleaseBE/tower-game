@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ccd8f13c971e8a"
-path="res://.godot/imported/decor_bubblegum-cd148795adcd3822.ctex"
+uid="uid://bjcax86pqumfp"
+path="res://.godot/imported/decor_bubblegum.png-1fcdb723f849ca3e46a90420a120ed14.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/background/decor_bubblegum.png"
-dest_files=["res://.godot/imported/decor_bubblegum-cd148795adcd3822.ctex"]
+dest_files=["res://.godot/imported/decor_bubblegum.png-1fcdb723f849ca3e46a90420a120ed14.ctex"]
 
 [params]
 
@@ -31,7 +31,7 @@ process/channel_remap/red=0
 process/channel_remap/green=1
 process/channel_remap/blue=2
 process/channel_remap/alpha=3
-process/fix_alpha_border=false
+process/fix_alpha_border=true
 process/premult_alpha=false
 process/normal_map_invert_y=false
 process/hdr_as_srgb=false

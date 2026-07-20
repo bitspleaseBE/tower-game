@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://f8xgm32olnoj"
-path="res://.godot/imported/ground_meadow.png-a43ba9aef7ac50ff07adb0350e429114.ctex"
+uid="uid://b5sy30h7ljbv7"
+path="res://.godot/imported/pad.png-ee8ed713eb5636afa91ceb0dfca14525.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/background/ground_meadow.png"
-dest_files=["res://.godot/imported/ground_meadow.png-a43ba9aef7ac50ff07adb0350e429114.ctex"]
+source_file="res://assets/_style_pass/src/pad.png"
+dest_files=["res://.godot/imported/pad.png-ee8ed713eb5636afa91ceb0dfca14525.ctex"]
 
 [params]
 

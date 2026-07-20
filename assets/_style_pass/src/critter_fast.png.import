@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://f8xgm32olnoj"
-path="res://.godot/imported/ground_meadow.png-a43ba9aef7ac50ff07adb0350e429114.ctex"
+uid="uid://dafs5i3in3x3g"
+path="res://.godot/imported/critter_fast.png-d160905b758ca41c6c0817447b2e60a3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/background/ground_meadow.png"
-dest_files=["res://.godot/imported/ground_meadow.png-a43ba9aef7ac50ff07adb0350e429114.ctex"]
+source_file="res://assets/_style_pass/src/critter_fast.png"
+dest_files=["res://.godot/imported/critter_fast.png-d160905b758ca41c6c0817447b2e60a3.ctex"]
 
 [params]
 

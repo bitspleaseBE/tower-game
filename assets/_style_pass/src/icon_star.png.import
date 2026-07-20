@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://f8xgm32olnoj"
-path="res://.godot/imported/ground_meadow.png-a43ba9aef7ac50ff07adb0350e429114.ctex"
+uid="uid://bqq0di7jlixh1"
+path="res://.godot/imported/icon_star.png-58a1cc8d0edf37aa24b8154b5c11b217.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/background/ground_meadow.png"
-dest_files=["res://.godot/imported/ground_meadow.png-a43ba9aef7ac50ff07adb0350e429114.ctex"]
+source_file="res://assets/_style_pass/src/icon_star.png"
+dest_files=["res://.godot/imported/icon_star.png-58a1cc8d0edf37aa24b8154b5c11b217.ctex"]
 
 [params]
 

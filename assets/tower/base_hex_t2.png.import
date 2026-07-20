@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://t193d6159bcb9f"
-path="res://.godot/imported/base_hex_t2.png-193d6159bcb9f.ctex"
+uid="uid://bo3bibfqa6jxu"
+path="res://.godot/imported/base_hex_t2.png-38aa2f38fa4be6543d09d5e500f4480e.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://assets/tower/base_hex_t2.png"
-dest_files=["res://.godot/imported/base_hex_t2.png-193d6159bcb9f.ctex"]
+dest_files=["res://.godot/imported/base_hex_t2.png-38aa2f38fa4be6543d09d5e500f4480e.ctex"]
 
 [params]
 
@@ -31,7 +31,7 @@ process/channel_remap/red=0
 process/channel_remap/green=1
 process/channel_remap/blue=2
 process/channel_remap/alpha=3
-process/fix_alpha_border=false
+process/fix_alpha_border=true
 process/premult_alpha=false
 process/normal_map_invert_y=false
 process/hdr_as_srgb=false

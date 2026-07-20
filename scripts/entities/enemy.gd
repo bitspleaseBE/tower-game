@@ -16,14 +16,6 @@ const BODY_TEXTURES := {
 	&"boss": preload("res://assets/enemies/critter_boss.png"),
 }
 
-const FACE_TEXTURES := {
-	&"normal": preload("res://assets/enemies/face_a.png"),
-	&"fast": preload("res://assets/enemies/face_b.png"),
-	&"swarm": preload("res://assets/enemies/face_c.png"),
-	&"armored": preload("res://assets/enemies/face_d.png"),
-	&"boss": preload("res://assets/enemies/face_e.png"),
-}
-
 @onready var skin: Node2D = $Skin
 @onready var hurtbox: Area2D = $Hurtbox
 @onready var hurtbox_shape: CollisionShape2D = $Hurtbox/CollisionShape2D
