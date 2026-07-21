@@ -324,7 +324,7 @@ func _on_early_call_pressed() -> void:
 	earn(bonus)
 	Sound.play_sfx(&"coin")
 	# Mint — distinct from gold kill-bounty floaters.
-	Juice.floater("+%d" % bonus, Vector2(360, 520), Color(0.35, 0.92, 0.78, 1.0))
+	Juice.floater("+%d" % bonus, Vector2(360, 900), Color(0.35, 0.92, 0.78, 1.0))
 	hud.pulse_coins()
 
 

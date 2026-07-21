@@ -1,13 +1,13 @@
 extends Node
-## Wave state machine: COUNTDOWN → SPAWNING → CLEARING → (next COUNTDOWN | WON).
+## Wave state machine: COUNTDOWN → SPAWNING → (countdown while leftovers alive | WON).
 
 signal countdown_tick(seconds_left: int)
-## Bonus updates while the Next wave button is offered (CLEARING + countdown).
+## Bonus updates while the Next wave button is offered (post-spawn countdown).
 signal early_call_available(seconds_left: int, bonus: int)
 signal early_call_hidden
 
-## Inter-wave breather. Next-wave button arms when the last spawn group finishes.
-const COUNTDOWN_SECONDS := 5
+## Inter-wave breather. Countdown + Next-wave button arm when the last spawn group finishes.
+const COUNTDOWN_SECONDS := 25
 
 enum State { IDLE, COUNTDOWN, SPAWNING, CLEARING, DONE }
 
@@ -76,9 +76,6 @@ func early_call_bonus_now() -> int:
 		max_bonus = maxi(0, map_data.early_wave_bonus_max)
 	if max_bonus <= 0:
 		return 0
-	# Full bonus while finishing the current wave; scales down during the breather.
-	if _state == State.CLEARING:
-		return max_bonus
 	if _state == State.COUNTDOWN and _countdown_remaining > 0:
 		return maxi(
 			1,
@@ -109,7 +106,7 @@ func _arm_early_call() -> void:
 		return
 	_early_call_armed = true
 	_early_call_claimed = false
-	early_call_available.emit(0, early_call_bonus_now())
+	early_call_available.emit(_countdown_remaining, early_call_bonus_now())
 
 
 func _begin_countdown() -> void:
@@ -129,6 +126,8 @@ func _begin_countdown() -> void:
 		return
 
 	_countdown_remaining = COUNTDOWN_SECONDS
+	if _early_call_armed and not _early_call_claimed:
+		_arm_early_call()
 	while _countdown_remaining > 0:
 		if _run_over:
 			_disarm_early_call()
@@ -177,30 +176,30 @@ func _spawn_wave() -> void:
 		if _run_over:
 			return
 
-	# Last group dispatched — offer Next wave if another wave can follow.
-	_state = State.CLEARING
-	_arm_early_call()
-
-	while _alive_enemies > 0:
+	# Last group dispatched. Campaign last wave: wait for the board to clear, then win.
+	# Otherwise: start the next-wave countdown immediately — leftovers may still be alive.
+	if not _wave_has_next:
+		_state = State.CLEARING
+		while _alive_enemies > 0:
+			if _run_over:
+				return
+			await get_tree().create_timer(0.1).timeout
+			if _run_over:
+				return
+		Events.wave_cleared.emit(wave_number)
 		if _run_over:
 			return
-		await get_tree().create_timer(0.1).timeout
-		if _run_over:
-			return
-
-	Events.wave_cleared.emit(wave_number)
-	if _run_over:
-		return
-
-	# Campaign: clearing the last scripted wave wins. Endless: keep going forever.
-	if not endless and wave_number >= total_scripted:
 		_disarm_early_call()
 		_state = State.DONE
 		if _game.lives > 0:
 			Events.run_won.emit(map_data.id)
 		return
 
+	Events.wave_cleared.emit(wave_number)
 	_wave_index += 1
+	# Arm for the upcoming countdown (emit happens once COUNTDOWN + remaining are set).
+	_early_call_armed = true
+	_early_call_claimed = false
 	_begin_countdown()
 
 
