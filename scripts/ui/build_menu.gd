@@ -5,6 +5,9 @@ signal build_opened(pad: BuildPad)
 
 const TowerScene: PackedScene = preload("res://scenes/entities/tower.tscn")
 const COIN_ICON: Texture2D = preload("res://assets/ui/icon_coin.png")
+const LOCK_ICON: Texture2D = preload("res://assets/ui/icon_lock.png")
+## Campaign index of map_04 — tier-3 (level 3) powers unlock from here.
+const TIER3_UNLOCK_MAP_INDEX := 3
 const TOWER_ICONS := {
 	&"popper": preload("res://assets/tower/weapon_popper.png"),
 	&"lobber": preload("res://assets/tower/weapon_lobber.png"),
@@ -304,6 +307,16 @@ func _make_coin_icon(size_px: float) -> TextureRect:
 	return coin
 
 
+func _tier3_unlocked() -> bool:
+	var map_id: StringName = &"map_01"
+	if _game != null and _game.get("map_data") != null:
+		map_id = (_game.map_data as MapData).id
+	var idx := SaveGame.CAMPAIGN.find(map_id)
+	if idx < 0:
+		idx = 0
+	return idx >= TIER3_UNLOCK_MAP_INDEX
+
+
 func _refresh_manage_buttons() -> void:
 	if _pad == null or _pad.tower == null:
 		return
@@ -313,14 +326,32 @@ func _refresh_manage_buttons() -> void:
 	sell_button.custom_minimum_size = Vector2(0, 88)
 	sell_button.theme_type_variation = &"ButtonSecondary"
 	if tower.tier >= 2:
+		primary_button.theme_type_variation = &""
 		primary_button.icon = null
 		primary_button.text = "MAX"
 		primary_button.disabled = true
 	else:
 		var next_cost: int = tower.data.cost[tower.tier + 1]
-		primary_button.icon = COIN_ICON
-		primary_button.text = "Upgrade — %d" % next_cost
-		primary_button.disabled = not _is_free_build() and (_game == null or not _game.can_afford(next_cost))
+		# Next upgrade unlocks the level-3 power — golden button; locked until map 4.
+		if tower.tier == 1:
+			primary_button.theme_type_variation = &"ButtonPower"
+			if _tier3_unlocked():
+				primary_button.icon = COIN_ICON
+				primary_button.text = "Upgrade — %d ★" % next_cost
+				primary_button.disabled = not _is_free_build() and (
+					_game == null or not _game.can_afford(next_cost)
+				)
+			else:
+				primary_button.icon = LOCK_ICON
+				primary_button.text = "Level 4"
+				primary_button.disabled = true
+		else:
+			primary_button.icon = COIN_ICON
+			primary_button.theme_type_variation = &""
+			primary_button.text = "Upgrade — %d" % next_cost
+			primary_button.disabled = not _is_free_build() and (
+				_game == null or not _game.can_afford(next_cost)
+			)
 	primary_button.custom_minimum_size = Vector2(0, 88)
 
 
@@ -360,6 +391,9 @@ func _on_primary_pressed() -> void:
 	if _mode == &"manage" and _pad.tower:
 		var tower: Tower = _pad.tower
 		if tower.tier >= 2:
+			return
+		# Tier 1→2 (level 3) is locked until map_04.
+		if tower.tier == 1 and not _tier3_unlocked():
 			return
 		var cost: int = tower.data.cost[tower.tier + 1]
 		if not _game.spend(cost):

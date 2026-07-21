@@ -60,6 +60,16 @@ size_flags_horizontal = 4
 expand_mode = 1
 stretch_mode = 5
 
+[node name="TipDemo" type="Control" parent="TipPanel/MarginContainer/VBox"]
+unique_name_in_owner = true
+process_mode = 3
+visible = false
+clip_contents = true
+custom_minimum_size = Vector2(0, 170)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
 [node name="TitleLabel" type="Label" parent="TipPanel/MarginContainer/VBox"]
 unique_name_in_owner = true
 layout_mode = 2

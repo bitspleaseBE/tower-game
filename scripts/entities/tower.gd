@@ -207,7 +207,11 @@ func _fire(target: Enemy) -> void:
 		TowerData.Behavior.SPLASH:
 			_fire_lob(target)
 		TowerData.Behavior.SNIPER:
-			_fire_homing(target, true)
+			# Tier-3 longshot swaps the heavy shot for a piercing line.
+			if tier >= 2:
+				_fire_pierce(target)
+			else:
+				_fire_homing(target, true)
 		_:
 			_fire_homing(target, false)
 
@@ -221,10 +225,27 @@ func _fire_homing(target: Enemy, heavy: bool) -> void:
 		return
 	var barrel_tip := _barrel_tip(28.0)
 	projectile.global_position = barrel_tip
-	projectile.launch(target, data.damage[tier], data.projectile_speed, heavy)
+	var splash: float = data.splash_radius_px[tier] if tier < data.splash_radius_px.size() else 0.0
+	projectile.launch(target, data.damage[tier], data.projectile_speed, heavy, splash)
 	Sound.play_sfx(&"shot_longshot" if heavy else &"shot_popper")
 	if heavy:
 		Juice.muzzle_flash(barrel_tip)
+	Juice.squash(skin)
+
+
+func _fire_pierce(target: Enemy) -> void:
+	var game := get_tree().get_first_node_in_group("game")
+	if game == null or not game.has_method("acquire_projectile"):
+		return
+	var projectile: Projectile = game.acquire_projectile()
+	if projectile == null:
+		return
+	var barrel_tip := _barrel_tip(28.0)
+	projectile.global_position = barrel_tip
+	var heading := target.global_position - barrel_tip
+	projectile.launch_pierce(heading, data.damage[tier], data.projectile_speed, data.range_px[tier] * 1.3)
+	Sound.play_sfx(&"shot_longshot")
+	Juice.muzzle_flash(barrel_tip)
 	Juice.squash(skin)
 
 
@@ -238,7 +259,8 @@ func _fire_lob(target: Enemy) -> void:
 	var barrel_tip := _barrel_tip(20.0)
 	projectile.global_position = barrel_tip
 	var splash: float = data.splash_radius_px[tier] if tier < data.splash_radius_px.size() else 70.0
-	projectile.launch_lob(target.global_position, data.damage[tier], data.projectile_speed, splash)
+	var stun: float = data.stun_duration[tier] if tier < data.stun_duration.size() else 0.0
+	projectile.launch_lob(target.global_position, data.damage[tier], data.projectile_speed, splash, stun)
 	Sound.play_sfx(&"shot_lobber")
 	Juice.squash(skin, Vector2(1.15, 0.75), 0.18)
 
@@ -259,9 +281,13 @@ func _fire_water_stream(target: Enemy) -> void:
 		if projectile == null:
 			break
 		projectile.global_position = barrel_tip + heading * float(i) * 7.0
-		# Only the trailing droplet leaves a puddle — the rest are stream body.
-		var puddle_r := pool_r if i == STREAM_DROPLETS - 1 else 0.0
-		projectile.launch_stream(heading, target, STREAM_SPEED, factor, duration, puddle_r, pool_life)
+		# Only the trailing droplet leaves a puddle / deals tier-3 sting — the rest are stream body.
+		var is_tail := i == STREAM_DROPLETS - 1
+		var puddle_r := pool_r if is_tail else 0.0
+		var droplet_damage: float = 0.0
+		if is_tail and tier < data.damage.size():
+			droplet_damage = data.damage[tier]
+		projectile.launch_stream(heading, target, STREAM_SPEED, factor, duration, puddle_r, pool_life, droplet_damage)
 		fired += 1
 	if fired <= 0:
 		return

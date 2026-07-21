@@ -14,3 +14,4 @@ behavior = 1
 sell_refund_ratio = 0.7
 projectile_speed = 280.0
 splash_radius_px = Array[float]([70.0, 85.0, 100.0])
+stun_duration = Array[float]([0.0, 0.0, 0.6])

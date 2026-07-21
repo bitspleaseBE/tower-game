@@ -1,6 +1,6 @@
 class_name Projectile
 extends Area2D
-## Pooled shot: HOMING / LOB / STREAM. Skins: gum bubble, balloon, laser, water drop.
+## Pooled shot: HOMING / LOB / STREAM / PIERCE. Skins: gum bubble, balloon, laser, water drop.
 
 const LIFETIME_SECONDS := 1.5
 const STREAM_LIFETIME := 0.55
@@ -16,7 +16,7 @@ const GUM_PURPLE := Color(0.78, 0.58, 0.95, 1.0)
 const GUM_WHITE := Color(1.0, 0.98, 1.0, 1.0)
 const GUM_PALETTE: Array[Color] = [GUM_BLUE, GUM_PINK, GUM_PURPLE, GUM_WHITE]
 
-enum Mode { HOMING, LOB, STREAM }
+enum Mode { HOMING, LOB, STREAM, PIERCE }
 
 @onready var skin: Node2D = $Skin
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
@@ -42,6 +42,10 @@ var _slow_factor: float = 0.65
 var _slow_duration: float = 1.2
 var _pool_radius: float = 48.0
 var _pool_lifetime: float = 2.4
+var _stun_duration: float = 0.0
+var _max_travel: float = 0.0
+var _traveled: float = 0.0
+var _pierce_hits: Dictionary = {} ## instance_id -> true; each enemy takes pierce damage once
 
 
 func _ready() -> void:
@@ -82,6 +86,10 @@ func reset() -> void:
 	_slow_duration = 1.2
 	_pool_radius = 48.0
 	_pool_lifetime = 2.4
+	_stun_duration = 0.0
+	_max_travel = 0.0
+	_traveled = 0.0
+	_pierce_hits.clear()
 	skin.position = Vector2.ZERO
 	skin.scale = Vector2.ONE
 	skin.modulate = Color.WHITE
@@ -98,7 +106,7 @@ func activate() -> void:
 	set_deferred("monitorable", false)
 
 
-func launch(target: Enemy, damage: float, speed: float, heavy := false) -> void:
+func launch(target: Enemy, damage: float, speed: float, heavy := false, splash_radius := 0.0) -> void:
 	mode = Mode.HOMING
 	_heavy_impact = heavy
 	_build_skin()
@@ -106,6 +114,7 @@ func launch(target: Enemy, damage: float, speed: float, heavy := false) -> void:
 	_target_generation = target.generation if target != null else -1
 	_damage = damage
 	_speed = speed
+	_splash_radius = splash_radius
 	_alive_for = 0.0
 	_launched = true
 	_wobble_phase = randf() * TAU
@@ -118,7 +127,7 @@ func launch(target: Enemy, damage: float, speed: float, heavy := false) -> void:
 		_orient_skin_to_heading()
 
 
-func launch_lob(dest: Vector2, damage: float, speed: float, splash_radius: float) -> void:
+func launch_lob(dest: Vector2, damage: float, speed: float, splash_radius: float, stun_duration := 0.0) -> void:
 	mode = Mode.LOB
 	_heavy_impact = false
 	_build_skin()
@@ -127,6 +136,7 @@ func launch_lob(dest: Vector2, damage: float, speed: float, splash_radius: float
 	_damage = damage
 	_speed = speed
 	_splash_radius = splash_radius
+	_stun_duration = stun_duration
 	_lob_start = global_position
 	_lob_dest = dest
 	var distance := _lob_start.distance_to(_lob_dest)
@@ -148,13 +158,14 @@ func launch_stream(
 	slow_duration: float,
 	pool_radius: float,
 	pool_lifetime: float,
+	damage := 0.0,
 ) -> void:
 	mode = Mode.STREAM
 	_heavy_impact = false
 	_build_skin()
 	_target = target
 	_target_generation = target.generation if target != null else -1
-	_damage = 0.0
+	_damage = damage
 	_speed = speed
 	_heading = heading.normalized() if heading.length_squared() > 0.001 else Vector2.UP
 	_slow_factor = slow_factor
@@ -164,6 +175,28 @@ func launch_stream(
 	_alive_for = 0.0
 	_launched = true
 	_wobble_phase = randf() * TAU
+	_orient_skin_to_heading()
+	if collision_shape:
+		collision_shape.set_deferred("disabled", false)
+	monitoring = true
+
+
+func launch_pierce(heading: Vector2, damage: float, speed: float, max_travel: float) -> void:
+	mode = Mode.PIERCE
+	_heavy_impact = true
+	_build_skin()
+	_target = null
+	_target_generation = -1
+	_damage = damage
+	_speed = speed
+	_heading = heading.normalized() if heading.length_squared() > 0.001 else Vector2.UP
+	_max_travel = max_travel
+	_traveled = 0.0
+	_pierce_hits.clear()
+	_alive_for = 0.0
+	_launched = true
+	_wobble_phase = randf() * TAU
+	skin.scale = Vector2(1.0, 1.55)
 	_orient_skin_to_heading()
 	if collision_shape:
 		collision_shape.set_deferred("disabled", false)
@@ -195,6 +228,10 @@ func _physics_process(delta: float) -> void:
 
 	if mode == Mode.STREAM:
 		_process_stream(delta)
+		return
+
+	if mode == Mode.PIERCE:
+		_process_pierce(delta)
 		return
 
 	# HOMING
@@ -243,6 +280,17 @@ func _process_stream(delta: float) -> void:
 		_resolve_stream_impact()
 
 
+func _process_pierce(delta: float) -> void:
+	_alive_for += delta
+	_wobble_phase += delta * 9.0
+	skin.scale = Vector2(1.0, 1.55) * (1.0 + sin(_wobble_phase) * 0.04)
+	var step := _speed * delta
+	global_position += _heading * step
+	_traveled += step
+	if _traveled >= _max_travel or _alive_for >= LIFETIME_SECONDS:
+		deactivate()
+
+
 func _process_lob(delta: float) -> void:
 	_lob_elapsed += delta
 	var t := clampf(_lob_elapsed / _lob_flight_time, 0.0, 1.0)
@@ -264,6 +312,9 @@ func _detonate_splash() -> void:
 			continue
 		if enemy.global_position.distance_squared_to(dest) <= radius_sq:
 			enemy.take_damage(_damage)
+			# Tier-3 lobber: splash also pins critters in place for a beat.
+			if _stun_duration > 0.0 and enemy.active:
+				enemy.apply_slow(0.05, _stun_duration)
 	Juice.bubble_pop(dest, GUM_BLUE, true)
 	Juice.confetti(dest)
 	deactivate()
@@ -278,8 +329,30 @@ func _resolve_homing_hit(enemy: Enemy) -> void:
 	else:
 		Juice.bubble_pop(global_position, _bubble_color, false)
 	enemy.take_damage(_damage, _heavy_impact)
+	# Tier-3 popper: the hit bursts, splashing damage onto nearby critters.
+	if _splash_radius > 0.0:
+		var hit_pos := global_position
+		var radius_sq := _splash_radius * _splash_radius
+		for node: Node in get_tree().get_nodes_in_group("enemies"):
+			var other := node as Enemy
+			if other == null or other == enemy or not other.active:
+				continue
+			if other.global_position.distance_squared_to(hit_pos) <= radius_sq:
+				other.take_damage(_damage)
+		Juice.bubble_pop(hit_pos, _bubble_color, true)
+		Juice.confetti(hit_pos)
 	set_deferred("monitoring", false)
 	call_deferred("deactivate")
+
+
+func _resolve_pierce_hit(enemy: Enemy) -> void:
+	## Damages each enemy once, then keeps flying — no deactivate on hit.
+	var key := enemy.get_instance_id()
+	if _pierce_hits.has(key):
+		return
+	_pierce_hits[key] = true
+	Juice.laser_hit(global_position)
+	enemy.take_damage(_damage, true)
 
 
 func _resolve_stream_impact() -> void:
@@ -288,8 +361,11 @@ func _resolve_stream_impact() -> void:
 	_launched = false
 	var hit_pos := global_position
 	if _target_valid():
-		_target.apply_slow(_slow_factor, _slow_duration)
 		hit_pos = _target.global_position
+		_target.apply_slow(_slow_factor, _slow_duration)
+		# Tier-3 chiller: trailing droplet stings once per pulse.
+		if _damage > 0.0:
+			_target.take_damage(_damage)
 	_spawn_water_pool(hit_pos)
 	set_deferred("monitoring", false)
 	call_deferred("deactivate")
@@ -326,6 +402,8 @@ func _on_area_entered(area: Area2D) -> void:
 		_resolve_homing_hit(enemy)
 	elif mode == Mode.STREAM:
 		_resolve_stream_impact()
+	elif mode == Mode.PIERCE:
+		_resolve_pierce_hit(enemy)
 
 
 func _orient_skin_to_heading() -> void:

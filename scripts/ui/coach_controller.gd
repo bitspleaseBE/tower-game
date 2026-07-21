@@ -19,6 +19,29 @@ const ENEMY_TIP_BODY := {
 	&"armored": "Tough shell — hit harder.",
 	&"boss": "Big boss incoming!",
 }
+## Level-3 (tier index 2) power explainers, shown once per tower.
+const TIER3_TIPS := {
+	&"popper": {
+		"title": "Super Lollipop!",
+		"body": "Now pops in a sugary blast, hitting nearby critters too.",
+		"flavor": &"burst",
+	},
+	&"lobber": {
+		"title": "Super Ballooner!",
+		"body": "Splashes now stun critters in place for a moment.",
+		"flavor": &"stun",
+	},
+	&"chiller": {
+		"title": "Super Slushie!",
+		"body": "Slush now hurts! Slowed critters take damage too.",
+		"flavor": &"slush",
+	},
+	&"longshot": {
+		"title": "Super Candy Cane!",
+		"body": "Shots pierce through, hitting every critter in a line.",
+		"flavor": &"pierce",
+	},
+}
 const LEAK_COOLDOWN_SEC := 1.5
 
 @onready var tip_card: Control = %TipCard
@@ -49,6 +72,8 @@ func setup(game: Node) -> void:
 		Events.wave_started.connect(_on_wave_started)
 	if not Events.enemy_leaked.is_connected(_on_enemy_leaked):
 		Events.enemy_leaked.connect(_on_enemy_leaked)
+	if not Events.tower_upgraded.is_connected(_on_tower_upgraded):
+		Events.tower_upgraded.connect(_on_tower_upgraded)
 	_queue_run_start_tips()
 
 
@@ -77,6 +102,7 @@ func _queue_run_start_tips() -> void:
 			"title": "New: Slushie!",
 			"body": "Slows critters so others can pop them.",
 			"art": TOWER_ART[&"chiller"],
+			"demo": {"tower": &"chiller"},
 		})
 	elif map_id == &"map_03" and not SaveGame.has_seen_tip("tower_longshot"):
 		_enqueue({
@@ -84,6 +110,7 @@ func _queue_run_start_tips() -> void:
 			"title": "New: Candy Cane!",
 			"body": "Hits hard from far away.",
 			"art": TOWER_ART[&"longshot"],
+			"demo": {"tower": &"longshot"},
 		})
 	_try_show_next()
 
@@ -103,7 +130,8 @@ func _try_show_next() -> void:
 		String(tip.get("title", "")),
 		String(tip.get("body", "")),
 		String(tip.get("key", "")),
-		tip.get("art") as Texture2D
+		tip.get("art") as Texture2D,
+		tip.get("demo", {}) as Dictionary
 	)
 
 
@@ -154,6 +182,29 @@ func _on_wave_started(number: int, _total: int) -> void:
 			"body": body,
 			"art": ENEMY_ART.get(enemy_id),
 		})
+	_try_show_next()
+
+
+func _on_tower_upgraded(tower: Node) -> void:
+	if not _enabled:
+		return
+	if tower == null or tower.get("tier") == null or tower.get("data") == null:
+		return
+	if int(tower.tier) != 2:
+		return
+	var tower_id: StringName = (tower.data as TowerData).id
+	if not TIER3_TIPS.has(tower_id):
+		return
+	var tip_key := "tier3_%s" % String(tower_id)
+	if SaveGame.has_seen_tip(tip_key):
+		return
+	var info: Dictionary = TIER3_TIPS[tower_id]
+	_enqueue({
+		"key": tip_key,
+		"title": String(info["title"]),
+		"body": String(info["body"]),
+		"demo": {"tower": tower_id, "flavor": info["flavor"]},
+	})
 	_try_show_next()
 
 

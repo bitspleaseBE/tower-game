@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=18 format=3]
+[gd_resource type="Theme" load_steps=22 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/ui/toggle_on.png" id="1_toggle_on"]
 [ext_resource type="Texture2D" path="res://assets/ui/toggle_off.png" id="2_toggle_off"]
@@ -149,6 +149,70 @@ corner_radius_top_right = 24
 corner_radius_bottom_right = 24
 corner_radius_bottom_left = 24
 
+[sub_resource type="StyleBoxFlat" id="btn_power_normal"]
+content_margin_left = 32.0
+content_margin_top = 18.0
+content_margin_right = 32.0
+content_margin_bottom = 22.0
+bg_color = Color(1, 0.8, 0.36, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 7
+border_color = Color(0.62, 0.42, 0.85, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[sub_resource type="StyleBoxFlat" id="btn_power_hover"]
+content_margin_left = 32.0
+content_margin_top = 18.0
+content_margin_right = 32.0
+content_margin_bottom = 22.0
+bg_color = Color(1, 0.855, 0.47, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 7
+border_color = Color(0.62, 0.42, 0.85, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[sub_resource type="StyleBoxFlat" id="btn_power_pressed"]
+content_margin_left = 32.0
+content_margin_top = 22.0
+content_margin_right = 32.0
+content_margin_bottom = 18.0
+bg_color = Color(0.94, 0.7, 0.26, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 2
+border_color = Color(0.52, 0.33, 0.75, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[sub_resource type="StyleBoxFlat" id="btn_power_disabled"]
+content_margin_left = 32.0
+content_margin_top = 18.0
+content_margin_right = 32.0
+content_margin_bottom = 22.0
+bg_color = Color(0.94, 0.9, 0.94, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 7
+border_color = Color(0.62, 0.42, 0.85, 0.35)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
 [sub_resource type="StyleBoxFlat" id="panel_style"]
 content_margin_left = 10.0
 content_margin_top = 10.0
@@ -227,6 +291,17 @@ ButtonSecondary/styles/focus = SubResource("btn_focus")
 ButtonSecondary/styles/hover = SubResource("btn_sec_hover")
 ButtonSecondary/styles/normal = SubResource("btn_sec_normal")
 ButtonSecondary/styles/pressed = SubResource("btn_sec_pressed")
+ButtonPower/base_type = &"Button"
+ButtonPower/colors/font_color = Color(0.42, 0.25, 0.14, 1)
+ButtonPower/colors/font_disabled_color = Color(0.31, 0.227, 0.357, 0.6)
+ButtonPower/colors/font_focus_color = Color(0.42, 0.25, 0.14, 1)
+ButtonPower/colors/font_hover_color = Color(0.42, 0.25, 0.14, 1)
+ButtonPower/colors/font_pressed_color = Color(0.42, 0.25, 0.14, 1)
+ButtonPower/styles/disabled = SubResource("btn_power_disabled")
+ButtonPower/styles/focus = SubResource("btn_focus")
+ButtonPower/styles/hover = SubResource("btn_power_hover")
+ButtonPower/styles/normal = SubResource("btn_power_normal")
+ButtonPower/styles/pressed = SubResource("btn_power_pressed")
 CheckButton/colors/font_color = Color(0.31, 0.227, 0.357, 1)
 CheckButton/colors/font_disabled_color = Color(0.31, 0.227, 0.357, 0.6)
 CheckButton/colors/font_focus_color = Color(0.31, 0.227, 0.357, 1)
