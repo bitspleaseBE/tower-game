@@ -19,6 +19,14 @@
 
 Hierarchy (brightest → quietest): **towers / pads / enemies / path → river & bridge → clouds → meadow**.
 
+Path: **strawberry pink fill + cream-white icing sides**, with **filleted (wavy) corners** at runtime — not hard right angles.
+
+Enemies: tiny wide-set eyes **low on the body** (concept critter read).
+
+Signature towers: candy cannons (popper / lobber / etc.) — readable weapons on pads.
+
+Map landmarks: sparse **cupcake / sundae** dessert props that stand out more than quiet clouds — not buildable.
+
 ## Visual rules
 
 1. **Big shapes only** — one clear read at phone size; no tiny filigree.

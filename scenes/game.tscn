@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3]
+[gd_scene load_steps=20 format=3]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
 [ext_resource type="Script" path="res://scripts/wave_spawner.gd" id="2_spawner"]
@@ -17,7 +17,8 @@
 [ext_resource type="Texture2D" path="res://assets/background/decor_river.png" id="13_river"]
 [ext_resource type="Texture2D" path="res://assets/background/decor_bridge.png" id="15_bridge"]
 [ext_resource type="Texture2D" path="res://assets/background/decor_gumdrop.png" id="16_gumdrop"]
-[ext_resource type="Texture2D" path="res://assets/background/path_straight.png" id="23_path"]
+[ext_resource type="Texture2D" path="res://assets/background/decor_cupcake.png" id="17_cupcake"]
+[ext_resource type="Texture2D" path="res://assets/background/decor_sundae.png" id="18_sundae"]
 
 [sub_resource type="Gradient" id="Gradient_vignette"]
 offsets = PackedFloat32Array(0, 0.5, 1)
@@ -147,6 +148,20 @@ modulate = Color(1, 1, 1, 0.32)
 scale = Vector2(0.38, 0.38)
 texture = ExtResource("16_gumdrop")
 
+[node name="CupcakeLandmark" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(640, 280)
+
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CupcakeLandmark"]
+scale = Vector2(0.95, 0.95)
+texture = ExtResource("17_cupcake")
+
+[node name="SundaeLandmark" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(90, 980)
+
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/SundaeLandmark"]
+scale = Vector2(0.9, 0.9)
+texture = ExtResource("18_sundae")
+
 [node name="SpawnMarker" type="Node2D" parent="Board/Decor"]
 position = Vector2(40, 280)
 
@@ -176,30 +191,28 @@ polygon = PackedVector2Array(18, 0, 15.588, 9, 9, 15.588, 0, 18, -9, 15.588, -15
 [node name="Path" type="Path2D" parent="Board"]
 
 [node name="PathBorder" type="Line2D" parent="Board/Path"]
-width = 68.0
-default_color = Color(1, 0.62, 0.78, 1)
+width = 78.0
+default_color = Color(1, 0.94, 0.97, 1)
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
-round_precision = 12
+round_precision = 16
 
 [node name="PathLine" type="Line2D" parent="Board/Path"]
-width = 50.0
-default_color = Color(1, 1, 1, 1)
+width = 54.0
+default_color = Color(1, 0.42, 0.62, 1)
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
-round_precision = 12
-texture = ExtResource("23_path")
-texture_mode = 1
+round_precision = 16
 
 [node name="PathHighlight" type="Line2D" parent="Board/Path"]
 width = 22.0
-default_color = Color(1, 0.95, 0.98, 0.55)
+default_color = Color(1, 0.82, 0.9, 0.45)
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
-round_precision = 12
+round_precision = 16
 
 [node name="Pads" type="Node2D" parent="Board"]
 

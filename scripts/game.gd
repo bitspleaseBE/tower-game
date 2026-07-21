@@ -254,14 +254,54 @@ func _recenter_board() -> void:
 
 
 func _build_path() -> void:
+	## Fillet sharp corners so the sugar road reads organic (concept pink ribbon),
+	## while map .tres keeps the canonical corner waypoints for lint/smoke.
+	var drawn := _fillet_path_points(map_data.path_points, 72.0, 7)
 	var curve := Curve2D.new()
-	for point: Vector2 in map_data.path_points:
+	for point: Vector2 in drawn:
 		curve.add_point(point)
 	path.curve = curve
-	path_border.points = map_data.path_points
-	path_line.points = map_data.path_points
+	path_border.points = drawn
+	path_line.points = drawn
 	if path_highlight != null:
-		path_highlight.points = map_data.path_points
+		path_highlight.points = drawn
+
+
+func _fillet_path_points(pts: PackedVector2Array, radius: float, arc_steps: int) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	if pts.size() < 2:
+		return pts
+	if pts.size() == 2:
+		out.append(pts[0])
+		out.append(pts[1])
+		return out
+	out.append(pts[0])
+	for i: int in range(1, pts.size() - 1):
+		var a: Vector2 = pts[i - 1]
+		var b: Vector2 = pts[i]
+		var c: Vector2 = pts[i + 1]
+		var ba := a - b
+		var bc := c - b
+		var len_ba := ba.length()
+		var len_bc := bc.length()
+		if len_ba < 1.0 or len_bc < 1.0:
+			out.append(b)
+			continue
+		var r := minf(radius, minf(len_ba, len_bc) * 0.42)
+		var dir_ba := ba / len_ba
+		var dir_bc := bc / len_bc
+		var p0 := b + dir_ba * r
+		var p1 := b + dir_bc * r
+		out.append(p0)
+		## Quadratic arc through the corner for a soft whipped-cream bend.
+		for s: int in range(1, arc_steps):
+			var t := float(s) / float(arc_steps)
+			var ab := p0.lerp(b, t)
+			var bc_pt := b.lerp(p1, t)
+			out.append(ab.lerp(bc_pt, t))
+		out.append(p1)
+	out.append(pts[pts.size() - 1])
+	return out
 
 
 func _spawn_pads() -> void:

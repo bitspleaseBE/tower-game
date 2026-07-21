@@ -6,10 +6,10 @@
 script = ExtResource("1_boss")
 id = &"boss"
 display_name = "Big Boss"
-hp = 185.0
-speed = 38.0
+hp = 140.0
+speed = 36.0
 bounty = 100
 lives_cost = 10
-armor = 3.0
+armor = 2.0
 radius_px = 46.0
 is_boss = true
