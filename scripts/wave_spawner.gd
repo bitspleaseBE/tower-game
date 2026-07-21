@@ -2,13 +2,12 @@ extends Node
 ## Wave state machine: COUNTDOWN → SPAWNING → CLEARING → (next COUNTDOWN | WON).
 
 signal countdown_tick(seconds_left: int)
-## Emitted once per countdown when the early-call button should appear (seconds_left).
+## Bonus updates while the Next wave button is offered (CLEARING + countdown).
 signal early_call_available(seconds_left: int, bonus: int)
 signal early_call_hidden
 
-## Pacing (not balance): longer breather so a "Next wave" button can appear after 10s.
-const COUNTDOWN_SECONDS := 15
-const EARLY_CALL_REVEAL_AFTER := 10 ## elapsed seconds before the pink button shows
+## Inter-wave breather. Next-wave button arms when the last spawn group finishes.
+const COUNTDOWN_SECONDS := 5
 
 enum State { IDLE, COUNTDOWN, SPAWNING, CLEARING, DONE }
 
@@ -22,7 +21,9 @@ var _lost: bool = false ## permanent halt; resume_endless may clear a won halt o
 var _groups_remaining: int = 0
 var _countdown_remaining: int = 0
 var _skip_countdown: bool = false
-var _early_call_offered: bool = false
+var _early_call_armed: bool = false
+var _early_call_claimed: bool = false
+var _wave_has_next: bool = false
 
 
 func setup(game: Node, data: MapData) -> void:
@@ -47,7 +48,7 @@ func stop() -> void:
 	_run_over = true
 	_state = State.DONE
 	_skip_countdown = true
-	early_call_hidden.emit()
+	_disarm_early_call()
 
 
 func resume_endless() -> void:
@@ -67,62 +68,87 @@ func countdown_remaining() -> int:
 	return _countdown_remaining
 
 
-func early_call_bonus_for(remaining: int) -> int:
-	var window := COUNTDOWN_SECONDS - EARLY_CALL_REVEAL_AFTER
-	if remaining <= 0 or window <= 0:
+func early_call_bonus_now() -> int:
+	if not _early_call_armed or _early_call_claimed or _run_over:
 		return 0
 	var max_bonus := 12
 	if map_data != null:
 		max_bonus = maxi(0, map_data.early_wave_bonus_max)
-	# Full bonus at first reveal moment; scales down toward auto-start.
-	return maxi(1, int(round(float(max_bonus) * float(remaining) / float(window))))
+	if max_bonus <= 0:
+		return 0
+	# Full bonus while finishing the current wave; scales down during the breather.
+	if _state == State.CLEARING:
+		return max_bonus
+	if _state == State.COUNTDOWN and _countdown_remaining > 0:
+		return maxi(
+			1,
+			int(round(float(max_bonus) * float(_countdown_remaining) / float(COUNTDOWN_SECONDS)))
+		)
+	return 0
 
 
 ## Player pressed Next wave. Returns bonus coins (0 if not available).
 func request_early_call() -> int:
-	if _state != State.COUNTDOWN or _run_over:
+	var bonus := early_call_bonus_now()
+	if bonus <= 0:
 		return 0
-	var elapsed := COUNTDOWN_SECONDS - _countdown_remaining
-	if elapsed < EARLY_CALL_REVEAL_AFTER or _countdown_remaining <= 0:
-		return 0
-	var bonus := early_call_bonus_for(_countdown_remaining)
+	_early_call_claimed = true
 	_skip_countdown = true
 	early_call_hidden.emit()
 	return bonus
+
+
+func _disarm_early_call() -> void:
+	_early_call_armed = false
+	_early_call_claimed = false
+	early_call_hidden.emit()
+
+
+func _arm_early_call() -> void:
+	if not _wave_has_next or _run_over:
+		return
+	_early_call_armed = true
+	_early_call_claimed = false
+	early_call_available.emit(0, early_call_bonus_now())
 
 
 func _begin_countdown() -> void:
 	if _run_over:
 		return
 	_state = State.COUNTDOWN
-	_skip_countdown = false
-	_early_call_offered = false
+	# First wave (and resume) has no prior spawn — button stays hidden.
+	# After a wave, keep the button if it was armed and not yet claimed.
+	if _skip_countdown:
+		_disarm_early_call()
+		_skip_countdown = false
+		countdown_tick.emit(0)
+		_countdown_remaining = 0
+		if _run_over:
+			return
+		await _spawn_wave()
+		return
+
 	_countdown_remaining = COUNTDOWN_SECONDS
 	while _countdown_remaining > 0:
 		if _run_over:
-			early_call_hidden.emit()
+			_disarm_early_call()
 			return
 		if _skip_countdown:
 			break
 		countdown_tick.emit(_countdown_remaining)
-		var elapsed := COUNTDOWN_SECONDS - _countdown_remaining
-		if elapsed >= EARLY_CALL_REVEAL_AFTER:
-			if not _early_call_offered:
-				_early_call_offered = true
-			early_call_available.emit(
-				_countdown_remaining,
-				early_call_bonus_for(_countdown_remaining)
-			)
+		if _early_call_armed and not _early_call_claimed:
+			early_call_available.emit(_countdown_remaining, early_call_bonus_now())
 		await get_tree().create_timer(1.0).timeout
 		if _run_over:
-			early_call_hidden.emit()
+			_disarm_early_call()
 			return
 		if _skip_countdown:
 			break
 		_countdown_remaining -= 1
-	early_call_hidden.emit()
+	_disarm_early_call()
 	countdown_tick.emit(0)
 	_countdown_remaining = 0
+	_skip_countdown = false
 	if _run_over:
 		return
 	await _spawn_wave()
@@ -132,8 +158,11 @@ func _spawn_wave() -> void:
 	if _run_over:
 		return
 	_state = State.SPAWNING
+	_disarm_early_call()
 	var wave_number := _wave_index + 1
 	var total_scripted := map_data.waves.size()
+	var endless: bool = bool(_game.get("endless"))
+	_wave_has_next = endless or wave_number < total_scripted
 	Events.wave_started.emit(wave_number, total_scripted)
 
 	var wave: WaveData = _game.get_wave(wave_number)
@@ -148,7 +177,10 @@ func _spawn_wave() -> void:
 		if _run_over:
 			return
 
+	# Last group dispatched — offer Next wave if another wave can follow.
 	_state = State.CLEARING
+	_arm_early_call()
+
 	while _alive_enemies > 0:
 		if _run_over:
 			return
@@ -160,9 +192,9 @@ func _spawn_wave() -> void:
 	if _run_over:
 		return
 
-	var endless: bool = bool(_game.get("endless"))
 	# Campaign: clearing the last scripted wave wins. Endless: keep going forever.
 	if not endless and wave_number >= total_scripted:
+		_disarm_early_call()
 		_state = State.DONE
 		if _game.lives > 0:
 			Events.run_won.emit(map_data.id)
@@ -205,8 +237,10 @@ func _on_run_lost(_map_id: StringName) -> void:
 	_lost = true
 	_run_over = true
 	_state = State.DONE
+	_disarm_early_call()
 
 
 func _on_run_won(_map_id: StringName) -> void:
 	_run_over = true
 	_state = State.DONE
+	_disarm_early_call()

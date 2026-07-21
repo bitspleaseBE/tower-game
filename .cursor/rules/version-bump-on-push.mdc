@@ -1,0 +1,30 @@
+---
+description: Before every git push, bump the version and pick a new candy-themed build word
+alwaysApply: true
+---
+
+# Version bump on push
+
+Whenever you **git push** (or the user asks to push / ship / make it live):
+
+1. **Bump** `application/config/version` in `project.godot` (patch `0.x.Y` → `Y+1`, unless they specify minor/major).
+2. **Pick a random build word** from the list below — must differ from the current `application/config/build_word`.
+3. Set `application/config/build_word` in `project.godot` to that word (lowercase, single token).
+4. Keep `scenes/main_menu.tscn` `VersionLabel` placeholder in sync (`vX.Y.Z` only; the runtime line is `v{version} · {word}`).
+5. Commit both settings with the push (message like `Bump to 0.3.10 · frosting`).
+6. Then push. Do not push without a version + word change in the same commit (or an immediately preceding commit on the branch).
+
+## Build-word pool (candy / Bubble Pop)
+
+Choose uniformly at random:
+
+`bubble` · `gumdrop` · `lollipop` · `frosting` · `marshmallow` · `sprinkle` · `swirl` · `slushie` · `softserve` · `candycane` · `jelly` · `mint` · `fizz` · `glaze` · `gummy` · `cotton` · `sugar` · `pop` · `chomp` · `nougat` · `taffy` · `sherbet` · `bonbon` · `cupcake` · `sparkle`
+
+## Example
+
+```
+config/version="0.3.10"
+config/build_word="frosting"
+```
+
+Menu shows: `v0.3.10 · frosting`

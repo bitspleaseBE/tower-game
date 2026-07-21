@@ -81,12 +81,10 @@ func show_countdown(seconds_left: int) -> void:
 			Juice.punch_scale(countdown_chip, 1.08, 0.12)
 	else:
 		countdown_chip.visible = false
-		hide_early_call()
 
 
 func hide_countdown() -> void:
 	countdown_chip.visible = false
-	hide_early_call()
 
 
 func show_early_call(bonus: int) -> void:

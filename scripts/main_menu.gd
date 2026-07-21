@@ -4,7 +4,9 @@ const MAX_GREETING_NAME_LEN := 24
 
 
 func _ready() -> void:
-	%VersionLabel.text = "v%s · bubble" % ProjectSettings.get_setting("application/config/version", "dev")
+	var version := str(ProjectSettings.get_setting("application/config/version", "dev"))
+	var word := str(ProjectSettings.get_setting("application/config/build_word", "bubble"))
+	%VersionLabel.text = "v%s · %s" % [version, word]
 	_apply_greeting(_read_welcome_name())
 	Juice.squishify_button(%NewGameButton)
 	Juice.squishify_button(%SettingsButton)

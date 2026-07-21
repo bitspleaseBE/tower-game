@@ -140,7 +140,7 @@ func _initialize() -> void:
 			failed = true
 		else:
 			var hp_before: float = float(e_arm.get("hp"))
-			e_arm.call("take_damage", 1.0) # armor 2 → floor 0.25
+			e_arm.call("take_damage", 1.0) # armor ≥1 → floor 0.25 on 1-dmg hits
 			var hp_after: float = float(e_arm.get("hp"))
 			var dealt := hp_before - hp_after
 			if dealt < 0.24 or dealt > 0.26:
