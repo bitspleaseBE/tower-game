@@ -343,7 +343,7 @@ func _refresh_manage_buttons() -> void:
 				)
 			else:
 				primary_button.icon = LOCK_ICON
-				primary_button.text = "Level 4"
+				primary_button.text = "Unlock at level 4"
 				primary_button.disabled = true
 		else:
 			primary_button.icon = COIN_ICON
