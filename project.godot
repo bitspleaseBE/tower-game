@@ -11,8 +11,8 @@ config_version=5
 [application]
 
 config/name="Bubble Pop"
-config/version="0.3.15"
-config/build_word="frosting"
+config/version="0.3.16"
+config/build_word="sherbet"
 run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 boot_splash/bg_color=Color(0.929, 0.729, 0.945, 1)

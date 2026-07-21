@@ -5,6 +5,7 @@ const MapCardScene: PackedScene = preload("res://scenes/ui/map_card.tscn")
 const ConfettiScene: PackedScene = preload("res://scenes/fx/confetti_cpu.tscn")
 
 @onready var cards_box: VBoxContainer = %Cards
+@onready var cards_scroll: ScrollContainer = %CardsScroll
 @onready var back_button: Button = %BackButton
 @onready var unlock_fx: Node2D = %UnlockFx
 @onready var title_label: Label = %Title
@@ -16,6 +17,8 @@ func _ready() -> void:
 	Juice.squishify_button(back_button)
 	back_button.pressed.connect(_go_menu)
 	_build_cards()
+	# Start at the top so map 1 isn't scrolled off after focus/layout.
+	cards_scroll.scroll_vertical = 0
 	_play_intro()
 	_maybe_unlock_ceremony()
 	_focus_first()
@@ -79,6 +82,7 @@ func _maybe_unlock_ceremony() -> void:
 	if card == null:
 		return
 	await get_tree().create_timer(0.5).timeout
+	cards_scroll.ensure_control_visible(card)
 	card.pivot_offset = card.size * 0.5
 	Juice.punch_scale(card, 1.12, 0.28)
 	Sound.play_sfx(&"unlock")
@@ -113,6 +117,7 @@ func _pop_unlocked_label(card: Control) -> void:
 
 func _focus_first() -> void:
 	await get_tree().process_frame
+	cards_scroll.scroll_vertical = 0
 	for id: StringName in SaveGame.CAMPAIGN:
 		var card: Node = _cards.get(id)
 		if card == null:
@@ -120,6 +125,9 @@ func _focus_first() -> void:
 		var play_btn: Button = card.get_node_or_null("%PlayButton") as Button
 		if play_btn != null and play_btn.visible and not play_btn.disabled:
 			play_btn.grab_focus()
+			# Keep the list pinned to the top so focus-follow doesn't hide map 1.
+			await get_tree().process_frame
+			cards_scroll.scroll_vertical = 0
 			return
 	back_button.grab_focus()
 
