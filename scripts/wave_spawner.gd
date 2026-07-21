@@ -1,12 +1,13 @@
 extends Node
 ## Wave state machine: COUNTDOWN → SPAWNING → (countdown while leftovers alive | WON).
+## Kingdom Rush style: one Next-wave button carries the timer and early-call bonus.
 
 signal countdown_tick(seconds_left: int)
-## Bonus updates while the Next wave button is offered (post-spawn countdown).
+## Next-wave button is offered during every countdown (including the opening one).
 signal early_call_available(seconds_left: int, bonus: int)
 signal early_call_hidden
 
-## Inter-wave breather. Countdown + Next-wave button arm when the last spawn group finishes.
+## Inter-wave / opening breather. Button + timer arm for the full duration.
 const COUNTDOWN_SECONDS := 25
 
 enum State { IDLE, COUNTDOWN, SPAWNING, CLEARING, DONE }
@@ -101,11 +102,9 @@ func _disarm_early_call() -> void:
 	early_call_hidden.emit()
 
 
-func _arm_early_call() -> void:
-	if not _wave_has_next or _run_over:
+func _emit_early_call() -> void:
+	if not _early_call_armed or _early_call_claimed or _run_over:
 		return
-	_early_call_armed = true
-	_early_call_claimed = false
 	early_call_available.emit(_countdown_remaining, early_call_bonus_now())
 
 
@@ -113,8 +112,6 @@ func _begin_countdown() -> void:
 	if _run_over:
 		return
 	_state = State.COUNTDOWN
-	# First wave (and resume) has no prior spawn — button stays hidden.
-	# After a wave, keep the button if it was armed and not yet claimed.
 	if _skip_countdown:
 		_disarm_early_call()
 		_skip_countdown = false
@@ -125,9 +122,10 @@ func _begin_countdown() -> void:
 		await _spawn_wave()
 		return
 
+	# One control owns the timer: arm the Next-wave button for the full countdown.
 	_countdown_remaining = COUNTDOWN_SECONDS
-	if _early_call_armed and not _early_call_claimed:
-		_arm_early_call()
+	_early_call_armed = true
+	_early_call_claimed = false
 	while _countdown_remaining > 0:
 		if _run_over:
 			_disarm_early_call()
@@ -135,8 +133,7 @@ func _begin_countdown() -> void:
 		if _skip_countdown:
 			break
 		countdown_tick.emit(_countdown_remaining)
-		if _early_call_armed and not _early_call_claimed:
-			early_call_available.emit(_countdown_remaining, early_call_bonus_now())
+		_emit_early_call()
 		await get_tree().create_timer(1.0).timeout
 		if _run_over:
 			_disarm_early_call()
@@ -197,9 +194,6 @@ func _spawn_wave() -> void:
 
 	Events.wave_cleared.emit(wave_number)
 	_wave_index += 1
-	# Arm for the upcoming countdown (emit happens once COUNTDOWN + remaining are set).
-	_early_call_armed = true
-	_early_call_claimed = false
 	_begin_countdown()
 
 

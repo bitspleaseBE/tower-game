@@ -304,13 +304,13 @@ func _hide_all_range_rings() -> void:
 
 
 func _on_countdown_tick(seconds_left: int) -> void:
-	hud.show_countdown(seconds_left)
-	if seconds_left > 0:
+	# Timer UI lives on the Next-wave button; only soft-tick the last few seconds.
+	if seconds_left > 0 and seconds_left <= 5:
 		Sound.play_sfx(&"countdown_tick")
 
 
-func _on_early_call_available(_seconds_left: int, bonus: int) -> void:
-	hud.show_early_call(bonus)
+func _on_early_call_available(seconds_left: int, bonus: int) -> void:
+	hud.show_early_call(seconds_left, bonus)
 
 
 func _on_early_call_hidden() -> void:
