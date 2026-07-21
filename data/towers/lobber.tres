@@ -6,7 +6,7 @@
 script = ExtResource("1_lob")
 id = &"lobber"
 display_name = "Ballooner"
-cost = Array[int]([70, 90, 130])
+cost = Array[int]([70, 105, 150])
 damage = Array[float]([2.0, 3.5, 5.0])
 range_px = Array[float]([170.0, 185.0, 200.0])
 fire_interval = Array[float]([1.5, 1.4, 1.2])

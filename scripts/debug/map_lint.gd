@@ -4,6 +4,10 @@ extends SceneTree
 
 const PAD_PATH_MIN := 90.0
 const PAD_PAD_MIN := 110.0
+const PAD_RIVER_MIN := 48.0
+const RIVER_TEX_SIZE := Vector2(900, 280)
+## Approximate water core (excludes thick icing banks) as fraction of scaled sprite.
+const RIVER_WATER_FRAC := Vector2(0.90, 0.56)
 const PAD_X_MIN := 60.0
 const PAD_X_MAX := 660.0
 const PAD_Y_MIN := 190.0
@@ -123,6 +127,20 @@ func _lint_map(path: String) -> bool:
 			var d := pad.distance_to(other)
 			if d < PAD_PAD_MIN:
 				push_error("%s: pads %d–%d dist %.1f < %s" % [label, i, j, d, PAD_PAD_MIN])
+				ok = false
+		if map.river_position != Vector2.ZERO:
+			var river_half := Vector2(
+				RIVER_TEX_SIZE.x * map.river_scale.x * RIVER_WATER_FRAC.x * 0.5,
+				RIVER_TEX_SIZE.y * map.river_scale.y * RIVER_WATER_FRAC.y * 0.5
+			)
+			var d_river := Vector2(
+				absf(pad.x - map.river_position.x),
+				absf(pad.y - map.river_position.y)
+			)
+			if d_river.x < river_half.x + PAD_RIVER_MIN and d_river.y < river_half.y + PAD_RIVER_MIN:
+				push_error(
+					"%s: pad %d %s inside river band at %s" % [label, i, pad, map.river_position]
+				)
 				ok = false
 
 	if map.expansion_wave < 0 or map.expansion_wave > map.waves.size():

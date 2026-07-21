@@ -43,8 +43,8 @@ Map landmarks: sparse per-map `ornaments` on `MapData` (`MapOrnament`: kind + po
 |------|------|--------|
 | Meadow | Quiet white frosting + soft blush | `ground_meadow.png`, clear ≈ `(0.988, 0.988, 1.0)` |
 | Path | Strawberry sugar (not brown) | `path_straight.png` + pink `PathBorder` |
-| River | Blue raspberry jelly | `decor_river.png` |
-| Bridge | Wafer / cookie with pink rail | `decor_bridge.png` at path crossing |
+| River | Blue raspberry jelly band across the board (soft-faded ends) | `decor_river.png` |
+| Bridge | Wafer deck with pink rails — **true alpha**, no baked water | `decor_bridge.png` under the path |
 | Clouds | Fluffy cotton candy | `decor_cloud.png` / `_pink` — replace bushes/trees |
 | Pads | Lilac marshmallow | `pad.png` |
 | UI | Cream + gumdrop buttons | `theme/candy_theme.tres` |

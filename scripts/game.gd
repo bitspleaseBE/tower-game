@@ -205,6 +205,11 @@ func _spawn_enemy(enemy_data: EnemyData, lane: int = 0) -> Enemy:
 	if path_node != null and enemy.get_parent() != path_node:
 		enemy.reparent(path_node, false)
 	enemy.activate(enemy_data)
+	## After a board pan, skip the off-screen lead-in so critters appear at the
+	## visible edge of the path instead of walking in from above for a minute.
+	var start_progress := _visible_spawn_progress(path_node)
+	if start_progress > 0.0:
+		enemy.progress = start_progress
 	return enemy
 
 
@@ -215,13 +220,16 @@ func get_lane_path(lane: int) -> Path2D:
 
 
 func get_lane_entry(lane: int) -> Vector2:
-	var lanes := map_data.resolved_lanes()
-	if lane < 0 or lane >= lanes.size():
-		return Vector2.ZERO
-	var pts := _lane_points_for_phase(lanes[lane])
-	if pts.is_empty():
-		return Vector2.ZERO
-	return pts[0]
+	var path_node := get_lane_path(lane)
+	if path_node == null or path_node.curve == null or path_node.curve.get_baked_length() <= 0.0:
+		var lanes := map_data.resolved_lanes()
+		if lane < 0 or lane >= lanes.size():
+			return Vector2.ZERO
+		var pts := _lane_points_for_phase(lanes[lane])
+		if pts.is_empty():
+			return Vector2.ZERO
+		return pts[0]
+	return path_node.curve.sample_baked(_visible_spawn_progress(path_node))
 
 
 func get_lane_label(lane: int) -> String:
@@ -402,6 +410,34 @@ func _lane_points_for_phase(lane: LaneData) -> PackedVector2Array:
 	return lane.points
 
 
+## Progress along a lane curve where it first enters the visible board (below the HUD).
+## 0 when the natural path start is already on-screen.
+func _visible_spawn_progress(path_node: Path2D) -> float:
+	if path_node == null or path_node.curve == null:
+		return 0.0
+	var curve := path_node.curve
+	var length := curve.get_baked_length()
+	if length <= 1.0:
+		return 0.0
+	## Board-space Y of the top of the playfield after pan (leave room under the HUD).
+	var top_y := _board_pan.y + 130.0
+	var start := curve.sample_baked(0.0)
+	if start.y >= top_y:
+		return 0.0
+	var step := 10.0
+	var prev := start
+	var d := step
+	while d <= length:
+		var pt := curve.sample_baked(d)
+		if pt.y >= top_y:
+			var dy := pt.y - prev.y
+			var t := 1.0 if absf(dy) < 0.01 else clampf((top_y - prev.y) / dy, 0.0, 1.0)
+			return minf(length * 0.95, (d - step) + step * t)
+		prev = pt
+		d += step
+	return 0.0
+
+
 func _build_paths() -> void:
 	## Fillet sharp corners so the sugar road reads organic (concept pink ribbon),
 	## while map .tres keeps the canonical corner waypoints for lint/smoke.
@@ -454,7 +490,7 @@ func _place_markers() -> void:
 			var marker: Node2D = _spawn_markers[i]
 			if unlocked and pts.size() >= 1:
 				marker.visible = true
-				marker.position = pts[0]
+				marker.position = get_lane_entry(i)
 			else:
 				marker.visible = false
 		if unlocked and pts.size() >= 1:

@@ -72,7 +72,7 @@ func countdown_remaining() -> int:
 func early_call_bonus_now() -> int:
 	if not _early_call_armed or _early_call_claimed or _run_over:
 		return 0
-	var max_bonus := 12
+	var max_bonus := 18
 	if map_data != null:
 		max_bonus = maxi(0, map_data.early_wave_bonus_max)
 	if max_bonus <= 0:

@@ -17,9 +17,9 @@ const CANONICAL_PADS: PackedVector2Array = [
 	Vector2(180, 400),
 	Vector2(420, 400),
 	Vector2(650, 410),
-	Vector2(360, 660),
-	Vector2(620, 660),
-	Vector2(70, 690),
+	Vector2(70, 570),
+	Vector2(630, 220),
+	Vector2(70, 850),
 	Vector2(300, 930),
 	Vector2(440, 1020),
 ]

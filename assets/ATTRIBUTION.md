@@ -56,6 +56,7 @@ every shipped third-party file appears here, and only shipped files do.
 - Files used:
   - assets/ui/icon_star.png (pack: PNG/White/2x/star.png)
   - assets/ui/icon_lock.png (pack: PNG/White/2x/locked.png)
+  - assets/ui/icon_lock_dark.png (pack: PNG/Black/2x/locked.png)
 
 ## Soft FX discs — original
 - Soft white discs/stars authored for kill confetti / muzzle / puff (no black matte):

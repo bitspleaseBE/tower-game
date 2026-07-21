@@ -5,7 +5,7 @@ signal build_opened(pad: BuildPad)
 
 const TowerScene: PackedScene = preload("res://scenes/entities/tower.tscn")
 const COIN_ICON: Texture2D = preload("res://assets/ui/icon_coin.png")
-const LOCK_ICON: Texture2D = preload("res://assets/ui/icon_lock.png")
+const LOCK_ICON: Texture2D = preload("res://assets/ui/icon_lock_dark.png")
 ## Campaign index of map_04 — tier-3 (level 3) powers unlock from here.
 const TIER3_UNLOCK_MAP_INDEX := 3
 const TOWER_ICONS := {

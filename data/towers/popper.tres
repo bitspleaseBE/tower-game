@@ -6,7 +6,7 @@
 script = ExtResource("1_blycm")
 id = &"popper"
 display_name = "Lollipop"
-cost = Array[int]([50, 60, 90])
+cost = Array[int]([50, 70, 110])
 damage = Array[float]([1.0, 2.0, 3.0])
 range_px = Array[float]([180.0, 195.0, 210.0])
 fire_interval = Array[float]([0.55, 0.45, 0.35])

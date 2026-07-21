@@ -54,15 +54,15 @@ centered = true
 
 [node name="River" type="Sprite2D" parent="Board/Decor"]
 z_index = -2
-position = Vector2(360, 680)
-scale = Vector2(1.05, 0.95)
+position = Vector2(360, 700)
+scale = Vector2(0.95, 0.4)
 modulate = Color(1, 1, 1, 0.92)
 texture = ExtResource("13_river")
 
 [node name="Bridge" type="Sprite2D" parent="Board/Decor"]
 z_index = -1
-position = Vector2(160, 680)
-scale = Vector2(0.72, 0.72)
+position = Vector2(160, 700)
+scale = Vector2(0.58, 0.58)
 texture = ExtResource("15_bridge")
 
 [node name="Props" type="Node2D" parent="Board/Decor"]

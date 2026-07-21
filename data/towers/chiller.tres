@@ -6,7 +6,7 @@
 script = ExtResource("1_chill")
 id = &"chiller"
 display_name = "Slushie"
-cost = Array[int]([60, 80, 110])
+cost = Array[int]([60, 95, 130])
 damage = Array[float]([0.0, 0.0, 1.0])
 range_px = Array[float]([150.0, 170.0, 190.0])
 fire_interval = Array[float]([0.35, 0.3, 0.25])

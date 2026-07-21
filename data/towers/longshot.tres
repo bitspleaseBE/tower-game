@@ -6,7 +6,7 @@
 script = ExtResource("1_long")
 id = &"longshot"
 display_name = "Candy Cane"
-cost = Array[int]([90, 120, 170])
+cost = Array[int]([90, 140, 200])
 damage = Array[float]([7.0, 12.0, 20.0])
 range_px = Array[float]([300.0, 340.0, 380.0])
 fire_interval = Array[float]([2.2, 2.0, 1.8])

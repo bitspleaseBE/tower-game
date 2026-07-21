@@ -12,13 +12,14 @@ extends Resource
 @export var endless_count_growth: float = 1.1
 @export var endless_speed_growth: float = 1.03
 ## Max coins for calling the next wave at the first moment the button appears.
-@export var early_wave_bonus_max: int = 12
+@export var early_wave_bonus_max: int = 18
 ## Candy river band center (board space). Zero hides the river.
+## Prefer full-board width with a thin Y so the creek reads continuous; pads stay off the water.
 @export var river_position: Vector2 = Vector2.ZERO
-@export var river_scale: Vector2 = Vector2(1.05, 0.95)
-## Bridge center — must sit on a path segment so the road reads over it.
+@export var river_scale: Vector2 = Vector2(0.95, 0.4)
+## Bridge center — transparent wafer deck over the river; path draws on top.
 @export var bridge_position: Vector2 = Vector2.ZERO
-@export var bridge_scale: Vector2 = Vector2(0.72, 0.72)
+@export var bridge_scale: Vector2 = Vector2(0.58, 0.58)
 @export var bridge_rotation: float = 0.0
 ## Decorative desserts / ornaments for this map (kinds: cupcake, sundae,
 ## donut, macaron, softserve, cookie). Keep sparse — a couple per map.

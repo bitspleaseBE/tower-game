@@ -4,6 +4,8 @@ extends Node
 const HOW_TO_PLAY_ART: Texture2D = preload("res://assets/ui/tip_how_to_play.png")
 const BUILD_ART: Texture2D = preload("res://assets/background/pad.png")
 const TOWER_ART := {
+	&"popper": preload("res://assets/tower/weapon_popper.png"),
+	&"lobber": preload("res://assets/tower/weapon_lobber.png"),
 	&"chiller": preload("res://assets/tower/weapon_chiller.png"),
 	&"longshot": preload("res://assets/tower/weapon_longshot.png"),
 }
@@ -21,25 +23,29 @@ const ENEMY_TIP_BODY := {
 }
 ## Level-3 (tier index 2) power explainers, shown once per tower.
 const TIER3_TIPS := {
-	&"popper": {
+	"popper": {
 		"title": "Super Lollipop!",
 		"body": "Now pops in a sugary blast, hitting nearby critters too.",
 		"flavor": &"burst",
+		"art_id": &"popper",
 	},
-	&"lobber": {
+	"lobber": {
 		"title": "Super Ballooner!",
 		"body": "Splashes now stun critters in place for a moment.",
 		"flavor": &"stun",
+		"art_id": &"lobber",
 	},
-	&"chiller": {
+	"chiller": {
 		"title": "Super Slushie!",
 		"body": "Slush now hurts! Slowed critters take damage too.",
 		"flavor": &"slush",
+		"art_id": &"chiller",
 	},
-	&"longshot": {
+	"longshot": {
 		"title": "Super Candy Cane!",
 		"body": "Shots pierce through, hitting every critter in a line.",
 		"flavor": &"pierce",
+		"art_id": &"longshot",
 	},
 }
 const LEAK_COOLDOWN_SEC := 1.5
@@ -192,20 +198,26 @@ func _on_tower_upgraded(tower: Node) -> void:
 		return
 	if int(tower.tier) != 2:
 		return
-	var tower_id: StringName = (tower.data as TowerData).id
-	if not TIER3_TIPS.has(tower_id):
+	var tip_id := String((tower.data as TowerData).id)
+	if not TIER3_TIPS.has(tip_id):
 		return
-	var tip_key := "tier3_%s" % String(tower_id)
+	var tip_key := "tier3_%s" % tip_id
 	if SaveGame.has_seen_tip(tip_key):
 		return
-	var info: Dictionary = TIER3_TIPS[tower_id]
+	var info: Dictionary = TIER3_TIPS[tip_id]
+	var art_id: StringName = info.get("art_id", &"")
+	# Close the manage sheet so the tip isn't hidden behind it.
+	if _game != null and _game.get("build_menu") != null and _game.build_menu.has_method("close"):
+		_game.build_menu.close()
 	_enqueue({
 		"key": tip_key,
 		"title": String(info["title"]),
 		"body": String(info["body"]),
-		"demo": {"tower": tower_id, "flavor": info["flavor"]},
+		"art": TOWER_ART.get(art_id),
+		"demo": {"tower": StringName(tip_id), "flavor": info["flavor"]},
 	})
-	_try_show_next()
+	# Defer so the sheet can finish closing before we pause for the tip.
+	call_deferred("_try_show_next")
 
 
 func _on_enemy_leaked(_enemy: Node) -> void:
