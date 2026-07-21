@@ -51,7 +51,7 @@ offset_bottom = -168.0
 grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 0
-follow_focus = true
+follow_focus = false
 
 [node name="Cards" type="VBoxContainer" parent="CardsScroll"]
 unique_name_in_owner = true

@@ -1,8 +1,12 @@
 extends Control
 ## Campaign map picker. MainMenu → MapSelect → Game.
+## Custom drag-scroll so the list works on mobile web (iOS Safari), where
+## ScrollContainer + child Buttons often swallow touch drags. Desktop wheel
+## scrolling still uses the engine ScrollContainer default.
 
 const MapCardScene: PackedScene = preload("res://scenes/ui/map_card.tscn")
 const ConfettiScene: PackedScene = preload("res://scenes/fx/confetti_cpu.tscn")
+const DRAG_DEADZONE_PX := 12.0
 
 @onready var cards_box: VBoxContainer = %Cards
 @onready var cards_scroll: ScrollContainer = %CardsScroll
@@ -11,11 +15,19 @@ const ConfettiScene: PackedScene = preload("res://scenes/fx/confetti_cpu.tscn")
 @onready var title_label: Label = %Title
 
 var _cards: Dictionary = {} ## StringName -> MapCard
+var _drag_tracking := false
+var _drag_active := false
+var _drag_last := Vector2.ZERO
+var _drag_origin := Vector2.ZERO
+var _block_card_clicks := false
 
 
 func _ready() -> void:
+	add_to_group("map_select")
 	Juice.squishify_button(back_button)
 	back_button.pressed.connect(_go_menu)
+	cards_scroll.follow_focus = false
+	cards_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	_build_cards()
 	# Start at the top so map 1 isn't scrolled off after focus/layout.
 	cards_scroll.scroll_vertical = 0
@@ -26,9 +38,64 @@ func _ready() -> void:
 	Sound.play_music(&"music_game")
 
 
+func should_block_card_clicks() -> bool:
+	return _block_card_clicks
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		_go_menu()
+
+
+## Drag-to-scroll before child Controls eat the gesture (needed on iPhone web).
+func _input(event: InputEvent) -> void:
+	if not is_visible_in_tree() or cards_scroll == null:
+		return
+	var scroll_rect := cards_scroll.get_global_rect()
+
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index != MOUSE_BUTTON_LEFT:
+			return
+		if mb.pressed:
+			if scroll_rect.has_point(mb.global_position):
+				_drag_tracking = true
+				_drag_active = false
+				_block_card_clicks = false
+				_drag_last = mb.global_position
+				_drag_origin = mb.global_position
+		else:
+			if _drag_active or _block_card_clicks:
+				get_viewport().set_input_as_handled()
+				_block_card_clicks = true
+				_clear_click_block.call_deferred()
+			_drag_tracking = false
+			_drag_active = false
+		return
+
+	if event is InputEventMouseMotion and _drag_tracking:
+		var mm := event as InputEventMouseMotion
+		if (mm.button_mask & MOUSE_BUTTON_MASK_LEFT) == 0:
+			return
+		var pos := mm.global_position
+		if not _drag_active:
+			if _drag_origin.distance_to(pos) < DRAG_DEADZONE_PX:
+				return
+			_drag_active = true
+			_block_card_clicks = true
+			_drag_last = pos
+			var focused := get_viewport().gui_get_focus_owner()
+			if focused != null:
+				focused.release_focus()
+		var dy := _drag_last.y - pos.y
+		_drag_last = pos
+		if absf(dy) >= 0.5:
+			cards_scroll.scroll_vertical += int(round(dy))
+		get_viewport().set_input_as_handled()
+
+
+func _clear_click_block() -> void:
+	_block_card_clicks = false
 
 
 func _build_cards() -> void:
@@ -49,9 +116,32 @@ func _build_cards() -> void:
 		_cards[id] = card
 		if map != null:
 			prev_name = map.display_name
+	_update_cards_min_size.call_deferred()
+
+
+func _update_cards_min_size() -> void:
+	await get_tree().process_frame
+	if cards_box == null:
+		return
+	var total := 0.0
+	var count := 0
+	for child: Node in cards_box.get_children():
+		var c := child as Control
+		if c == null:
+			continue
+		total += c.get_combined_minimum_size().y
+		count += 1
+	if count > 1:
+		total += float(cards_box.get_theme_constant("separation")) * float(count - 1)
+	## Padding so the last card can scroll fully above the Menu button.
+	total += 24.0
+	cards_box.custom_minimum_size = Vector2(0.0, total)
+	cards_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 
 func _on_play(endless: bool, map: MapData) -> void:
+	if _block_card_clicks:
+		return
 	SaveGame.run_map = map
 	SaveGame.run_endless = endless
 	get_tree().change_scene_to_file("res://scenes/game.tscn")
@@ -118,6 +208,9 @@ func _pop_unlocked_label(card: Control) -> void:
 func _focus_first() -> void:
 	await get_tree().process_frame
 	cards_scroll.scroll_vertical = 0
+	# Don't grab button focus on touch devices — it fights drag-scroll on iOS.
+	if DisplayServer.is_touchscreen_available():
+		return
 	for id: StringName in SaveGame.CAMPAIGN:
 		var card: Node = _cards.get(id)
 		if card == null:
@@ -125,7 +218,6 @@ func _focus_first() -> void:
 		var play_btn: Button = card.get_node_or_null("%PlayButton") as Button
 		if play_btn != null and play_btn.visible and not play_btn.disabled:
 			play_btn.grab_focus()
-			# Keep the list pinned to the top so focus-follow doesn't hide map 1.
 			await get_tree().process_frame
 			cards_scroll.scroll_vertical = 0
 			return

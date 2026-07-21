@@ -18,12 +18,31 @@ var _map: MapData = null
 
 
 func _ready() -> void:
-	play_button.pressed.connect(func() -> void: play_pressed.emit(false))
-	endless_button.pressed.connect(func() -> void: play_pressed.emit(true))
+	play_button.action_mode = BaseButton.ACTION_MODE_BUTTON_RELEASE
+	endless_button.action_mode = BaseButton.ACTION_MODE_BUTTON_RELEASE
+	play_button.pressed.connect(_on_play_pressed)
+	endless_button.pressed.connect(_on_endless_pressed)
 	Juice.squishify_button(play_button)
 	Juice.squishify_button(endless_button)
 	gui_input.connect(_on_gui_input)
 	_start_badge_pulse()
+
+
+func _on_play_pressed() -> void:
+	if _clicks_blocked():
+		return
+	play_pressed.emit(false)
+
+
+func _on_endless_pressed() -> void:
+	if _clicks_blocked():
+		return
+	play_pressed.emit(true)
+
+
+func _clicks_blocked() -> bool:
+	var ms := get_tree().get_first_node_in_group("map_select")
+	return ms != null and ms.has_method("should_block_card_clicks") and bool(ms.call("should_block_card_clicks"))
 
 
 func setup(map: MapData, unlocked: bool, beaten: bool, best: int, prev_name: String) -> void:
