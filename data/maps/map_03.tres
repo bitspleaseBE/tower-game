@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="MapData" format=3]
 
+[ext_resource type="Script" path="res://scripts/data/map_ornament.gd" id="orn_script"]
 [ext_resource type="Script" path="res://scripts/data/map_data.gd" id="1_7w6kl"]
 [ext_resource type="Script" path="res://scripts/data/wave_data.gd" id="2_8nto6"]
 [ext_resource type="Script" path="res://scripts/data/spawn_group.gd" id="3_vx0dc"]
@@ -233,6 +234,21 @@ start_delay = 6.0
 script = ExtResource("2_8nto6")
 spawn_groups = Array[ExtResource("3_vx0dc")]([SubResource("Resource_lef05"), SubResource("Resource_cpsmr"), SubResource("Resource_g1b8b"), SubResource("Resource_hiwhv")])
 
+
+[sub_resource type="Resource" id="orn_1"]
+script = ExtResource("orn_script")
+kind = &"donut"
+position = Vector2(630, 95)
+scale = 0.7
+rotation = 0.18
+
+[sub_resource type="Resource" id="orn_2"]
+script = ExtResource("orn_script")
+kind = &"cookie"
+position = Vector2(90, 1165)
+scale = 0.48
+rotation = -0.22
+
 [resource]
 script = ExtResource("1_7w6kl")
 id = &"map_03"
@@ -245,3 +261,8 @@ waves = Array[ExtResource("2_8nto6")]([SubResource("Resource_5thqc"), SubResourc
 endless_hp_growth = 1.18
 endless_count_growth = 1.08
 endless_speed_growth = 1.02
+river_position = Vector2(360, 690)
+river_scale = Vector2(1.1, 1.0)
+bridge_position = Vector2(160, 690)
+bridge_scale = Vector2(0.78, 0.78)
+ornaments = Array[ExtResource("orn_script")]([SubResource("orn_1"), SubResource("orn_2")])

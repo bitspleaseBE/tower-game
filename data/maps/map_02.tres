@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="MapData" format=3]
 
+[ext_resource type="Script" path="res://scripts/data/map_ornament.gd" id="orn_script"]
 [ext_resource type="Script" path="res://scripts/data/map_data.gd" id="1_5em27"]
 [ext_resource type="Script" path="res://scripts/data/wave_data.gd" id="2_l5v5n"]
 [ext_resource type="Script" path="res://scripts/data/spawn_group.gd" id="3_d4hsn"]
@@ -208,6 +209,21 @@ start_delay = 8.0
 script = ExtResource("2_l5v5n")
 spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_0q14c"), SubResource("Resource_82ka2"), SubResource("Resource_fx50w")])
 
+
+[sub_resource type="Resource" id="orn_1"]
+script = ExtResource("orn_script")
+kind = &"sundae"
+position = Vector2(250, 88)
+scale = 0.72
+rotation = 0.06
+
+[sub_resource type="Resource" id="orn_2"]
+script = ExtResource("orn_script")
+kind = &"softserve"
+position = Vector2(95, 1145)
+scale = 0.54
+rotation = -0.14
+
 [resource]
 script = ExtResource("1_5em27")
 id = &"map_02"
@@ -220,3 +236,8 @@ waves = Array[ExtResource("2_l5v5n")]([SubResource("Resource_ydhys"), SubResourc
 endless_hp_growth = 1.16
 endless_count_growth = 1.07
 endless_speed_growth = 1.02
+river_position = Vector2(360, 580)
+river_scale = Vector2(1.15, 1.0)
+bridge_position = Vector2(600, 580)
+bridge_scale = Vector2(0.85, 0.85)
+ornaments = Array[ExtResource("orn_script")]([SubResource("orn_1"), SubResource("orn_2")])

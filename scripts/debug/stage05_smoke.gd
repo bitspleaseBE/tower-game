@@ -15,7 +15,7 @@ func _initialize() -> void:
 		return
 
 	# --- Maps + endless params ---
-	for id: String in ["map_01", "map_02", "map_03"]:
+	for id: String in ["map_01", "map_02", "map_03", "map_04", "map_05"]:
 		var map: MapData = load("res://data/maps/%s.tres" % id) as MapData
 		if map == null:
 			push_error("missing %s" % id)
@@ -32,7 +32,7 @@ func _initialize() -> void:
 
 	# --- SaveGame API ---
 	var campaign: Array = sg.get("CAMPAIGN")
-	if campaign == null or campaign.size() != 3:
+	if campaign == null or campaign.size() != 5:
 		push_error("CAMPAIGN size")
 		failed = true
 	else:

@@ -25,7 +25,7 @@ Enemies: tiny wide-set eyes **low on the body** (concept critter read).
 
 Signature towers: candy cannons (popper / lobber / etc.) — readable weapons on pads.
 
-Map landmarks: sparse **cupcake / sundae** dessert props that stand out more than quiet clouds — not buildable.
+Map landmarks: sparse per-map `ornaments` on `MapData` (`MapOrnament`: kind + position + scale + rotation). Kinds in use: cupcake, sundae, donut, macaron, softserve, cookie. Spread across opposite corners/edges, vary scale, keep ≥120px off the path.
 
 ## Visual rules
 

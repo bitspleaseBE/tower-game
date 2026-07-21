@@ -1,0 +1,286 @@
+[gd_resource type="Resource" script_class="MapData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/map_ornament.gd" id="orn_script"]
+[ext_resource type="Script" path="res://scripts/data/lane_data.gd" id="lane_script"]
+[ext_resource type="Script" path="res://scripts/data/map_data.gd" id="1_map"]
+[ext_resource type="Script" path="res://scripts/data/wave_data.gd" id="2_wave"]
+[ext_resource type="Script" path="res://scripts/data/spawn_group.gd" id="3_group"]
+[ext_resource type="Resource" path="res://data/enemies/normal.tres" id="4_normal"]
+[ext_resource type="Resource" path="res://data/enemies/fast.tres" id="5_fast"]
+[ext_resource type="Resource" path="res://data/enemies/swarm.tres" id="6_swarm"]
+[ext_resource type="Resource" path="res://data/enemies/armored.tres" id="7_armor"]
+[ext_resource type="Resource" path="res://data/enemies/boss.tres" id="8_boss"]
+
+[sub_resource type="Resource" id="lane_left"]
+script = ExtResource("lane_script")
+points = PackedVector2Array(-40, 280, 360, 280, 360, 500, 160, 500, 160, 740, 500, 740, 500, 940, 360, 940, 360, 1020)
+unlock_wave = 1
+label = "Strawberry Ridge"
+
+[sub_resource type="Resource" id="lane_right"]
+script = ExtResource("lane_script")
+points = PackedVector2Array(760, 280, 360, 280, 360, 500, 160, 500, 160, 740, 500, 740, 500, 940, 360, 940, 360, 1020)
+unlock_wave = 1
+label = "Chocolate Ridge"
+
+[sub_resource type="Resource" id="orn_1"]
+script = ExtResource("orn_script")
+kind = &"sundae"
+position = Vector2(80, 1050)
+scale = 0.75
+
+[sub_resource type="Resource" id="orn_2"]
+script = ExtResource("orn_script")
+kind = &"donut"
+position = Vector2(640, 160)
+scale = 0.7
+
+[sub_resource type="Resource" id="w1_g1"]
+script = ExtResource("3_group")
+enemy = ExtResource("4_normal")
+count = 6
+spawn_interval = 1.2
+lane = 0
+
+[sub_resource type="Resource" id="wave1"]
+script = ExtResource("2_wave")
+spawn_groups = Array[ExtResource("3_group")]([SubResource("w1_g1")])
+
+[sub_resource type="Resource" id="w2_g1"]
+script = ExtResource("3_group")
+enemy = ExtResource("4_normal")
+count = 10
+spawn_interval = 1.0
+lane = 0
+
+[sub_resource type="Resource" id="wave2"]
+script = ExtResource("2_wave")
+spawn_groups = Array[ExtResource("3_group")]([SubResource("w2_g1")])
+
+[sub_resource type="Resource" id="w3_g1"]
+script = ExtResource("3_group")
+enemy = ExtResource("4_normal")
+count = 8
+spawn_interval = 1.0
+lane = 0
+
+[sub_resource type="Resource" id="w3_g2"]
+script = ExtResource("3_group")
+enemy = ExtResource("5_fast")
+count = 4
+spawn_interval = 0.9
+start_delay = 4.0
+lane = 0
+
+[sub_resource type="Resource" id="wave3"]
+script = ExtResource("2_wave")
+spawn_groups = Array[ExtResource("3_group")]([SubResource("w3_g1"), SubResource("w3_g2")])
+
+[sub_resource type="Resource" id="w4_g1"]
+script = ExtResource("3_group")
+enemy = ExtResource("4_normal")
+count = 10
+spawn_interval = 0.9
+lane = 1
+
+[sub_resource type="Resource" id="w4_g2"]
+script = ExtResource("3_group")
+enemy = ExtResource("5_fast")
+count = 5
+spawn_interval = 0.8
+start_delay = 3.0
+lane = 1
+
+[sub_resource type="Resource" id="wave4"]
+script = ExtResource("2_wave")
+spawn_groups = Array[ExtResource("3_group")]([SubResource("w4_g1"), SubResource("w4_g2")])
+
+[sub_resource type="Resource" id="w5_g1"]
+script = ExtResource("3_group")
+enemy = ExtResource("5_fast")
+count = 12
+spawn_interval = 0.7
+lane = 1
+
+[sub_resource type="Resource" id="wave5"]
+script = ExtResource("2_wave")
+spawn_groups = Array[ExtResource("3_group")]([SubResource("w5_g1")])
+
+[sub_resource type="Resource" id="w6_g1"]
+script = ExtResource("3_group")
+enemy = ExtResource("6_swarm")
+count = 18
+spawn_interval = 0.4
+lane = 1
+
+[sub_resource type="Resource" id="w6_g2"]
+script = ExtResource("3_group")
+enemy = ExtResource("4_normal")
+count = 6
+spawn_interval = 1.0
+start_delay = 2.0
+lane = 1
+
+[sub_resource type="Resource" id="wave6"]
+script = ExtResource("2_wave")
+spawn_groups = Array[ExtResource("3_group")]([SubResource("w6_g1"), SubResource("w6_g2")])
+
+[sub_resource type="Resource" id="w7_g1"]
+script = ExtResource("3_group")
+enemy = ExtResource("4_normal")
+count = 8
+spawn_interval = 0.9
+lane = 0
+
+[sub_resource type="Resource" id="w7_g2"]
+script = ExtResource("3_group")
+enemy = ExtResource("4_normal")
+count = 8
+spawn_interval = 0.9
+lane = 1
+
+[sub_resource type="Resource" id="wave7"]
+script = ExtResource("2_wave")
+spawn_groups = Array[ExtResource("3_group")]([SubResource("w7_g1"), SubResource("w7_g2")])
+
+[sub_resource type="Resource" id="w8_g1"]
+script = ExtResource("3_group")
+enemy = ExtResource("6_swarm")
+count = 16
+spawn_interval = 0.35
+lane = 0
+
+[sub_resource type="Resource" id="w8_g2"]
+script = ExtResource("3_group")
+enemy = ExtResource("5_fast")
+count = 8
+spawn_interval = 0.7
+lane = 1
+
+[sub_resource type="Resource" id="wave8"]
+script = ExtResource("2_wave")
+spawn_groups = Array[ExtResource("3_group")]([SubResource("w8_g1"), SubResource("w8_g2")])
+
+[sub_resource type="Resource" id="w9_g1"]
+script = ExtResource("3_group")
+enemy = ExtResource("7_armor")
+count = 4
+spawn_interval = 2.2
+lane = 0
+
+[sub_resource type="Resource" id="w9_g2"]
+script = ExtResource("3_group")
+enemy = ExtResource("7_armor")
+count = 4
+spawn_interval = 2.2
+lane = 1
+
+[sub_resource type="Resource" id="w9_g3"]
+script = ExtResource("3_group")
+enemy = ExtResource("4_normal")
+count = 6
+spawn_interval = 0.8
+start_delay = 2.0
+lane = 0
+
+[sub_resource type="Resource" id="wave9"]
+script = ExtResource("2_wave")
+spawn_groups = Array[ExtResource("3_group")]([SubResource("w9_g1"), SubResource("w9_g2"), SubResource("w9_g3")])
+
+[sub_resource type="Resource" id="w10_g1"]
+script = ExtResource("3_group")
+enemy = ExtResource("6_swarm")
+count = 20
+spawn_interval = 0.35
+lane = 0
+
+[sub_resource type="Resource" id="w10_g2"]
+script = ExtResource("3_group")
+enemy = ExtResource("6_swarm")
+count = 20
+spawn_interval = 0.35
+lane = 1
+
+[sub_resource type="Resource" id="wave10"]
+script = ExtResource("2_wave")
+spawn_groups = Array[ExtResource("3_group")]([SubResource("w10_g1"), SubResource("w10_g2")])
+
+[sub_resource type="Resource" id="w11_g1"]
+script = ExtResource("3_group")
+enemy = ExtResource("7_armor")
+count = 5
+spawn_interval = 1.8
+lane = 0
+
+[sub_resource type="Resource" id="w11_g2"]
+script = ExtResource("3_group")
+enemy = ExtResource("5_fast")
+count = 10
+spawn_interval = 0.6
+lane = 1
+
+[sub_resource type="Resource" id="w11_g3"]
+script = ExtResource("3_group")
+enemy = ExtResource("4_normal")
+count = 8
+spawn_interval = 0.8
+start_delay = 3.0
+lane = 0
+
+[sub_resource type="Resource" id="wave11"]
+script = ExtResource("2_wave")
+spawn_groups = Array[ExtResource("3_group")]([SubResource("w11_g1"), SubResource("w11_g2"), SubResource("w11_g3")])
+
+[sub_resource type="Resource" id="w12_boss"]
+script = ExtResource("3_group")
+enemy = ExtResource("8_boss")
+count = 1
+spawn_interval = 1.0
+lane = 0
+
+[sub_resource type="Resource" id="w12_swarm_l"]
+script = ExtResource("3_group")
+enemy = ExtResource("6_swarm")
+count = 16
+spawn_interval = 0.4
+start_delay = 3.0
+lane = 0
+
+[sub_resource type="Resource" id="w12_swarm_r"]
+script = ExtResource("3_group")
+enemy = ExtResource("6_swarm")
+count = 16
+spawn_interval = 0.4
+start_delay = 3.0
+lane = 1
+
+[sub_resource type="Resource" id="w12_fast"]
+script = ExtResource("3_group")
+enemy = ExtResource("5_fast")
+count = 6
+spawn_interval = 0.6
+start_delay = 8.0
+lane = 1
+
+[sub_resource type="Resource" id="wave12"]
+script = ExtResource("2_wave")
+spawn_groups = Array[ExtResource("3_group")]([SubResource("w12_boss"), SubResource("w12_swarm_l"), SubResource("w12_swarm_r"), SubResource("w12_fast")])
+
+[resource]
+script = ExtResource("1_map")
+id = &"map_04"
+display_name = "Split Sundae"
+path_points = PackedVector2Array(-40, 280, 360, 280, 360, 500, 160, 500, 160, 740, 500, 740, 500, 940, 360, 940, 360, 1020)
+pad_positions = PackedVector2Array(200, 390, 520, 390, 60, 620, 280, 620, 440, 620, 660, 620, 200, 1040, 520, 1040)
+starting_coins = 110
+starting_lives = 18
+waves = Array[ExtResource("2_wave")]([SubResource("wave1"), SubResource("wave2"), SubResource("wave3"), SubResource("wave4"), SubResource("wave5"), SubResource("wave6"), SubResource("wave7"), SubResource("wave8"), SubResource("wave9"), SubResource("wave10"), SubResource("wave11"), SubResource("wave12")])
+endless_hp_growth = 1.15
+endless_count_growth = 1.07
+endless_speed_growth = 1.02
+river_position = Vector2(360, 620)
+river_scale = Vector2(1.05, 0.9)
+bridge_position = Vector2(160, 620)
+bridge_scale = Vector2(0.72, 0.72)
+ornaments = Array[ExtResource("orn_script")]([SubResource("orn_1"), SubResource("orn_2")])
+lanes = Array[ExtResource("lane_script")]([SubResource("lane_left"), SubResource("lane_right")])

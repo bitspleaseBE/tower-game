@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="MapData" format=3]
 
+[ext_resource type="Script" path="res://scripts/data/map_ornament.gd" id="orn_script"]
 [ext_resource type="Script" path="res://scripts/data/map_data.gd" id="1_cs3hx"]
 [ext_resource type="Script" path="res://scripts/data/wave_data.gd" id="2_wfgdk"]
 [ext_resource type="Script" path="res://scripts/data/spawn_group.gd" id="3_4a38b"]
@@ -165,6 +166,21 @@ start_delay = 8.0
 script = ExtResource("2_wfgdk")
 spawn_groups = Array[ExtResource("3_4a38b")]([SubResource("w10_boss"), SubResource("w10_swarm"), SubResource("w10_fast")])
 
+
+[sub_resource type="Resource" id="orn_1"]
+script = ExtResource("orn_script")
+kind = &"cupcake"
+position = Vector2(88, 105)
+scale = 0.78
+rotation = -0.08
+
+[sub_resource type="Resource" id="orn_2"]
+script = ExtResource("orn_script")
+kind = &"macaron"
+position = Vector2(605, 1170)
+scale = 0.5
+rotation = 0.28
+
 [resource]
 script = ExtResource("1_cs3hx")
 id = &"map_01"
@@ -177,3 +193,8 @@ waves = Array[ExtResource("2_wfgdk")]([SubResource("wave1"), SubResource("wave2"
 endless_hp_growth = 1.14
 endless_count_growth = 1.06
 endless_speed_growth = 1.015
+river_position = Vector2(360, 680)
+river_scale = Vector2(1.1, 1.0)
+bridge_position = Vector2(160, 680)
+bridge_scale = Vector2(0.78, 0.78)
+ornaments = Array[ExtResource("orn_script")]([SubResource("orn_1"), SubResource("orn_2")])

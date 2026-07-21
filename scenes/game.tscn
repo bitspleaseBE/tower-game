@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
 [ext_resource type="Script" path="res://scripts/wave_spawner.gd" id="2_spawner"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/build_menu.tscn" id="4_bm"]
 [ext_resource type="PackedScene" path="res://scenes/ui/result_overlay.tscn" id="5_ro"]
 [ext_resource type="PackedScene" path="res://scenes/ui/wave_banner.tscn" id="6_wb"]
+[ext_resource type="PackedScene" path="res://scenes/ui/lane_alert.tscn" id="6_la"]
 [ext_resource type="PackedScene" path="res://scenes/ui/pause_overlay.tscn" id="14_po"]
 [ext_resource type="PackedScene" path="res://scenes/ui/coach.tscn" id="22_coach"]
 [ext_resource type="Script" path="res://scripts/debug/stress_test.gd" id="7_stress"]
@@ -17,8 +18,6 @@
 [ext_resource type="Texture2D" path="res://assets/background/decor_river.png" id="13_river"]
 [ext_resource type="Texture2D" path="res://assets/background/decor_bridge.png" id="15_bridge"]
 [ext_resource type="Texture2D" path="res://assets/background/decor_gumdrop.png" id="16_gumdrop"]
-[ext_resource type="Texture2D" path="res://assets/background/decor_cupcake.png" id="17_cupcake"]
-[ext_resource type="Texture2D" path="res://assets/background/decor_sundae.png" id="18_sundae"]
 
 [sub_resource type="Gradient" id="Gradient_vignette"]
 offsets = PackedFloat32Array(0, 0.5, 1)
@@ -40,6 +39,13 @@ script = ExtResource("1_game")
 [node name="Ground" type="Sprite2D" parent="Board"]
 z_index = -10
 position = Vector2(360, 640)
+scale = Vector2(2.33333, 2.33333)
+texture = ExtResource("10_ground")
+centered = true
+
+[node name="GroundLower" type="Sprite2D" parent="Board"]
+z_index = -10
+position = Vector2(360, 1920)
 scale = Vector2(2.33333, 2.33333)
 texture = ExtResource("10_ground")
 centered = true
@@ -132,6 +138,38 @@ modulate = Color(1, 1, 1, 0.38)
 scale = Vector2(0.7, 0.7)
 texture = ExtResource("11_cloud")
 
+[node name="CloudLowerW" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(80, 1480)
+
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CloudLowerW"]
+modulate = Color(1, 1, 1, 0.4)
+scale = Vector2(0.85, 0.85)
+texture = ExtResource("12_cloudp")
+
+[node name="CloudLowerE" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(640, 1600)
+
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CloudLowerE"]
+modulate = Color(1, 1, 1, 0.42)
+scale = Vector2(0.9, 0.9)
+texture = ExtResource("11_cloud")
+
+[node name="CloudLowerS" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(360, 1900)
+
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CloudLowerS"]
+modulate = Color(1, 1, 1, 0.36)
+scale = Vector2(1.0, 1.0)
+texture = ExtResource("12_cloudp")
+
+[node name="GumdropLower" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(200, 1750)
+
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/GumdropLower"]
+modulate = Color(1, 1, 1, 0.34)
+scale = Vector2(0.42, 0.42)
+texture = ExtResource("16_gumdrop")
+
 [node name="GumdropFarNW" type="Node2D" parent="Board/Decor/Props"]
 position = Vector2(120, 200)
 
@@ -147,20 +185,6 @@ position = Vector2(600, 1040)
 modulate = Color(1, 1, 1, 0.32)
 scale = Vector2(0.38, 0.38)
 texture = ExtResource("16_gumdrop")
-
-[node name="CupcakeLandmark" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(640, 280)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CupcakeLandmark"]
-scale = Vector2(0.95, 0.95)
-texture = ExtResource("17_cupcake")
-
-[node name="SundaeLandmark" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(90, 980)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/SundaeLandmark"]
-scale = Vector2(0.9, 0.9)
-texture = ExtResource("18_sundae")
 
 [node name="SpawnMarker" type="Node2D" parent="Board/Decor"]
 position = Vector2(40, 280)
@@ -189,6 +213,7 @@ color = Color(1, 0.7, 0.75, 1)
 polygon = PackedVector2Array(18, 0, 15.588, 9, 9, 15.588, 0, 18, -9, 15.588, -15.588, 9, -18, 0, -15.588, -9, -9, -15.588, 0, -18, 9, -15.588, 15.588, -9)
 
 [node name="Path" type="Path2D" parent="Board"]
+z_index = 2
 
 [node name="PathBorder" type="Line2D" parent="Board/Path"]
 width = 78.0
@@ -214,12 +239,18 @@ begin_cap_mode = 2
 end_cap_mode = 2
 round_precision = 16
 
+[node name="Landmarks" type="Node2D" parent="Board"]
+z_index = 1
+
 [node name="Pads" type="Node2D" parent="Board"]
+z_index = 4
 
 [node name="RangePreview" type="Node2D" parent="Board"]
+z_index = 5
 script = ExtResource("9_rp")
 
 [node name="Projectiles" type="Node2D" parent="Board"]
+z_index = 6
 
 [node name="FxLayer" type="Node2D" parent="."]
 
@@ -247,6 +278,8 @@ stretch_mode = 0
 [node name="BuildMenu" parent="UI" instance=ExtResource("4_bm")]
 
 [node name="WaveBanner" parent="UI" instance=ExtResource("6_wb")]
+
+[node name="LaneAlert" parent="UI" instance=ExtResource("6_la")]
 
 [node name="ResultOverlay" parent="UI" instance=ExtResource("5_ro")]
 

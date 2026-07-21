@@ -2,11 +2,17 @@ extends Control
 ## Bouncy wave announcement banner. Never eats pad taps.
 
 @onready var label: Label = %BannerLabel
+@onready var subtitle: Label = get_node_or_null("%SubtitleLabel")
+
+var _pending_subtitle: String = ""
 
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if subtitle != null:
+		subtitle.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		subtitle.text = ""
 	visible = false
 	Juice.claim(self)
 	Events.wave_started.connect(_on_wave_started)
@@ -17,7 +23,13 @@ func _ready() -> void:
 
 func announce(text: String) -> void:
 	label.text = text
+	if subtitle != null:
+		subtitle.text = ""
 	_show_banner()
+
+
+func set_pending_subtitle(text: String) -> void:
+	_pending_subtitle = text
 
 
 func _on_wave_started(number: int, _total: int) -> void:
@@ -31,12 +43,17 @@ func _on_wave_started(number: int, _total: int) -> void:
 					is_boss_wave = true
 					break
 	label.text = "BOSS!" if is_boss_wave else "Wave %d" % number
+	if subtitle != null:
+		subtitle.text = _pending_subtitle
+		_pending_subtitle = ""
 	Sound.play_sfx(&"wave_start")
 	_show_banner()
 
 
 func _on_wave_cleared(_number: int) -> void:
 	label.text = "Clear!"
+	if subtitle != null:
+		subtitle.text = ""
 	_show_banner(0.35)
 
 

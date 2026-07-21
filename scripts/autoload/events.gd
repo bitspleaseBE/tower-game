@@ -5,6 +5,10 @@ signal coins_changed(coins: int)
 signal lives_changed(lives: int)
 signal wave_started(number: int, total: int)
 signal wave_cleared(number: int)
+## Fired when a wave's last enemy is gone (safe to rebuild paths / expand).
+signal wave_all_clear(number: int)
+## Upcoming wave lane indices + labels for spawn-side warnings during countdown.
+signal wave_lanes_previewed(lane_indices: Array, labels: Array)
 signal enemy_killed(enemy: Node, bounty: int)
 signal enemy_leaked(enemy: Node)
 signal tower_built(tower: Node, pad: Node)

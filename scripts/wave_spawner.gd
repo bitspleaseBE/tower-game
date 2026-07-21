@@ -112,6 +112,7 @@ func _begin_countdown() -> void:
 	if _run_over:
 		return
 	_state = State.COUNTDOWN
+	_preview_upcoming_lanes()
 	if _skip_countdown:
 		_disarm_early_call()
 		_skip_countdown = false
@@ -150,6 +151,28 @@ func _begin_countdown() -> void:
 	await _spawn_wave()
 
 
+func _preview_upcoming_lanes() -> void:
+	if _game == null or map_data == null:
+		return
+	var wave_number := _wave_index + 1
+	var wave: WaveData = _game.get_wave(wave_number)
+	if wave == null:
+		return
+	var indices: Array = []
+	var labels: Array = []
+	var seen: Dictionary = {}
+	for group: SpawnGroup in wave.spawn_groups:
+		if group == null or seen.has(group.lane):
+			continue
+		seen[group.lane] = true
+		indices.append(group.lane)
+		var lab := ""
+		if _game.has_method("get_lane_label"):
+			lab = String(_game.get_lane_label(group.lane))
+		labels.append(lab)
+	Events.wave_lanes_previewed.emit(indices, labels)
+
+
 func _spawn_wave() -> void:
 	if _run_over:
 		return
@@ -184,6 +207,7 @@ func _spawn_wave() -> void:
 			if _run_over:
 				return
 		Events.wave_cleared.emit(wave_number)
+		Events.wave_all_clear.emit(wave_number)
 		if _run_over:
 			return
 		_disarm_early_call()
@@ -193,8 +217,31 @@ func _spawn_wave() -> void:
 		return
 
 	Events.wave_cleared.emit(wave_number)
+	# Expansion maps must finish the board clear + pan before the next countdown.
+	if map_data.expansion_wave > 0 and wave_number == map_data.expansion_wave:
+		while _alive_enemies > 0:
+			if _run_over:
+				return
+			await get_tree().create_timer(0.1).timeout
+			if _run_over:
+				return
+		Events.wave_all_clear.emit(wave_number)
+		if _game.has_method("run_expansion_if_needed"):
+			await _game.run_expansion_if_needed()
+	else:
+		_emit_all_clear_when_empty(wave_number)
 	_wave_index += 1
 	_begin_countdown()
+
+
+func _emit_all_clear_when_empty(wave_number: int) -> void:
+	while _alive_enemies > 0:
+		if _run_over:
+			return
+		await get_tree().create_timer(0.1).timeout
+		if _run_over:
+			return
+	Events.wave_all_clear.emit(wave_number)
 
 
 func _spawn_group(group: SpawnGroup) -> void:
@@ -207,7 +254,7 @@ func _spawn_group(group: SpawnGroup) -> void:
 		if _run_over:
 			_groups_remaining = maxi(0, _groups_remaining - 1)
 			return
-		var spawned: Variant = _game._spawn_enemy(group.enemy)
+		var spawned: Variant = _game._spawn_enemy(group.enemy, group.lane)
 		if spawned != null:
 			_alive_enemies += 1
 		if i < group.count - 1:

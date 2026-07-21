@@ -13,3 +13,39 @@ extends Resource
 @export var endless_speed_growth: float = 1.03
 ## Max coins for calling the next wave at the first moment the button appears.
 @export var early_wave_bonus_max: int = 12
+## Candy river band center (board space). Zero hides the river.
+@export var river_position: Vector2 = Vector2.ZERO
+@export var river_scale: Vector2 = Vector2(1.05, 0.95)
+## Bridge center — must sit on a path segment so the road reads over it.
+@export var bridge_position: Vector2 = Vector2.ZERO
+@export var bridge_scale: Vector2 = Vector2(0.72, 0.72)
+@export var bridge_rotation: float = 0.0
+## Decorative desserts / ornaments for this map (kinds: cupcake, sundae,
+## donut, macaron, softserve, cookie). Keep sparse — a couple per map.
+@export var ornaments: Array[MapOrnament] = []
+## Multi-lane maps. Empty → legacy single lane from `path_points`.
+@export var lanes: Array[LaneData] = []
+## Wave after which the board expands (0 = no expansion). Fires when that wave is fully clear.
+@export var expansion_wave: int = 0
+## Board Y offset applied after expansion (positive = pan down / content moves up).
+@export var expansion_pan: float = 0.0
+## Parallel to `pad_positions`. Empty → all pads available from wave 1.
+## Value is the first wave number the pad may appear (1 = start).
+@export var pad_unlock_waves: PackedInt32Array = PackedInt32Array()
+
+
+## Resolved lane list: authored `lanes`, or a synthetic lane from `path_points`.
+func resolved_lanes() -> Array[LaneData]:
+	if not lanes.is_empty():
+		return lanes
+	var legacy := LaneData.new()
+	legacy.points = path_points
+	legacy.unlock_wave = 1
+	legacy.label = ""
+	return [legacy] as Array[LaneData]
+
+
+func pad_unlock_wave(index: int) -> int:
+	if index < 0 or index >= pad_unlock_waves.size():
+		return 1
+	return maxi(1, pad_unlock_waves[index])

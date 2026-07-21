@@ -3,7 +3,7 @@ extends Node
 
 const SAVE_PATH := "user://save.cfg"
 const META_SECTION := "meta"
-const CAMPAIGN: Array[StringName] = [&"map_01", &"map_02", &"map_03"]
+const CAMPAIGN: Array[StringName] = [&"map_01", &"map_02", &"map_03", &"map_04", &"map_05"]
 
 ## Never persisted to disk — MapSelect / Next map! set these; Game reads at _ready.
 ## Survive reload_current_scene() so Retry relaunches the same setup.

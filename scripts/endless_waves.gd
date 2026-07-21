@@ -34,6 +34,7 @@ static func generate(map: MapData, wave_number: int) -> WaveData:
 		g.count = maxi(1, int(ceili(float(tg.count) * count_mult)))
 		g.spawn_interval = maxf(tg.spawn_interval, INTERVAL_FLOOR)
 		g.start_delay = tg.start_delay
+		g.lane = tg.lane
 		groups.append(g)
 		total_count += g.count
 
