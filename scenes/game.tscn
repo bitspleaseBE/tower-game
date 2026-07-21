@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
 [ext_resource type="Script" path="res://scripts/wave_spawner.gd" id="2_spawner"]
@@ -12,16 +12,11 @@
 [ext_resource type="PackedScene" path="res://scenes/debug/stress_overlay.tscn" id="8_so"]
 [ext_resource type="Script" path="res://scripts/ui/range_preview.gd" id="9_rp"]
 [ext_resource type="Texture2D" path="res://assets/background/ground_meadow.png" id="10_ground"]
-[ext_resource type="Texture2D" path="res://assets/background/decor_tree.png" id="11_tree"]
-[ext_resource type="Texture2D" path="res://assets/background/decor_bush.png" id="12_bush"]
-[ext_resource type="Texture2D" path="res://assets/background/decor_rock.png" id="13_rock"]
-[ext_resource type="Texture2D" path="res://assets/background/decor_gumdrop.png" id="15_gumdrop"]
-[ext_resource type="Texture2D" path="res://assets/background/decor_swirl.png" id="16_swirl"]
-[ext_resource type="Texture2D" path="res://assets/background/decor_candy_cane.png" id="17_cane"]
-[ext_resource type="Texture2D" path="res://assets/background/decor_bubblegum.png" id="18_gum"]
-[ext_resource type="Texture2D" path="res://assets/background/decor_gumdrop_blue.png" id="19_gblue"]
-[ext_resource type="Texture2D" path="res://assets/background/decor_lollipop_blue.png" id="20_lblue"]
-[ext_resource type="Texture2D" path="res://assets/background/decor_swirl_mint.png" id="21_smint"]
+[ext_resource type="Texture2D" path="res://assets/background/decor_cloud.png" id="11_cloud"]
+[ext_resource type="Texture2D" path="res://assets/background/decor_cloud_pink.png" id="12_cloudp"]
+[ext_resource type="Texture2D" path="res://assets/background/decor_river.png" id="13_river"]
+[ext_resource type="Texture2D" path="res://assets/background/decor_bridge.png" id="15_bridge"]
+[ext_resource type="Texture2D" path="res://assets/background/decor_gumdrop.png" id="16_gumdrop"]
 [ext_resource type="Texture2D" path="res://assets/background/path_straight.png" id="23_path"]
 
 [sub_resource type="Gradient" id="Gradient_vignette"]
@@ -50,270 +45,107 @@ centered = true
 
 [node name="Decor" type="Node2D" parent="Board"]
 
+[node name="River" type="Sprite2D" parent="Board/Decor"]
+z_index = -2
+position = Vector2(360, 680)
+scale = Vector2(1.05, 0.95)
+modulate = Color(1, 1, 1, 0.92)
+texture = ExtResource("13_river")
+
+[node name="Bridge" type="Sprite2D" parent="Board/Decor"]
+z_index = -1
+position = Vector2(160, 680)
+scale = Vector2(0.72, 0.72)
+texture = ExtResource("15_bridge")
+
 [node name="Props" type="Node2D" parent="Board/Decor"]
 
-[node name="LolliNW" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(70, 120)
+[node name="CloudNW" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(80, 110)
+rotation = 0.2
 
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/LolliNW"]
-z_index = -1
-position = Vector2(0, 8)
-color = Color(0.45, 0.25, 0.4, 0.22)
-polygon = PackedVector2Array(26, 0, 22.516, 6.5, 13, 11.258, 0, 13, -13, 11.258, -22.516, 6.5, -26, 0, -22.516, -6.5, -13, -11.258, 0, -13, 13, -11.258, 22.516, -6.5)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/LolliNW"]
-texture = ExtResource("11_tree")
-scale = Vector2(0.72, 0.72)
-
-[node name="LolliBlueN" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(300, 100)
-
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/LolliBlueN"]
-z_index = -1
-position = Vector2(0, 8)
-color = Color(0.45, 0.25, 0.4, 0.22)
-polygon = PackedVector2Array(24, 0, 20.785, 6, 12, 10.392, 0, 12, -12, 10.392, -20.785, 6, -24, 0, -20.785, -6, -12, -10.392, 0, -12, 12, -10.392, 20.785, -6)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/LolliBlueN"]
-texture = ExtResource("20_lblue")
-scale = Vector2(0.62, 0.62)
-
-[node name="BushNE" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(640, 110)
-
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/BushNE"]
-z_index = -1
-position = Vector2(0, 10)
-color = Color(0.45, 0.25, 0.4, 0.22)
-polygon = PackedVector2Array(28, 0, 24.249, 7, 14, 12.124, 0, 14, -14, 12.124, -24.249, 7, -28, 0, -24.249, -7, -14, -12.124, 0, -14, 14, -12.124, 24.249, -7)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/BushNE"]
-texture = ExtResource("12_bush")
-scale = Vector2(0.78, 0.78)
-
-[node name="CaneNE" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(520, 150)
-rotation = 0.4
-
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/CaneNE"]
-z_index = -1
-position = Vector2(0, 6)
-color = Color(0.45, 0.25, 0.4, 0.2)
-polygon = PackedVector2Array(22, 0, 19.053, 5.5, 11, 9.526, 0, 11, -11, 9.526, -19.053, 5.5, -22, 0, -19.053, -5.5, -11, -9.526, 0, -11, 11, -9.526, 19.053, -5.5)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CaneNE"]
-texture = ExtResource("17_cane")
-scale = Vector2(0.55, 0.55)
-
-[node name="SwirlW" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(55, 380)
-
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/SwirlW"]
-z_index = -1
-position = Vector2(0, 8)
-color = Color(0.45, 0.25, 0.4, 0.22)
-polygon = PackedVector2Array(30, 0, 25.981, 7.5, 15, 12.99, 0, 15, -15, 12.99, -25.981, 7.5, -30, 0, -25.981, -7.5, -15, -12.99, 0, -15, 15, -12.99, 25.981, -7.5)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/SwirlW"]
-texture = ExtResource("16_swirl")
-scale = Vector2(0.7, 0.7)
-
-[node name="GumdropBlueW" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(50, 560)
-
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/GumdropBlueW"]
-z_index = -1
-position = Vector2(0, 6)
-color = Color(0.45, 0.25, 0.4, 0.2)
-polygon = PackedVector2Array(18, 0, 15.588, 4.5, 9, 7.794, 0, 9, -9, 7.794, -15.588, 4.5, -18, 0, -15.588, -4.5, -9, -7.794, 0, -9, 9, -7.794, 15.588, -4.5)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/GumdropBlueW"]
-texture = ExtResource("19_gblue")
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CloudNW"]
+modulate = Color(1, 1, 1, 0.48)
 scale = Vector2(0.85, 0.85)
+texture = ExtResource("11_cloud")
 
-[node name="BubblegumW" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(90, 780)
+[node name="CloudN" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(360, 70)
+rotation = -0.1
 
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/BubblegumW"]
-z_index = -1
-position = Vector2(0, 10)
-color = Color(0.45, 0.25, 0.4, 0.22)
-polygon = PackedVector2Array(26, 0, 22.516, 6.5, 13, 11.258, 0, 13, -13, 11.258, -22.516, 6.5, -26, 0, -22.516, -6.5, -13, -11.258, 0, -13, 13, -11.258, 22.516, -6.5)
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CloudN"]
+modulate = Color(1, 1, 1, 0.42)
+scale = Vector2(1.05, 1.05)
+texture = ExtResource("12_cloudp")
 
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/BubblegumW"]
-texture = ExtResource("18_gum")
-scale = Vector2(0.68, 0.68)
+[node name="CloudNE" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(640, 130)
+rotation = 0.35
 
-[node name="LolliSW" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(55, 980)
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CloudNE"]
+modulate = Color(1, 1, 1, 0.45)
+scale = Vector2(0.9, 0.9)
+texture = ExtResource("11_cloud")
 
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/LolliSW"]
-z_index = -1
-position = Vector2(0, 8)
-color = Color(0.45, 0.25, 0.4, 0.22)
-polygon = PackedVector2Array(24, 0, 20.785, 6, 12, 10.392, 0, 12, -12, 10.392, -20.785, 6, -24, 0, -20.785, -6, -12, -10.392, 0, -12, 12, -10.392, 20.785, -6)
+[node name="CloudW" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(40, 420)
+rotation = 0.5
 
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/LolliSW"]
-texture = ExtResource("11_tree")
-scale = Vector2(0.6, 0.6)
-
-[node name="SwirlMintS" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(40, 1140)
-
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/SwirlMintS"]
-z_index = -1
-position = Vector2(0, 8)
-color = Color(0.45, 0.25, 0.4, 0.22)
-polygon = PackedVector2Array(28, 0, 24.249, 7, 14, 12.124, 0, 14, -14, 12.124, -24.249, 7, -28, 0, -24.249, -7, -14, -12.124, 0, -14, 14, -12.124, 24.249, -7)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/SwirlMintS"]
-texture = ExtResource("21_smint")
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CloudW"]
+modulate = Color(1, 1, 1, 0.4)
 scale = Vector2(0.75, 0.75)
+texture = ExtResource("12_cloudp")
 
-[node name="CaneS" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(200, 1160)
-rotation = -0.55
+[node name="CloudE" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(690, 480)
+rotation = -0.4
 
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/CaneS"]
-z_index = -1
-position = Vector2(0, 6)
-color = Color(0.45, 0.25, 0.4, 0.2)
-polygon = PackedVector2Array(20, 0, 17.321, 5, 10, 8.66, 0, 10, -10, 8.66, -17.321, 5, -20, 0, -17.321, -5, -10, -8.66, 0, -10, 10, -8.66, 17.321, -5)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CaneS"]
-texture = ExtResource("17_cane")
-scale = Vector2(0.5, 0.5)
-
-[node name="GumdropSE" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(620, 1120)
-
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/GumdropSE"]
-z_index = -1
-position = Vector2(0, 6)
-color = Color(0.45, 0.25, 0.4, 0.2)
-polygon = PackedVector2Array(18, 0, 15.588, 4.5, 9, 7.794, 0, 9, -9, 7.794, -15.588, 4.5, -18, 0, -15.588, -4.5, -9, -7.794, 0, -9, 9, -7.794, 15.588, -4.5)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/GumdropSE"]
-texture = ExtResource("15_gumdrop")
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CloudE"]
+modulate = Color(1, 1, 1, 0.4)
 scale = Vector2(0.8, 0.8)
+texture = ExtResource("11_cloud")
 
-[node name="SwirlE" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(680, 500)
+[node name="CloudSW" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(60, 1080)
+rotation = 0.15
 
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/SwirlE"]
-z_index = -1
-position = Vector2(0, 8)
-color = Color(0.45, 0.25, 0.4, 0.22)
-polygon = PackedVector2Array(28, 0, 24.249, 7, 14, 12.124, 0, 14, -14, 12.124, -24.249, 7, -28, 0, -24.249, -7, -14, -12.124, 0, -14, 14, -12.124, 24.249, -7)
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CloudSW"]
+modulate = Color(1, 1, 1, 0.46)
+scale = Vector2(0.95, 0.95)
+texture = ExtResource("11_cloud")
 
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/SwirlE"]
-texture = ExtResource("16_swirl")
-scale = Vector2(0.65, 0.65)
+[node name="CloudSE" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(650, 1100)
+rotation = -0.25
 
-[node name="LolliBlueE" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(690, 700)
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CloudSE"]
+modulate = Color(1, 1, 1, 0.44)
+scale = Vector2(0.88, 0.88)
+texture = ExtResource("12_cloudp")
 
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/LolliBlueE"]
-z_index = -1
-position = Vector2(0, 8)
-color = Color(0.45, 0.25, 0.4, 0.22)
-polygon = PackedVector2Array(24, 0, 20.785, 6, 12, 10.392, 0, 12, -12, 10.392, -20.785, 6, -24, 0, -20.785, -6, -12, -10.392, 0, -12, 12, -10.392, 20.785, -6)
+[node name="CloudS" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(400, 1180)
 
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/LolliBlueE"]
-texture = ExtResource("20_lblue")
-scale = Vector2(0.68, 0.68)
-
-[node name="BubblegumE" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(680, 900)
-
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/BubblegumE"]
-z_index = -1
-position = Vector2(0, 10)
-color = Color(0.45, 0.25, 0.4, 0.22)
-polygon = PackedVector2Array(24, 0, 20.785, 6, 12, 10.392, 0, 12, -12, 10.392, -20.785, 6, -24, 0, -20.785, -6, -12, -10.392, 0, -12, 12, -10.392, 20.785, -6)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/BubblegumE"]
-texture = ExtResource("18_gum")
-scale = Vector2(0.6, 0.6)
-
-[node name="GumdropBlueE" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(670, 320)
-
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/GumdropBlueE"]
-z_index = -1
-position = Vector2(0, 6)
-color = Color(0.45, 0.25, 0.4, 0.2)
-polygon = PackedVector2Array(16, 0, 13.856, 4, 8, 6.928, 0, 8, -8, 6.928, -13.856, 4, -16, 0, -13.856, -4, -8, -6.928, 0, -8, 8, -6.928, 13.856, -4)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/GumdropBlueE"]
-texture = ExtResource("19_gblue")
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CloudS"]
+modulate = Color(1, 1, 1, 0.38)
 scale = Vector2(0.7, 0.7)
+texture = ExtResource("11_cloud")
 
-[node name="RockMid" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(360, 150)
+[node name="GumdropFarNW" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(120, 200)
 
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/RockMid"]
-z_index = -1
-position = Vector2(0, 6)
-color = Color(0.45, 0.25, 0.4, 0.18)
-polygon = PackedVector2Array(16, 0, 13.856, 4, 8, 6.928, 0, 8, -8, 6.928, -13.856, 4, -16, 0, -13.856, -4, -8, -6.928, 0, -8, 8, -6.928, 13.856, -4)
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/GumdropFarNW"]
+modulate = Color(1, 1, 1, 0.35)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("16_gumdrop")
 
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/RockMid"]
-texture = ExtResource("13_rock")
-scale = Vector2(0.75, 0.75)
+[node name="GumdropFarSE" type="Node2D" parent="Board/Decor/Props"]
+position = Vector2(600, 1040)
 
-[node name="SwirlMintPocket" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(480, 720)
-
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/SwirlMintPocket"]
-z_index = -1
-position = Vector2(0, 8)
-color = Color(0.45, 0.25, 0.4, 0.2)
-polygon = PackedVector2Array(22, 0, 19.053, 5.5, 11, 9.526, 0, 11, -11, 9.526, -19.053, 5.5, -22, 0, -19.053, -5.5, -11, -9.526, 0, -11, 11, -9.526, 19.053, -5.5)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/SwirlMintPocket"]
-texture = ExtResource("21_smint")
-scale = Vector2(0.55, 0.55)
-
-[node name="CanePocket" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(280, 480)
-rotation = 1.1
-
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/CanePocket"]
-z_index = -1
-position = Vector2(0, 5)
-color = Color(0.45, 0.25, 0.4, 0.18)
-polygon = PackedVector2Array(16, 0, 13.856, 4, 8, 6.928, 0, 8, -8, 6.928, -13.856, 4, -16, 0, -13.856, -4, -8, -6.928, 0, -8, 8, -6.928, 13.856, -4)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/CanePocket"]
-texture = ExtResource("17_cane")
-scale = Vector2(0.42, 0.42)
-
-[node name="LolliPocket" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(480, 940)
-
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/LolliPocket"]
-z_index = -1
-position = Vector2(0, 7)
-color = Color(0.45, 0.25, 0.4, 0.2)
-polygon = PackedVector2Array(20, 0, 17.321, 5, 10, 8.66, 0, 10, -10, 8.66, -17.321, 5, -20, 0, -17.321, -5, -10, -8.66, 0, -10, 10, -8.66, 17.321, -5)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/LolliPocket"]
-texture = ExtResource("11_tree")
-scale = Vector2(0.5, 0.5)
-
-[node name="GumdropPocket" type="Node2D" parent="Board/Decor/Props"]
-position = Vector2(100, 640)
-
-[node name="Shadow" type="Polygon2D" parent="Board/Decor/Props/GumdropPocket"]
-z_index = -1
-position = Vector2(0, 5)
-color = Color(0.45, 0.25, 0.4, 0.18)
-polygon = PackedVector2Array(14, 0, 12.124, 3.5, 7, 6.062, 0, 7, -7, 6.062, -12.124, 3.5, -14, 0, -12.124, -3.5, -7, -6.062, 0, -7, 7, -6.062, 12.124, -3.5)
-
-[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/GumdropPocket"]
-texture = ExtResource("15_gumdrop")
-scale = Vector2(0.55, 0.55)
+[node name="Sprite" type="Sprite2D" parent="Board/Decor/Props/GumdropFarSE"]
+modulate = Color(1, 1, 1, 0.32)
+scale = Vector2(0.38, 0.38)
+texture = ExtResource("16_gumdrop")
 
 [node name="SpawnMarker" type="Node2D" parent="Board/Decor"]
 position = Vector2(40, 280)
@@ -345,7 +177,7 @@ polygon = PackedVector2Array(18, 0, 15.588, 9, 9, 15.588, 0, 18, -9, 15.588, -15
 
 [node name="PathBorder" type="Line2D" parent="Board/Path"]
 width = 68.0
-default_color = Color(0.92, 0.48, 0.62, 1)
+default_color = Color(1, 0.62, 0.78, 1)
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
@@ -363,7 +195,7 @@ texture_mode = 1
 
 [node name="PathHighlight" type="Line2D" parent="Board/Path"]
 width = 22.0
-default_color = Color(1.0, 0.98, 0.99, 0.4)
+default_color = Color(1, 0.95, 0.98, 0.55)
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
