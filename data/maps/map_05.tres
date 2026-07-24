@@ -13,20 +13,20 @@
 
 [sub_resource type="Resource" id="lane_top"]
 script = ExtResource("lane_script")
-points = PackedVector2Array(360, 160, 560, 160, 560, 400, 160, 400, 160, 700, 500, 700, 500, 980, 360, 980, 360, 1200, 160, 1200, 160, 1480, 560, 1480, 560, 1660, 360, 1660)
+points = PackedVector2Array(360, 160, 560, 160, 560, 400, 160, 400, 160, 700, 500, 700, 500, 980, 360, 980, 360, 1080, 160, 1080, 160, 1360, 560, 1360, 560, 1540, 360, 1540)
 phase1_point_count = 8
 unlock_wave = 1
 label = "Falls Top"
 
 [sub_resource type="Resource" id="lane_tunnel"]
 script = ExtResource("lane_script")
-points = PackedVector2Array(-40, 1320, 160, 1320, 160, 1480, 560, 1480, 560, 1660, 360, 1660)
+points = PackedVector2Array(-40, 1200, 160, 1200, 160, 1360, 560, 1360, 560, 1540, 360, 1540)
 unlock_wave = 12
 label = "Toffee Tunnel"
 
 [sub_resource type="Resource" id="lane_ledge"]
 script = ExtResource("lane_script")
-points = PackedVector2Array(760, 1320, 560, 1320, 560, 1480, 560, 1660, 360, 1660)
+points = PackedVector2Array(760, 1200, 560, 1200, 560, 1360, 560, 1540, 360, 1540)
 unlock_wave = 14
 label = "Licorice Ledge"
 
@@ -45,7 +45,7 @@ scale = 0.68
 [sub_resource type="Resource" id="orn_3"]
 script = ExtResource("orn_script")
 kind = &"macaron"
-position = Vector2(300, 1360)
+position = Vector2(300, 1240)
 scale = 0.7
 
 [sub_resource type="Resource" id="w1_g1"]
@@ -357,8 +357,8 @@ spawn_groups = Array[ExtResource("3_group")]([SubResource("w15_boss"), SubResour
 script = ExtResource("1_map")
 id = &"map_05"
 display_name = "Fudge Falls"
-path_points = PackedVector2Array(360, 160, 560, 160, 560, 400, 160, 400, 160, 700, 500, 700, 500, 980, 360, 980, 360, 1200, 160, 1200, 160, 1480, 560, 1480, 560, 1660, 360, 1660)
-pad_positions = PackedVector2Array(440, 280, 440, 520, 280, 520, 70, 550, 360, 820, 640, 820, 280, 1300, 440, 1300, 70, 1550, 250, 1570, 650, 1550)
+path_points = PackedVector2Array(360, 160, 560, 160, 560, 400, 160, 400, 160, 700, 500, 700, 500, 980, 360, 980, 360, 1080, 160, 1080, 160, 1360, 560, 1360, 560, 1540, 360, 1540)
+pad_positions = PackedVector2Array(440, 280, 440, 520, 280, 520, 70, 550, 360, 820, 640, 820, 280, 1180, 440, 1180, 70, 1430, 250, 1450, 650, 1430)
 pad_unlock_waves = PackedInt32Array(1, 1, 1, 1, 1, 1, 11, 11, 11, 11, 11)
 starting_coins = 130
 starting_lives = 15
@@ -366,11 +366,11 @@ waves = Array[ExtResource("2_wave")]([SubResource("wave1"), SubResource("wave2")
 endless_hp_growth = 1.16
 endless_count_growth = 1.08
 endless_speed_growth = 1.02
-river_position = Vector2(360, 1100)
+river_position = Vector2(360, 1030)
 river_scale = Vector2(0.95, 0.4)
-bridge_position = Vector2(360, 1100)
+bridge_position = Vector2(360, 1030)
 bridge_scale = Vector2(0.6, 0.6)
 ornaments = Array[ExtResource("orn_script")]([SubResource("orn_1"), SubResource("orn_2"), SubResource("orn_3")])
 lanes = Array[ExtResource("lane_script")]([SubResource("lane_top"), SubResource("lane_tunnel"), SubResource("lane_ledge")])
 expansion_wave = 10
-expansion_pan = 620.0
+expansion_pan = 500.0

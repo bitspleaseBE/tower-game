@@ -196,6 +196,15 @@ func earn(amount: int) -> void:
 	Events.coins_changed.emit(coins)
 
 
+func bounty_for(enemy_data: EnemyData) -> int:
+	if enemy_data == null:
+		return 0
+	var scale := 1.0
+	if map_data != null:
+		scale = map_data.bounty_scale
+	return maxi(1, int(round(float(enemy_data.bounty) * scale)))
+
+
 func _spawn_enemy(enemy_data: EnemyData, lane: int = 0) -> Enemy:
 	var node: Node = _enemy_pool.acquire()
 	if node == null:

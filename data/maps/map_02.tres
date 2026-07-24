@@ -8,7 +8,6 @@
 [ext_resource type="Resource" path="res://data/enemies/fast.tres" id="5_fxdq4"]
 [ext_resource type="Resource" path="res://data/enemies/swarm.tres" id="6_13d8w"]
 [ext_resource type="Resource" path="res://data/enemies/armored.tres" id="7_anvho"]
-[ext_resource type="Resource" path="res://data/enemies/boss.tres" id="8_vqvtf"]
 
 [sub_resource type="Resource" id="Resource_prup8"]
 script = ExtResource("3_d4hsn")
@@ -92,9 +91,9 @@ spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_1uor4"), Sub
 
 [sub_resource type="Resource" id="Resource_i1c73"]
 script = ExtResource("3_d4hsn")
-enemy = ExtResource("8_vqvtf")
-count = 1
-spawn_interval = 1.0
+enemy = ExtResource("7_anvho")
+count = 6
+spawn_interval = 1.4
 
 [sub_resource type="Resource" id="Resource_gm8qc"]
 script = ExtResource("3_d4hsn")
@@ -187,23 +186,23 @@ spawn_groups = Array[ExtResource("3_d4hsn")]([SubResource("Resource_ocy1b"), Sub
 
 [sub_resource type="Resource" id="Resource_0q14c"]
 script = ExtResource("3_d4hsn")
-enemy = ExtResource("8_vqvtf")
-count = 2
-spawn_interval = 12.0
+enemy = ExtResource("7_anvho")
+count = 10
+spawn_interval = 1.0
 
 [sub_resource type="Resource" id="Resource_82ka2"]
 script = ExtResource("3_d4hsn")
 enemy = ExtResource("6_13d8w")
-count = 12
-spawn_interval = 0.4
-start_delay = 3.0
+count = 18
+spawn_interval = 0.35
+start_delay = 2.0
 
 [sub_resource type="Resource" id="Resource_fx50w"]
 script = ExtResource("3_d4hsn")
 enemy = ExtResource("5_fxdq4")
-count = 8
-spawn_interval = 0.6
-start_delay = 8.0
+count = 10
+spawn_interval = 0.55
+start_delay = 6.0
 
 [sub_resource type="Resource" id="Resource_6sicu"]
 script = ExtResource("2_l5v5n")
@@ -236,6 +235,7 @@ waves = Array[ExtResource("2_l5v5n")]([SubResource("Resource_ydhys"), SubResourc
 endless_hp_growth = 1.16
 endless_count_growth = 1.07
 endless_speed_growth = 1.02
+bounty_scale = 0.85
 river_position = Vector2(360, 580)
 river_scale = Vector2(0.95, 0.4)
 bridge_position = Vector2(600, 580)

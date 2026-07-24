@@ -6,6 +6,7 @@
 radius = 26.0
 
 [node name="Enemy" type="PathFollow2D"]
+z_index = 1
 loop = false
 rotates = false
 script = ExtResource("1_enemy")

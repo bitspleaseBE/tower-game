@@ -158,12 +158,16 @@ func _die() -> void:
 	active = false
 	wobbling = false
 	hurtbox.set_deferred("monitorable", false)
-	Events.enemy_killed.emit(self, data.bounty)
+	var bounty := data.bounty
+	var game := get_tree().get_first_node_in_group("game")
+	if game != null and game.has_method("bounty_for"):
+		bounty = int(game.bounty_for(data))
+	Events.enemy_killed.emit(self, bounty)
 	Sound.play_sfx(&"kill_pop")
 	Sound.play_sfx(&"coin")
 	Juice.confetti(global_position)
 	Juice.coin_burst(global_position)
-	Juice.floater("+%d" % data.bounty, global_position, Color(1.0, 0.79, 0.3, 1.0))
+	Juice.floater("+%d" % bounty, global_position, Color(1.0, 0.79, 0.3, 1.0))
 	Juice.punch_scale(skin)
 	# Wait for punch, then return to pool.
 	var gen := generation
