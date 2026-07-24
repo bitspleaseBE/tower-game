@@ -7,6 +7,9 @@ extends PathFollow2D
 ## armor off — the counter-play matrix of Stage 4 depends on it.
 const ARMOR_MIN_DAMAGE_RATIO := 0.25
 const SLOW_TINT := Color(0.749, 0.89, 1.0, 1.0) ## #BFE3FF-ish
+## Candy faces sit at the bottom of the sprite (+Y). Subtract so the face tracks travel.
+const FACE_FORWARD := PI * 0.5
+const FACE_LOOKAHEAD_PX := 12.0
 
 const BODY_TEXTURES := {
 	&"normal": preload("res://assets/enemies/critter_normal.png"),
@@ -88,6 +91,8 @@ func activate(enemy_data: EnemyData) -> void:
 	_rest_scale = skin.scale
 	active = true
 	wobbling = true
+	# Deferred so Game can set visible-spawn progress before the first face sample.
+	call_deferred("_face_along_path")
 	if data.is_boss:
 		_play_boss_entrance()
 
@@ -131,11 +136,32 @@ func _process(delta: float) -> void:
 			_update_tint()
 	_walk_time += delta
 	progress += data.speed * _slow_factor * delta
+	_face_along_path()
 	if wobbling:
 		skin.scale = _rest_scale * Juice.wobble_scale(_walk_time)
 	if progress_ratio >= 1.0:
 		Events.enemy_leaked.emit(self)
 		deactivate()
+
+
+## Point the baked face along the path tangent. HP bar stays upright (sibling of Skin).
+func _face_along_path() -> void:
+	var path_node := get_parent() as Path2D
+	if path_node == null or path_node.curve == null or skin == null:
+		return
+	var curve := path_node.curve
+	var length := curve.get_baked_length()
+	if length <= 1.0:
+		return
+	var from_p := progress
+	var to_p := progress + FACE_LOOKAHEAD_PX
+	if to_p > length:
+		from_p = maxf(0.0, progress - FACE_LOOKAHEAD_PX)
+		to_p = progress
+	var dir := curve.sample_baked(minf(to_p, length)) - curve.sample_baked(from_p)
+	if dir.length_squared() < 0.25:
+		return
+	skin.rotation = dir.angle() - FACE_FORWARD
 
 
 func take_damage(amount: float, heavy := false) -> void:
